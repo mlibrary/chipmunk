@@ -29,7 +29,7 @@ RSpec.describe V1::RequestsController, type: :controller do
           bag_id: SecureRandom.uuid,
           content_type: "audio",
           external_id: SecureRandom.uuid
-        }.with_indifferent_access
+        }
       end
       let(:request_builder) { double(:request_builder, build: nil) }
       let(:expected_record) do
@@ -73,7 +73,8 @@ RSpec.describe V1::RequestsController, type: :controller do
             end
             it "passes the parameters to a RequestBuilder" do
               post :create, params: {request: attributes}
-              expect(request_builder).to have_received(:create).with(attributes.merge({user: user}))
+              expect(RequestBuilder).to have_received(:new).with(attributes.merge({user: user}))
+              expect(request_builder).to have_received(:create)
             end
             it "returns 201" do
               post :create, params: {request: attributes}
