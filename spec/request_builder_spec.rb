@@ -12,7 +12,7 @@ RSpec.describe RequestBuilder do
     end
 
     it "returns a Request with the configured upload link" do
-      expected_link = File.join(config_rsync_point, user.username, params[:bag_id])
+      expected_link = File.join(config_rsync_point, params[:bag_id])
       expect(described_class.new(params).create.upload_link).to eql expected_link
     end
 
