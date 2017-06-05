@@ -26,10 +26,10 @@ RSpec.shared_examples "a request" do |factory_id|
     expect(request.upload_path).to eq(File.join(upload_path,'someuser','1'))
   end
 
-  it "has an upload link based on the rsync point and bag id" do
+  it "has an upload link based on the rsync point, user, and bag id" do
     user = Fabricate.build(:user, username: 'someuser')
     request = Fabricate.build(factory_id, user: user, bag_id: 1)
-    expect(request.upload_link).to eq(File.join(upload_link,'1'))
+    expect(request.upload_link).to eq(File.join(upload_link, 'someuser', '1'))
   end
 
   describe "#to_param" do

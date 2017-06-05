@@ -16,11 +16,11 @@ class Request < ApplicationRecord
   end
 
   def upload_path
-    File.join(Rails.application.config.upload['upload_path'],user.username,bag_id)
+    File.join(Rails.application.config.upload['upload_path'], user.username, bag_id)
   end
 
   def upload_link
-    File.join(Rails.application.config.upload['rsync_point'],bag_id)
+    File.join(Rails.application.config.upload['rsync_point'], user.username, bag_id)
   end
 
 end
