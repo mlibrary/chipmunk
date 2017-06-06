@@ -9,7 +9,8 @@
 #
 # This process is synchronous.
 class RequestBuilder
-  def initialize(bag_id:, content_type:, external_id:, user:)
+  def initialize(bag_id:, content_type:, external_id:, user:, fs: Filesystem.new)
+    @fs = fs
     @request = klass_for(content_type)
       .new(
         bag_id: bag_id,
@@ -19,6 +20,8 @@ class RequestBuilder
   end
 
   def create
+    Rails.logger.debug "making directory #{request.upload_path}"
+    fs.mkdir_p request.upload_path
     request.save!
     request
   end
@@ -36,5 +39,5 @@ class RequestBuilder
 
   private
 
-  attr_accessor :request
+  attr_accessor :request, :fs
 end
