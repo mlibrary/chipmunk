@@ -9,17 +9,21 @@
 #
 # This process is synchronous.
 class RequestBuilder
-  def initialize
+  def initialize(bag_id:, content_type:, external_id:, user:, fs: Filesystem.new)
+    @fs = fs
+    @request = klass_for(content_type)
+      .new(
+        bag_id: bag_id,
+        external_id: external_id,
+        user: user
+      )
   end
 
-  # Returns the request. Pass a hash with all the parameters necessary for
-  # creation of the particular sub-request as well as the 'content_type' key to
-  # control which type of request gets generated (currently, 'audio' or
-  # 'digital'). Just using a hash rather than keyword parameters since Rails
-  # parameters and keyword args still don't mix well.
-  def create(params)
-    klass_for(params.delete(:content_type))
-      .create(params)
+  def create
+    Rails.logger.debug "making directory #{request.upload_path}"
+    fs.mkdir_p request.upload_path
+    request.save!
+    request
   end
 
   def klass_for(content_type)
@@ -35,5 +39,5 @@ class RequestBuilder
 
   private
 
-  attr_accessor :params
+  attr_accessor :request, :fs
 end

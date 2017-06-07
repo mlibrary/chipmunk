@@ -8,7 +8,6 @@ class BagMoveJob < ApplicationJob
     #  - success: commit the transaction
     #  - failure (exception) - transaction automatically rolls back
     queue_item.transaction do
-      binding.pry
       queue_item.bag = bag_type(queue_item).create!(
         bag_id: queue_item.request.bag_id,
         user: queue_item.user,
