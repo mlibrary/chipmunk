@@ -49,9 +49,16 @@ RSpec.describe Bag, type: :model do
     end
   end
 
-  it "has an upload link based on the rsync point and bag id" do
-    request = Fabricate.build(:bag, bag_id: uuid)
-    expect(request.upload_link).to eq(File.join(upload_link,uuid))
+  describe "#upload_link" do
+    it "has an upload link based on the rsync point and bag id if there is no storage location" do
+      request = Fabricate.build(:bag, bag_id: uuid, storage_location: nil)
+      expect(request.upload_link).to eq(File.join(upload_link,uuid))
+    end
+
+    it "raises an exception if the upload link is requested for a completed bag" do
+      request = Fabricate.build(:bag, storage_location: "it/exists")
+      expect{request.upload_link}.to raise_error RuntimeError
+    end
   end
 
   describe "#external_validation_cmd" do
