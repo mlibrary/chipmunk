@@ -27,6 +27,7 @@ class Bag < ApplicationRecord
   end
 
   def upload_link
+    raise RuntimeError, "cannot upload a completed bag" if storage_location
     File.join(Rails.application.config.upload['rsync_point'],bag_id)
   end
 
