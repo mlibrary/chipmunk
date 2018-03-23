@@ -2,6 +2,12 @@
 
 A Preservation-Focused Dark Repository for the University of Michigan
 
+## Development
+
+- `git clone https://github.com/mlibrary/chipmunk`
+- `bundle install`
+- `bundle exec rspec`
+
 ## Running integration tests
 
 - Make sure the validation scripts under `bin` have all required dependencies
@@ -22,6 +28,8 @@ A Preservation-Focused Dark Repository for the University of Michigan
 - Set up external validators in `config/validation.yml` - for a simple test try using `/bin/true`
 - In another window, start the development server: `bundle exec rails server`
 - In another window, start the resque pool: `bundle exec rake resque:pool`
+
+With [chipmunk-client](https://www.github.com/mlibrary/chipmunk-client):
 - (Optional) Bag some audio content: `bundle exec ruby -I lib bin/makebag audio 39015012345678 /path/to/audio/material /path/to/output/bag`
 - Try to upload a test bag: `bundle exec ruby -I lib bin/upload spec/support/fixtures/audio/upload/good` (or whatever bag you created before)
 
@@ -40,22 +48,8 @@ A Preservation-Focused Dark Repository for the University of Michigan
 
 ### Client setup
 
-- User should be able to connect via rsync over ssh to the configured rsync point in `config/upload.yml`
-- Create `config/client.yml` as follows:
-
-```yaml
-api_key: API_KEY_FROM_USER_SETUP_ABOVE
-# should be the full URL to the Chipmunk server; defaults to http://localhost:3000
-url: http://localhost:3000
-```
-
-### Client usage
-
-- `bin/upload -c path/to/config.yml /path/to/bag1 /path/to/bag2`
-
-If no config file is specified, it will use `config/client.yml` by default.
-
-The client will display progress on uploading and validating each bag in sequence.
+- In addition to the Rails server endpoint, the client must be able to connect
+  via rsync over ssh to the configured rsync point in `config/upload.yml` 
 
 ## Validators
 
