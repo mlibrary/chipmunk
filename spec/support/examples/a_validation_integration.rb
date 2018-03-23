@@ -47,7 +47,7 @@ RSpec.shared_examples "a validation integration" do
   end
 
   context "with a valid bag" do
-    let(:bag) { bag_with_id("good") }
+    let(:bag) { bag_with_id("goodbag") }
 
     it "completes the queue item and moves it to the destination" do
       expect(File).to receive(:rename).with(bag.src_path, bag.dest_path)
@@ -58,7 +58,7 @@ RSpec.shared_examples "a validation integration" do
   end
 
   context "with an invalid bag" do
-    let(:bag) { bag_with_id("bad") }
+    let(:bag) { bag_with_id("badbag") }
     it "reports the error and does not move the bag to storage" do
       expect(File).not_to receive(:rename).with(bag.src_path, bag.dest_path)
       subject
