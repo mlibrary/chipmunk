@@ -1,0 +1,6 @@
+External-Identifier: 39015087086396
+Chipmunk-Content-Type: audio
+Bag-ID: badbag
+Metadata-URL: http://mirlyn.lib.umich.edu/Record/011500592.xml
+Metadata-Type: MARC
+Metadata-Tagfile: marc.xml

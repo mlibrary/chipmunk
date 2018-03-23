@@ -3,4 +3,4 @@ febf1c802920687a4e02fe1e62a2380d  bag-info.txt
 224d69b3b78b248ad75dbf3e3f7778e7  manifest-md5.txt
 9ec70242a2ea2204af2eeed115b2a0a5  manifest-sha1.txt
 888f366f50152a4d64b89d4ee2d08258  marc.xml
-d987bc5c86cc1a44a978f36984061065  chipmunk-info.txt
+af4a68f7695a103ee540d2b576ee4527  chipmunk-info.txt
