@@ -15,9 +15,7 @@ gem "rack-cors"
 gem "rails", "~> 5.1.0"
 gem "resque"
 gem "resque-pool"
-# cli - should separate out
 gem "bagit"
-gem "rest-client"
 gem "mysql2"
 
 group :development, :test do
