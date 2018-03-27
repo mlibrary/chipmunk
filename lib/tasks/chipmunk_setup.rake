@@ -12,7 +12,9 @@ namespace :chipmunk do
 
   def set_upload_config(config_path, app_storage_path, app_upload_path, user_upload_path)
     # update upload.yml
-    config = YAML.load_file(config_path)
+    config = {}
+    config = YAML.load_file(config_path) if File.exists?(config_path)
+    config["upload"] ||= {}
     config["upload"]["rsync_point"] = "localhost:#{user_upload_path}"
     config["upload"]["storage_path"] = app_storage_path
     config["upload"]["upload_path"] = app_upload_path
@@ -37,7 +39,7 @@ namespace :chipmunk do
     app_storage_path = "#{Rails.root}/repo/storage"
     app_upload_path = "#{Rails.root}/repo/incoming"
     user_upload_path = "#{Rails.root}/incoming"
-    config_path = "#{Rails.root}/config/settings/#{Rails.env}.yml"
+    config_path = "#{Rails.root}/config/settings/#{Rails.env}.local.yml"
 
     create_paths(app_storage_path, "#{app_upload_path}/#{username}", user_upload_path)
     set_upload_config(config_path, app_storage_path, app_upload_path, user_upload_path)
