@@ -25,13 +25,39 @@ A Preservation-Focused Dark Repository for the University of Michigan
 - `git clone`/`bundle install` as usual
 - Set up the database: `bundle exec rake db:setup`
 - Set up the repository and upload paths: `bundle exec rake chipmunk:setup`
-- Set up external validators in `config/validation.yml` - for a simple test try using `/bin/true`
+- Set up external validators in `config/settings/development.local.yml` (see
+  example in `development.yml`). For a simple test that doesn't require any
+  pre-requisites, try using `/bin/true`
 - In another window, start the development server: `bundle exec rails server`
 - In another window, start the resque pool: `bundle exec rake resque:pool`
 
 With [chipmunk-client](https://www.github.com/mlibrary/chipmunk-client):
+- Configure `chipmunk-client` with the API key you got from `bundle exec rake chipmunk:setup`
 - (Optional) Bag some audio content: `bundle exec ruby -I lib bin/makebag audio 39015012345678 /path/to/audio/material /path/to/output/bag`
 - Try to upload a test bag: `bundle exec ruby -I lib bin/upload spec/support/fixtures/audio/upload/good` (or whatever bag you created before)
+- Check the bag's status:
+
+```bash
+curl -f -s -H "Authorization:Token token=YOUR_API_TOKEN" http://localhost:3000/v1/bags/EXTERNAL_ID | jq .
+```
+
+Which should result in something like:
+
+```javascript
+{
+  "bag_id": "b2a07afc-800f-41c6-942d-91989aeed950",
+  "user": "someuser",
+  "content_type": "audio",
+  "external_id": "EXTERNAL_ID",
+  "upload_link": "localhost:/somewhere/chipmunk/incoming/b2a07afc-800f-41c6-942d-91989aeed950",
+  "storage_location": "/somewhere/chipmunk/repo/storage/b2/a0/7a/b2a07afc-800f-41c6-942d-91989aeed950",
+  "stored": true,
+  "created_at": "2018-03-26 18:56:58 UTC",
+  "updated_at": "2018-03-26 18:57:04 UTC"
+}
+```
+
+Then you can verify the bag is properly stored in the listed `storage_location`.
 
 ## Usage
 
