@@ -16,7 +16,7 @@ gem "rails", "~> 5.1.0"
 gem "resque"
 gem "resque-pool"
 gem "bagit"
-gem "mysql2"
+gem "mysql2", "~>0.4.10"
 
 group :development, :test do
   gem "byebug", platforms: [:mri]
