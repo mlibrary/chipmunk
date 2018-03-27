@@ -4,8 +4,8 @@ upload:
   storage_path: /tmp/pfdr/storage/
 validation:
   external:
-    audio: "/path/to/validator"
-    video: "/path/to/validator"
+    audio: "bin/validate_audio.sh"
+    video: "bin/validate_video.pl"
   bagger_profile:
     digital: "http://uri_to_bagger_profile"
 
