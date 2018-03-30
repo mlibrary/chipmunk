@@ -3,6 +3,10 @@
 require "rails_helper"
 
 RSpec.describe ChipmunkBagValidator do
+  def exitstatus(status)
+    double(:exitstatus, exitstatus: status)
+  end
+
   let(:queue_item) { Fabricate(:queue_item) }
   let(:db_bag) { queue_item.bag }
   let(:src_path) { queue_item.bag.src_path }
@@ -21,13 +25,13 @@ RSpec.describe ChipmunkBagValidator do
     chipmunk_info_db.merge(
       "Metadata-Type"         => "MARC",
       "Metadata-URL"          => "http://what.ever",
-      "Metadata-Tagfile"      => "marc.xml",
+      "Metadata-Tagfile"      => "marc.xml"
     )
   end
 
   # default (good case)
   let(:fakebag) { double("fake bag", valid?: true) }
-  let(:ext_validation_result) { ["", "", 0] }
+  let(:ext_validation_result) { ["", "", exitstatus(0)] }
   let(:bag_info) { { "Foo" => "bar", "Baz" => "quux" } }
   let(:tag_files) { good_tag_files }
   let(:chipmunk_info) { chipmunk_info_with_metadata }
@@ -36,14 +40,14 @@ RSpec.describe ChipmunkBagValidator do
 
   around(:each) do |example|
     old_profile = Rails.application.config.validation["bagger_profile"]
-    profile_path = Rails.root.join("spec","support","fixtures","test-profile.json")
-    Rails.application.config.validation["bagger_profile"] = { "digital" => profile_path, "audio" => profile_path }
+    profile_uri = "file://" + Rails.root.join("spec", "support", "fixtures", "test-profile.json").to_s
+    Rails.application.config.validation["bagger_profile"] = { "digital" => profile_uri, "audio" => profile_uri }
     example.run
     Rails.application.config.validation["bagger_profile"] = old_profile
   end
 
   describe "#valid?" do
-    subject { described_class.new(db_bag,errors).valid? }
+    subject { described_class.new(db_bag, errors).valid? }
 
     before(:each) do
       allow(File).to receive(:'exist?').with(src_path).and_return true
@@ -65,7 +69,6 @@ RSpec.describe ChipmunkBagValidator do
       end
     end
 
-
     context "when the bag is valid" do
       context "and its metadata matches the queue item" do
         it "returns true" do
@@ -82,7 +85,7 @@ RSpec.describe ChipmunkBagValidator do
         let(:chipmunk_info) { chipmunk_info_with_metadata.merge("Bag-ID" => "something-different") }
         it_behaves_like "an invalid item", /Bag-ID/
       end
-      
+
       context "but its package type does not match the queue item" do
         let(:chipmunk_info) { chipmunk_info_with_metadata.merge("Chipmunk-Content-Type" => "something-different") }
         it_behaves_like "an invalid item", /Chipmunk-Content-Type/
@@ -107,12 +110,12 @@ RSpec.describe ChipmunkBagValidator do
         let(:chipmunk_info) do
           chipmunk_info_db.merge(
             "Metadata-URL"          => "http://what.ever",
-            "Metadata-Tagfile"      => "marc.xml")
+            "Metadata-Tagfile"      => "marc.xml"
+)
         end
 
         it_behaves_like "an invalid item", /Metadata-Type/
       end
-
 
       context "but external validation fails" do
         around(:each) do |example|
@@ -123,7 +126,7 @@ RSpec.describe ChipmunkBagValidator do
         end
 
         let(:chipmunk_info) { chipmunk_info_with_metadata }
-        let(:ext_validation_result) { ["external output", "external error", 1] }
+        let(:ext_validation_result) { ["external output", "external error", exitstatus(1)] }
 
         it_behaves_like "an invalid item", /external error/
       end
@@ -131,7 +134,7 @@ RSpec.describe ChipmunkBagValidator do
       context "but the package type has no external validation command" do
         around(:each) do |example|
           old_ext_validation = Rails.application.config.validation["external"]
-          Rails.application.config.validation["external"] = { }
+          Rails.application.config.validation["external"] = {}
           example.run
           Rails.application.config.validation["external"] = old_ext_validation
         end
@@ -155,7 +158,6 @@ RSpec.describe ChipmunkBagValidator do
       end
     end
 
-    
     context "with a bagger profile and bag not valid according to the profile" do
       let(:bag_info) { { "Baz" => "quux" } }
 

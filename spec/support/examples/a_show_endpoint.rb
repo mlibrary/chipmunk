@@ -16,7 +16,7 @@ RSpec.shared_examples "a show endpoint" do
   end
 
   def nonexistent_record
-    double(:nonexistent,  key => 'nonexistent')
+    double(:nonexistent, key => "nonexistent")
   end
 
   before(:each) do
@@ -67,7 +67,7 @@ RSpec.shared_examples "a show endpoint" do
 
     context "the record does not exist" do
       let(:record) { nonexistent_record }
-      it "raises an ActiveRecord::RecordNotFound"do
+      it "raises an ActiveRecord::RecordNotFound" do
         expect { send_request }.to raise_exception ActiveRecord::RecordNotFound
       end
     end
@@ -107,7 +107,7 @@ RSpec.shared_examples "a show endpoint" do
 
     context "the record does not exist" do
       let(:record) { nonexistent_record }
-      it "raises an ActiveRecord::RecordNotFound"do
+      it "raises an ActiveRecord::RecordNotFound" do
         expect { send_request }.to raise_exception ActiveRecord::RecordNotFound
       end
     end

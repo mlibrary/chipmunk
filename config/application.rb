@@ -21,12 +21,12 @@ Bundler.require(*Rails.groups)
 module Chipmunk
   class << self
     def config
-      @config ||= Ettin.for(Ettin.settings_files('config', Rails.env))
+      @config ||= Ettin.for(Ettin.settings_files("config", Rails.env))
     end
   end
 
   # eager load
-  self.config
+  config
 
   class Application < Rails::Application
     config.middleware.insert_before 0, Rack::Cors do
@@ -50,11 +50,11 @@ module Chipmunk
 
     config.autoload_paths << Rails.root.join("lib")
 
-    upload_path = Pathname.new(Rails.root)/"config"/"upload.yml"
-    config.upload = YAML.load(ERB.new(upload_path.read).result)
+    upload_path = Pathname.new(Rails.root) / "config" / "upload.yml"
+    config.upload = YAML.safe_load(ERB.new(upload_path.read).result)
 
-    validation_path = Pathname.new(Rails.root)/"config"/"validation.yml"
-    config.validation = YAML.load(ERB.new(validation_path.read).result)
+    validation_path = Pathname.new(Rails.root) / "config" / "validation.yml"
+    config.validation = YAML.safe_load(ERB.new(validation_path.read).result)
 
     config.active_job.queue_adapter = :resque
   end

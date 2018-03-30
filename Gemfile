@@ -7,16 +7,16 @@
 
 source "https://rubygems.org"
 
+gem "bagit"
 gem "bcrypt", "~> 3.1.7"
 gem "ettin"
 gem "jbuilder"
+gem "mysql2", "~>0.4.10"
 gem "pundit"
 gem "rack-cors"
 gem "rails", "~> 5.1.0"
 gem "resque"
 gem "resque-pool"
-gem "bagit"
-gem "mysql2", "~>0.4.10"
 
 group :development, :test do
   gem "byebug", platforms: [:mri]

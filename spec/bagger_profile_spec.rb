@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 require "bagger_profile"
 
 describe BaggerProfile do
-  subject do 
-    BaggerProfile.new(Rails.root.join("spec", "support","fixtures","test-profile.json")) 
+  subject do
+    BaggerProfile.new("file://" + Rails.root.join("spec", "support", "fixtures", "test-profile.json").to_s)
   end
 
   let(:errors) { [] }
@@ -20,20 +22,20 @@ describe BaggerProfile do
     end
 
     it "reports no errors" do
-      subject.valid?(bag_info,errors: errors)
+      subject.valid?(bag_info, errors: errors)
       expect(errors).to be_empty
     end
   end
 
   context "with bag info missing a required tag" do
-    let(:bag_info) {  { "Baz" => "quux" } }
+    let(:bag_info) { { "Baz" => "quux" } }
 
     it "is false" do
       expect(subject.valid?(bag_info)).to be false
     end
 
     it "reports an error" do
-      subject.valid?(bag_info,errors: errors)
+      subject.valid?(bag_info, errors: errors)
       expect(errors).to include a_string_matching(/Foo.*required/)
     end
   end
@@ -46,7 +48,7 @@ describe BaggerProfile do
     end
 
     it "reports an error" do
-      subject.valid?(bag_info,errors: errors)
+      subject.valid?(bag_info, errors: errors)
       expect(errors).to include a_string_matching(/allowed/)
     end
   end
@@ -59,11 +61,8 @@ describe BaggerProfile do
     end
 
     it "reports no errors" do
-      subject.valid?(bag_info,errors: errors)
+      subject.valid?(bag_info, errors: errors)
       expect(errors).to be_empty
     end
   end
-
-
 end
-

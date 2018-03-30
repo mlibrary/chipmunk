@@ -32,7 +32,7 @@ RSpec.describe User, type: :model do
     end
   end
 
-  let(:user){}
+  let(:user) {}
 
   describe "#admin" do
     it "defaults to false" do

@@ -21,7 +21,7 @@ RSpec.describe BagMoveJob do
     chipmunk_info_db.merge(
       "Metadata-Type"         => "MARC",
       "Metadata-URL"          => "http://what.ever",
-      "Metadata-Tagfile"      => "marc.xml",
+      "Metadata-Tagfile"      => "marc.xml"
     )
   end
 
@@ -36,7 +36,6 @@ RSpec.describe BagMoveJob do
     context "when the bag is valid" do
       let(:validator) { double(:validator, valid?: true) }
       subject { described_class.perform_now(queue_item, validator: validator) }
-
 
       it "moves the bag" do
         expect(File).to receive(:rename).with(src_path, dest_path)
@@ -79,7 +78,7 @@ RSpec.describe BagMoveJob do
 
     context "when the bag is invalid" do
       let(:validator) { double(:validator, valid?: false) }
-      subject { described_class.perform_now(queue_item, errors: ['my error'], validator: validator) }
+      subject { described_class.perform_now(queue_item, errors: ["my error"], validator: validator) }
 
       it "does not move the bag" do
         expect(File).not_to receive(:rename).with(src_path, dest_path)
@@ -90,7 +89,7 @@ RSpec.describe BagMoveJob do
         subject
         expect(queue_item.status).to eql("failed")
       end
-      
+
       it "records the validation error" do
         subject
         expect(queue_item.error).to match(/my error/)
@@ -103,7 +102,6 @@ RSpec.describe BagMoveJob do
     end
 
     context "when validation raises an exception" do
-
       let(:validator) { double(:validator) }
       subject { described_class.perform_now(queue_item, validator: validator) }
 
@@ -124,7 +122,7 @@ RSpec.describe BagMoveJob do
         expect(queue_item.error).to match(/injected error/)
       end
 
-      it "records the stack trace" do 
+      it "records the stack trace" do
         begin
           subject
         rescue InjectedError
@@ -132,8 +130,6 @@ RSpec.describe BagMoveJob do
 
         expect(queue_item.error).to match(__FILE__)
       end
-
     end
-
   end
 end

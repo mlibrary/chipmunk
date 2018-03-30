@@ -7,15 +7,15 @@ describe BaggerTag do
   describe "::from_hash" do
     let(:json_tag) do
       JSON.parse(<<~JSON)
-      {
-        "SomeField": {
-          "fieldRequired": true,
-          "valueList": [
-            "allowed_value",
-            "another_allowed_value"
-          ]
+        {
+          "SomeField": {
+            "fieldRequired": true,
+            "valueList": [
+              "allowed_value",
+              "another_allowed_value"
+            ]
+          }
         }
-      }
       JSON
     end
 
