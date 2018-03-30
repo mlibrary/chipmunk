@@ -11,7 +11,7 @@ module ChipmunkValidatable
       @validators ||= []
     end
 
-    def validates(_description = "", only_if: ->{true}, precondition: ->{}, condition:, error:)
+    def validates(_description = "", only_if: -> { true }, precondition: -> {}, condition:, error:)
       validators << lambda do
         return true unless instance_exec(&only_if)
 

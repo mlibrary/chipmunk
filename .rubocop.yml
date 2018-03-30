@@ -25,6 +25,7 @@ Metrics/LineLength:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*_spec.rb'
+    - 'spec/support/examples/*.rb'
 
 Layout/ElseAlignment:
   Enabled: false
@@ -111,13 +112,13 @@ Layout/SpaceInsideBlockBraces:
 Style/SymbolArray:
   EnforcedStyle: brackets
 
-Lint/BlockAlignment:
+Layout/BlockAlignment:
   EnforcedStyleAlignWith: start_of_line
 
-Lint/EndAlignment:
+Layout/EndAlignment:
   EnforcedStyleAlignWith: start_of_line
 
-Lint/DefEndAlignment:
+Layout/DefEndAlignment:
   EnforcedStyleAlignWith: def
 
 Performance/RedundantMerge:

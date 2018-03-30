@@ -23,7 +23,6 @@ RSpec.describe ChipmunkBag do
   subject { ChipmunkBag.new(@bag_path) }
 
   describe "#chipmunk_info" do
-
     context "with no chipmunk-info.txt" do
       it "returns an empty hash" do
         expect(subject.chipmunk_info).to eq({})
@@ -38,7 +37,7 @@ RSpec.describe ChipmunkBag do
         { "Metadata-URL"     => metadata_url,
           "Metadata-Tagfile" => metadata_file }
       end
-      
+
       let(:info_txt) do
         <<~TXT
           Metadata-URL: #{metadata_url}
@@ -56,5 +55,4 @@ RSpec.describe ChipmunkBag do
       end
     end
   end
-
 end

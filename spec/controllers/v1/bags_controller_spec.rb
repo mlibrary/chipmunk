@@ -31,7 +31,7 @@ RSpec.describe V1::BagsController, type: :controller do
 
         it "can fetch a bag by external id" do
           request.headers.merge! auth_header
-          get :show, params: { :bag_id => bag.external_id }
+          get :show, params: { bag_id: bag.external_id }
 
           expect(assigns(:bag)).to eql(bag)
         end
