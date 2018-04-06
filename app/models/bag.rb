@@ -4,6 +4,7 @@ class Bag < ApplicationRecord
 
   belongs_to :user
   has_one :queue_item
+  has_many :events
 
   def to_param
     bag_id
