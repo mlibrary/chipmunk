@@ -12,6 +12,10 @@ RSpec.describe V1::BagsController, type: :routing do
       it "routes to #show" do
         expect(get: "/v1/bags/1").to route_to("v1/bags#show", bag_id: "1")
       end
+
+      it "routes to #fixity_check" do
+        expect(post: "/v1/bags/1/fixity_check").to route_to("v1/bags#fixity_check", bag_id: "1")
+      end
     end
 
     describe "v1/requests" do

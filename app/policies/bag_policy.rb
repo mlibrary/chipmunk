@@ -10,6 +10,10 @@ class BagPolicy < ApplicationPolicy
     user&.admin? || record&.user == user
   end
 
+  def fixity_check?
+    show?
+  end
+
   def create?
     !user.nil?
   end
