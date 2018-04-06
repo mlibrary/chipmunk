@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe FixityCheckJob do
-  let(:package) { Fabricate(:bag) }
+  let(:package) { Fabricate(:package) }
   let(:user) { Fabricate(:user) }
   subject(:event) { package.events.last }
 

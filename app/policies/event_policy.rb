@@ -9,7 +9,7 @@ class EventPolicy < ApplicationPolicy
       else
         # non-privileged users are allowed to see events relating to any bags
         # they own, regardless of who created the event
-        scope.joins(:bag).where("bags.user_id": user.id)
+        scope.joins(:package).where(packages: { user_id: user.id })
       end
     end
   end

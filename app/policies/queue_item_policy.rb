@@ -23,7 +23,7 @@ class QueueItemPolicy < ApplicationPolicy
       if user.admin?
         scope.all
       else
-        scope.joins(:bag).where(bags: { user_id: user.id })
+        scope.joins(:package).where(packages: { user_id: user.id })
       end
     end
   end
