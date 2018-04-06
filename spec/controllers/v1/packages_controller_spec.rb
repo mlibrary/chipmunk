@@ -2,15 +2,15 @@
 
 require "rails_helper"
 
-RSpec.describe V1::BagsController, type: :controller do
+RSpec.describe V1::PackagesController, type: :controller do
   describe "/v1" do
     describe "GET #index" do
       it_behaves_like "an index endpoint" do
         let(:key) { :bag_id }
         let(:factory) do
-          proc {|user| user ? Fabricate(:bag, user: user) : Fabricate(:bag) }
+          proc {|user| user ? Fabricate(:package, user: user) : Fabricate(:package) }
         end
-        let(:assignee) { :bags }
+        let(:assignee) { :packages }
       end
     end
 
@@ -18,32 +18,32 @@ RSpec.describe V1::BagsController, type: :controller do
       it_behaves_like "a show endpoint" do
         let(:key) { :bag_id }
         let(:factory) do
-          proc {|user| user ? Fabricate(:bag, user: user) : Fabricate(:bag) }
+          proc {|user| user ? Fabricate(:package, user: user) : Fabricate(:package) }
         end
-        let(:assignee) { :bag }
+        let(:assignee) { :package }
       end
     end
 
     describe "GET #show/:external_id" do
       context "as an admin" do
         include_context "as admin user"
-        let(:bag) { Fabricate(:bag) }
+        let(:package) { Fabricate(:package) }
 
-        it "can fetch a bag by external id" do
+        it "can fetch a package by external id" do
           request.headers.merge! auth_header
-          get :show, params: { bag_id: bag.external_id }
+          get :show, params: { bag_id: package.external_id }
 
-          expect(assigns(:bag)).to eql(bag)
+          expect(assigns(:package)).to eql(package)
         end
       end
     end
 
     describe "POST #fixity_check" do
-      let(:bag) { Fabricate(:bag) }
+      let(:package) { Fabricate(:package) }
 
       describe "as an unauthenticated user" do
         it "returns a 401" do
-          post :fixity_check, params: { bag_id: bag.bag_id }
+          post :fixity_check, params: { bag_id: package.bag_id }
           expect(response).to have_http_status(401)
         end
       end
@@ -57,13 +57,13 @@ RSpec.describe V1::BagsController, type: :controller do
         end
 
         it "starts a FixityCheckJob for an object identified by bag_id" do
-          post :fixity_check, params: { bag_id: bag.bag_id }
-          expect(FixityCheckJob).to have_received(:perform_later).with(bag, user)
+          post :fixity_check, params: { bag_id: package.bag_id }
+          expect(FixityCheckJob).to have_received(:perform_later).with(package, user)
         end
 
         it "starts a FixityCheckJob for an object identified by external_id" do
-          post :fixity_check, params: { bag_id: bag.external_id }
-          expect(FixityCheckJob).to have_received(:perform_later).with(bag, user)
+          post :fixity_check, params: { bag_id: package.external_id }
+          expect(FixityCheckJob).to have_received(:perform_later).with(package, user)
         end
       end
 
@@ -71,7 +71,7 @@ RSpec.describe V1::BagsController, type: :controller do
         include_context "as underprivileged user"
         it "returns a 403" do
           request.headers.merge! auth_header
-          post :fixity_check, params: { bag_id: bag.bag_id }
+          post :fixity_check, params: { bag_id: package.bag_id }
           expect(response).to have_http_status(403)
         end
       end
@@ -88,7 +88,7 @@ RSpec.describe V1::BagsController, type: :controller do
 
       shared_context "mocked RequestBuilder" do |status|
         let(:result_request) do
-          Fabricate(:bag,
+          Fabricate(:package,
             bag_id: attributes[:bag_id],
             user: user,
             external_id: attributes[:external_id],
@@ -118,7 +118,7 @@ RSpec.describe V1::BagsController, type: :controller do
         end
         it "does not create the record" do
           post :create, params: attributes
-          expect(Bag.count).to eql(0)
+          expect(Package.count).to eql(0)
         end
       end
       context "as authenticated user" do
@@ -161,7 +161,7 @@ RSpec.describe V1::BagsController, type: :controller do
           include_context "mocked RequestBuilder", :duplicate
           it "does not create an additional record" do
             post :create, params: attributes
-            expect(Bag.count).to eql(1)
+            expect(Package.count).to eql(1)
           end
           it "returns 303" do
             post :create, params: attributes

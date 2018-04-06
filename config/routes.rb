@@ -2,12 +2,17 @@
 
 Rails.application.routes.draw do
   namespace :v1 do
-    resources :requests, controller: :bags, only: [:index, :show, :create], param: :bag_id
+    resources :requests, controller: :packages, only: [:index, :show, :create], param: :bag_id
     post "/requests/:bag_id/complete", controller: :queue_items, action: :create
-    resources :bags, only: [:index, :show], param: :bag_id
+
+    resources :packages, only: [:index, :show], param: :bag_id
+    post "/packages/:bag_id/fixity_check", controller: :packages, action: :fixity_check
+    get "/packages/:bag_id/events", controller: :events, action: :index
+
     resources :events, only: [:index]
 
-    post "/bags/:bag_id/fixity_check", controller: :bags, action: :fixity_check
+    resources :bags, only: [:index, :show], controller: :packages, param: :bag_id
+    post "/bags/:bag_id/fixity_check", controller: :packages, action: :fixity_check
     get "/bags/:bag_id/events", controller: :events, action: :index
 
     # We foresee the need for destroy; currently out of scope.

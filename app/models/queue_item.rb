@@ -8,7 +8,7 @@ class QueueItem < ApplicationRecord
     done:    2
   }
 
-  belongs_to :bag
+  belongs_to :bag, class_name: 'Package', foreign_key: 'bag_id'
 
   validates :status, presence: true
   validates :bag_id, presence: true

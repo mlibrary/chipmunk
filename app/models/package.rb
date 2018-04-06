@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-class Bag < ApplicationRecord
+class Package < ApplicationRecord
+
+  self.table_name = 'bags'
 
   belongs_to :user
   has_one :queue_item
-  has_many :events
+  has_many :events, foreign_key: 'bag_id'
 
   def to_param
     bag_id
@@ -16,7 +18,7 @@ class Bag < ApplicationRecord
 
   # Declare the policy class to use for authz
   def self.policy_class
-    BagPolicy
+    PackagePolicy
   end
 
   def src_path
