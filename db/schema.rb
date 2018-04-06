@@ -12,8 +12,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_180_402_151_631) do
-  create_table "bags", force: :cascade do |t|
+ActiveRecord::Schema.define(version: 20_180_406_213_356) do
+  create_table "events", force: :cascade do |t|
+    t.integer "package_id"
+    t.string "event_type"
+    t.integer "user_id"
+    t.string "outcome"
+    t.string "detail"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["package_id"], name: "index_events_on_package_id"
+    t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
+  create_table "packages", force: :cascade do |t|
     t.string "bag_id", null: false
     t.integer "user_id", null: false
     t.string "external_id", null: false
@@ -21,30 +33,18 @@ ActiveRecord::Schema.define(version: 20_180_402_151_631) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "content_type", default: "default", null: false
-    t.index ["bag_id"], name: "index_bags_on_bag_id", unique: true
-    t.index ["external_id"], name: "index_bags_on_external_id", unique: true
-    t.index ["user_id"], name: "index_bags_on_user_id"
-  end
-
-  create_table "events", force: :cascade do |t|
-    t.integer "bag_id"
-    t.string "event_type"
-    t.integer "user_id"
-    t.string "outcome"
-    t.string "detail"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["bag_id"], name: "index_events_on_bag_id"
-    t.index ["user_id"], name: "index_events_on_user_id"
+    t.index ["bag_id"], name: "index_packages_on_bag_id", unique: true
+    t.index ["external_id"], name: "index_packages_on_external_id", unique: true
+    t.index ["user_id"], name: "index_packages_on_user_id"
   end
 
   create_table "queue_items", force: :cascade do |t|
-    t.integer "bag_id"
+    t.integer "package_id"
     t.integer "status", default: 0, null: false
     t.text "error"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["bag_id"], name: "index_queue_items_on_bag_id"
+    t.index ["package_id"], name: "index_queue_items_on_package_id"
   end
 
   create_table "users", force: :cascade do |t|

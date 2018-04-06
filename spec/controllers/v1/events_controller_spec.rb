@@ -7,13 +7,13 @@ RSpec.describe V1::EventsController, type: :controller do
     describe "GET #index" do
       it_behaves_like "an index endpoint" do
         let(:key) { :event_id }
-        # for underprivileged users, should only render events where the bag
+        # for underprivileged users, should only render events where the package
         # belongs to the user
         let(:factory) do
-          proc do |user| 
+          proc do |user|
             if user
-              Fabricate(:event, bag: Fabricate(:bag, user: user))
-            else 
+              Fabricate(:event, package: Fabricate(:package, user: user))
+            else
               Fabricate(:event)
             end
           end
@@ -21,11 +21,12 @@ RSpec.describe V1::EventsController, type: :controller do
         let(:assignee) { :events }
       end
 
-      context "with events for two bags" do
+      context "with events for two packages" do
         include_context "as admin user"
 
-        let!(:bag) { Fabricate(:bag) }
-        let!(:events) { [Fabricate(:event, bag: bag), Fabricate(:event, bag: bag)] }
+        let!(:package) { Fabricate(:package) }
+        let!(:events) { [Fabricate(:event, package: package), Fabricate(:event, package: package)] }
+
         before(:each) do
           # create an extra event that shouldn't be in the output
           Fabricate(:event)
@@ -33,15 +34,14 @@ RSpec.describe V1::EventsController, type: :controller do
         end
 
         it "can show only events for an object identified by bag_id" do
-          get :index, params: { bag_id: bag.bag_id }
+          get :index, params: { bag_id: package.bag_id }
           expect(assigns(:events)).to eq(events)
         end
 
         it "can show only events for an object identified by external_id" do
-          get :index, params: { bag_id: bag.external_id }
+          get :index, params: { bag_id: package.external_id }
           expect(assigns(:events)).to eq(events)
         end
-
       end
     end
   end

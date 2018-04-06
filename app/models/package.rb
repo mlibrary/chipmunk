@@ -2,11 +2,9 @@
 
 class Package < ApplicationRecord
 
-  self.table_name = 'bags'
-
   belongs_to :user
   has_one :queue_item
-  has_many :events, foreign_key: 'bag_id'
+  has_many :events
 
   def to_param
     bag_id

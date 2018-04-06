@@ -15,12 +15,12 @@ describe "/v1/events/index.json.jbuilder" do
   end
   let(:expected) do
     [{
-      id: event.id,
-      type: event.event_type,
+      id:       event.id,
+      type:     event.event_type,
       executor: event.user.username,
-      outcome: event.outcome,
-      detail: event.detail,
-      date:   event.created_at.to_formatted_s(:default),
+      outcome:  event.outcome,
+      detail:   event.detail,
+      date:     event.created_at.to_formatted_s(:default)
     }]
   end
 
@@ -28,12 +28,11 @@ describe "/v1/events/index.json.jbuilder" do
 
   before(:each) do
     assign(:events, [event])
-    assign(:current_user, user) 
+    assign(:current_user, user)
   end
 
   it "renders correct json" do
     render
     expect(JSON.parse(rendered, symbolize_names: true)).to eql(expected)
   end
-
 end
