@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Fabricator(:bag, aliases: [:request]) do
+Fabricator(:package, aliases: [:bag, :request]) do
   bag_id { SecureRandom.uuid }
   user { Fabricate(:user) }
   external_id { SecureRandom.uuid }

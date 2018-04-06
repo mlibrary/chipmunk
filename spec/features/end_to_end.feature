@@ -1,6 +1,6 @@
 Feature: End to End functionality
   As an digitization technician
-  I want to upload bags
+  I want to upload packages
   So that I can verify their upload
 
   Background:
@@ -52,7 +52,7 @@ Feature: End to End functionality
       | bag           | /v1/bags/<bag_id>                    |
       | created_at    | 2017-05-17 18:49:08 UTC              |
       | updated_at    | 2017-05-17 18:49:08 UTC              |
-    When I send a GET request to "/v1/bags/<bag_id>"
+    When I send a GET request to "/v1/packages/<bag_id>"
     Then the response status should be "200"
     And the JSON response should be:
       | bag_id        | <bag_id>                             |

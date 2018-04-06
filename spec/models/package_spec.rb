@@ -3,7 +3,7 @@
 require "rails_helper"
 require "pry"
 
-RSpec.describe Bag, type: :model do
+RSpec.describe Package, type: :model do
   let(:upload_path) { Rails.application.config.upload["upload_path"] }
   let(:upload_link) { Rails.application.config.upload["rsync_point"] }
   let(:storage_path) { Rails.application.config.upload["storage_path"] }
