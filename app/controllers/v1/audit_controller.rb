@@ -2,6 +2,10 @@
 
 module V1
   class AuditController < ApplicationController
+    def index
+      authorize :audit
+    end
+
     def create
       authorize :audit
       Package.all.each do |package|
