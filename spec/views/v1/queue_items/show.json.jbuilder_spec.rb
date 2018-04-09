@@ -27,7 +27,7 @@ describe "/v1/queue_items/show.json.jbuilder" do
       {
         id:         queue_item.id,
         request:    "/v1/requests/#{queue_item.package.bag_id}",
-        bag:        "/v1/packages/#{queue_item.package.bag_id}",
+        package:    "/v1/packages/#{queue_item.package.bag_id}",
         status:     "DONE",
         created_at: queue_item.created_at.to_formatted_s(:default),
         updated_at: queue_item.updated_at.to_formatted_s(:default)
