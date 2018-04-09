@@ -17,5 +17,7 @@ Rails.application.routes.draw do
 
     # We foresee the need for destroy; currently out of scope.
     resources :queue_items, only: [:index, :show], path: :queue
+
+    resources :audit, only: [:index, :create]
   end
 end
