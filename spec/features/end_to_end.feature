@@ -49,7 +49,7 @@ Feature: End to End functionality
       | id            |   1                                  |
       | request       | /v1/requests/<bag_id>                |
       | status        | DONE                                 |
-      | bag           | /v1/packages/<bag_id>                |
+      | package       | /v1/packages/<bag_id>                |
       | created_at    | 2017-05-17 18:49:08 UTC              |
       | updated_at    | 2017-05-17 18:49:08 UTC              |
     When I send a GET request to "/v1/packages/<bag_id>"

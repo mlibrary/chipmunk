@@ -4,7 +4,7 @@ json.id queue_item.id
 json.status queue_item.status.to_s.upcase
 json.request v1_request_path(queue_item.package)
 if queue_item.status.to_sym == :done
-  json.bag v1_package_path(queue_item.package)
+  json.package v1_package_path(queue_item.package)
 end
 if queue_item.status.to_sym == :failed
   json.error queue_item.error
