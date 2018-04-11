@@ -12,13 +12,13 @@
 # This process is synchronous.
 class RequestBuilder
   def create(bag_id:, content_type:, external_id:, user:)
-    duplicate = Bag.find_by_bag_id(bag_id)
-    duplicate ||= Bag.find_by_external_id(external_id)
+    duplicate = Package.find_by_bag_id(bag_id)
+    duplicate ||= Package.find_by_external_id(external_id)
     unless duplicate.nil?
       return :duplicate, duplicate
     end
 
-    request = Bag.new(
+    request = Package.new(
       bag_id: bag_id,
       external_id: external_id,
       content_type: content_type,

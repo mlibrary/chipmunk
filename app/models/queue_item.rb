@@ -8,13 +8,13 @@ class QueueItem < ApplicationRecord
     done:    2
   }
 
-  belongs_to :bag
+  belongs_to :package
 
   validates :status, presence: true
-  validates :bag_id, presence: true
+  validates :package_id, presence: true
 
   def user
-    bag.user
+    package.user
   end
 
 end

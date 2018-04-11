@@ -4,16 +4,16 @@ require "rails_helper"
 
 RSpec.describe BagMoveJob do
   let(:queue_item) { Fabricate(:queue_item) }
-  let(:db_bag) { queue_item.bag }
-  let(:src_path) { queue_item.bag.src_path }
-  let(:dest_path) { queue_item.bag.dest_path }
+  let(:package) { queue_item.bag }
+  let(:src_path) { queue_item.package.src_path }
+  let(:dest_path) { queue_item.package.dest_path }
   let(:good_tag_files) { [File.join(src_path, "marc.xml")] }
 
   let(:chipmunk_info_db) do
     {
-      "External-Identifier"   => db_bag.external_id,
-      "Chipmunk-Content-Type" => db_bag.content_type,
-      "Bag-ID"                => db_bag.bag_id
+      "External-Identifier"   => package.external_id,
+      "Chipmunk-Content-Type" => package.content_type,
+      "Bag-ID"                => package.bag_id
     }
   end
 
@@ -33,7 +33,7 @@ RSpec.describe BagMoveJob do
       allow(File).to receive(:rename).with(src_path, dest_path).and_return true
     end
 
-    context "when the bag is valid" do
+    context "when the package is valid" do
       let(:validator) { double(:validator, valid?: true) }
       subject { described_class.perform_now(queue_item, validator: validator) }
 
@@ -76,7 +76,7 @@ RSpec.describe BagMoveJob do
       end
     end
 
-    context "when the bag is invalid" do
+    context "when the package is invalid" do
       let(:validator) { double(:validator, valid?: false) }
       subject { described_class.perform_now(queue_item, errors: ["my error"], validator: validator) }
 

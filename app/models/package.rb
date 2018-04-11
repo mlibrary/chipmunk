@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Bag < ApplicationRecord
+class Package < ApplicationRecord
 
   belongs_to :user
   has_one :queue_item
@@ -16,7 +16,7 @@ class Bag < ApplicationRecord
 
   # Declare the policy class to use for authz
   def self.policy_class
-    BagPolicy
+    PackagePolicy
   end
 
   def src_path

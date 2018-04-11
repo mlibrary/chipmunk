@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class BagPolicy < ApplicationPolicy
+class PackagePolicy < ApplicationPolicy
 
   def index?
     true
