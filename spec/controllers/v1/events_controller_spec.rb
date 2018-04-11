@@ -24,15 +24,11 @@ RSpec.describe V1::EventsController, type: :controller do
       context "with events for two bags" do
         include_context "as admin user"
 
-        let(:bag) { Fabricate(:bag) }
-        let(:events) { [Fabricate(:event, bag: bag), Fabricate(:event, bag: bag)] }
+        let!(:bag) { Fabricate(:bag) }
+        let!(:events) { [Fabricate(:event, bag: bag), Fabricate(:event, bag: bag)] }
         before(:each) do
-          # ensure these exist
-          bag
-          events
-          # this one shouldn't be in the output
-          another_bag = Fabricate(:bag)
-          Fabricate(:event, bag: another_bag)
+          # create an extra event that shouldn't be in the output
+          Fabricate(:event)
           request.headers.merge! auth_header
         end
 
