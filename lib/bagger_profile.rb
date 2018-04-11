@@ -12,7 +12,7 @@ class BaggerProfile
     profile = if uri.scheme == "file"
       File.read(uri.path)
     else
-      URI.read
+      uri.read
     end
 
     @tags = JSON.parse(profile)["ordered"].map {|t| BaggerTag.from_hash(t) }
