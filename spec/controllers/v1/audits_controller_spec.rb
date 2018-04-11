@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe V1::AuditController, type: :controller do
+RSpec.describe V1::AuditsController, type: :controller do
 
   describe "/v1" do
     describe "GET #index" do
