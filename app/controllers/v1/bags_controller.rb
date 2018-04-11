@@ -13,7 +13,7 @@ module V1
     # GET /bags/1
     # GET /bags/39015012345678
     def show
-      @bag = bag
+      authorize bag
     end
 
     # POST /v1/requests
@@ -32,16 +32,15 @@ module V1
     end
 
     def fixity_check
+      authorize bag
       FixityCheckJob.perform_later(bag, current_user)
     end
 
     private
 
     def bag
-      (Bag.find_by_bag_id(params[:bag_id]) ||
-       Bag.find_by_external_id!(params[:bag_id])).tap do |bag|
-        authorize bag, :show?
-      end
+      @bag ||= Bag.find_by_bag_id(params[:bag_id])
+      @bag ||= Bag.find_by_external_id!(params[:bag_id])
     end
 
     private
@@ -50,13 +49,6 @@ module V1
       params.permit([:bag_id, :external_id, :content_type])
         .to_h
         .symbolize_keys
-    end
-
-    def bag
-      (Bag.find_by_bag_id(params[:bag_id]) ||
-       Bag.find_by_external_id!(params[:bag_id])).tap do |bag|
-        authorize bag
-      end
     end
 
   end
