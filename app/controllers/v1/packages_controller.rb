@@ -3,22 +3,22 @@
 require "request_builder"
 
 module V1
-  class BagsController < ApplicationController
+  class PackagesController < ApplicationController
 
-    # GET /bags
+    # GET /packages
     def index
-      @bags = policy_scope(Bag)
+      @packages = policy_scope(Package)
     end
 
-    # GET /bags/1
-    # GET /bags/39015012345678
+    # GET /packages/1
+    # GET /packages/39015012345678
     def show
-      authorize bag
+      authorize package
     end
 
     # POST /v1/requests
     def create
-      authorize Bag
+      authorize Package
       status, @request_record = RequestBuilder.new
         .create(create_params.merge(user: current_user))
       case status
@@ -32,18 +32,16 @@ module V1
     end
 
     def fixity_check
-      authorize bag
-      FixityCheckJob.perform_later(bag, current_user)
+      authorize package
+      FixityCheckJob.perform_later(package, current_user)
     end
 
     private
 
-    def bag
-      @bag ||= Bag.find_by_bag_id(params[:bag_id])
-      @bag ||= Bag.find_by_external_id!(params[:bag_id])
+    def package
+      @package ||= Package.find_by_bag_id(params[:bag_id])
+      @package ||= Package.find_by_external_id!(params[:bag_id])
     end
-
-    private
 
     def create_params
       params.permit([:bag_id, :external_id, :content_type])

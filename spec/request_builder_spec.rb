@@ -13,21 +13,21 @@ RSpec.describe RequestBuilder do
     end
   end
 
-  shared_examples "a RequestBuilder invocation that creates a new Bag" do
+  shared_examples "a RequestBuilder invocation that creates a new Package" do
     it "returns :created" do
       expect(subject).to contain_exactly(:created, anything)
     end
-    it "returns the created bag" do
-      expect(subject).to contain_exactly(anything, an_instance_of(Bag))
+    it "returns the created package" do
+      expect(subject).to contain_exactly(anything, an_instance_of(Package))
     end
   end
 
-  shared_examples "a RequestBuilder invocation that returns an invalid Bag" do
+  shared_examples "a RequestBuilder invocation that returns an invalid Package" do
     it "returns :invalid" do
       expect(subject).to contain_exactly(:invalid, anything)
     end
-    it "returns a Bag" do
-      expect(subject).to contain_exactly(anything, an_instance_of(Bag))
+    it "returns a Package" do
+      expect(subject).to contain_exactly(anything, an_instance_of(Package))
     end
     it "returns an invalid object" do
       _, bag = subject
@@ -43,29 +43,29 @@ RSpec.describe RequestBuilder do
     subject { described_class.new.create(params) }
 
     context "duplicate bag id" do
-      let!(:existing) { Fabricate(:bag, bag_id: params[:bag_id], external_id: SecureRandom.uuid) }
+      let!(:existing) { Fabricate(:package, bag_id: params[:bag_id], external_id: SecureRandom.uuid) }
       it_behaves_like "a RequestBuilder invocation that returns a duplicate"
     end
 
     context "duplicate external id" do
-      let!(:existing) { Fabricate(:bag, bag_id: SecureRandom.uuid, external_id: params[:external_id]) }
+      let!(:existing) { Fabricate(:package, bag_id: SecureRandom.uuid, external_id: params[:external_id]) }
       it_behaves_like "a RequestBuilder invocation that returns a duplicate"
     end
 
-    context "duplicate bag and external id" do
-      let!(:existing) { Fabricate(:bag, bag_id: params[:bag_id], external_id: params[:external_id]) }
+    context "duplicate bag id and external id" do
+      let!(:existing) { Fabricate(:package, bag_id: params[:bag_id], external_id: params[:external_id]) }
       it_behaves_like "a RequestBuilder invocation that returns a duplicate"
     end
 
-    context "no duplicate bag" do
-      it_behaves_like "a RequestBuilder invocation that creates a new Bag"
+    context "no duplicate bag id" do
+      it_behaves_like "a RequestBuilder invocation that creates a new Package"
     end
     context "with no bag id" do
       let(:params) do
         { content_type: "audio", user: user,
           bag_id: nil, external_id: "blah" }
       end
-      it_behaves_like "a RequestBuilder invocation that returns an invalid Bag"
+      it_behaves_like "a RequestBuilder invocation that returns an invalid Package"
     end
   end
 end

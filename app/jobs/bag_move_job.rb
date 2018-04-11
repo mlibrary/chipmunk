@@ -5,10 +5,10 @@ require "chipmunk_bag_validator"
 
 class BagMoveJob < ApplicationJob
 
-  def perform(queue_item, errors: [], validator: ChipmunkBagValidator.new(queue_item.bag, errors))
+  def perform(queue_item, errors: [], validator: ChipmunkBagValidator.new(queue_item.package, errors))
     @queue_item = queue_item
-    @src_path = queue_item.bag.src_path
-    @dest_path = queue_item.bag.dest_path
+    @src_path = queue_item.package.src_path
+    @dest_path = queue_item.package.dest_path
     @errors = errors
 
     begin
@@ -54,8 +54,8 @@ class BagMoveJob < ApplicationJob
     queue_item.transaction do
       queue_item.status = :done
       queue_item.save!
-      queue_item.bag.storage_location = dest_path
-      queue_item.bag.save!
+      queue_item.package.storage_location = dest_path
+      queue_item.package.save!
     end
   end
 

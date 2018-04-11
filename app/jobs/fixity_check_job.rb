@@ -19,7 +19,7 @@ class FixityCheckJob < ApplicationJob
       detail = e.to_s
     end
 
-    Event.create(bag: package, user: user, event_type: "fixity check", outcome: outcome, detail: detail)
+    Event.create(package: package, user: user, event_type: "fixity check", outcome: outcome, detail: detail)
   end
 
 end
