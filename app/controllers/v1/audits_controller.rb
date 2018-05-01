@@ -3,7 +3,12 @@
 module V1
   class AuditsController < ApplicationController
     def index
-      authorize :audit
+      authorize Audit
+      @audits = policy_scope(Audit).map { |audit| AuditPresenter.new(audit) }
+    end
+
+    def show
+      @audit = AuditPresenter.new(Audit.find(params[:id]).tap { |a| authorize(a) })
     end
 
     def create

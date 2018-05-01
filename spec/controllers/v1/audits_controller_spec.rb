@@ -4,27 +4,34 @@ require "rails_helper"
 
 RSpec.describe V1::AuditsController, type: :controller do
   describe "/v1" do
+    let!(:audit) { Fabricate(:audit) }
+
     describe "GET #show" do
       context "as an admin" do
-        include_context "as admin user" do
-          it "assigns an audit presenter"
+        include_context "as admin user"
+        before(:each) { request.headers.merge! auth_header }
+
+        it "assigns an audit presenter" do
+          get :show, params: { id: audit.id }
+          expect(assigns(:audit).successes).to eq(0)
         end
+
+        it "can expand the audit"
       end
 
       context "as a non-admin" do
         include_context "as underprivileged user"
-
         before(:each) { request.headers.merge! auth_header }
 
         it "returns a 403" do
-          get :index
+          get :show, params: { id: audit.id }
           expect(response).to have_http_status(403)
         end
       end
 
       context "as a user that is not logged in" do
         it "returns a 401" do
-          get :index
+          get :show, params: { id: audit.id }
           expect(response).to have_http_status(401)
         end
       end
@@ -32,14 +39,19 @@ RSpec.describe V1::AuditsController, type: :controller do
 
     describe "GET #index" do
       context "as an admin" do
-        include_context "as admin user" do
-          it "assigns an audit presenter"
+        include_context "as admin user"
+        before(:each) { request.headers.merge! auth_header }
+
+        it "assigns an array of audit presenters" do
+          get :index
+          expect(assigns(:audits).first.successes).to eq(0)
         end
+
+        it "can expand the audit"
       end
 
       context "as a non-admin" do
         include_context "as underprivileged user"
-
         before(:each) { request.headers.merge! auth_header }
 
         it "returns a 403" do
