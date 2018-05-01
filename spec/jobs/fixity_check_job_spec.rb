@@ -22,6 +22,17 @@ RSpec.describe FixityCheckJob do
     end
   end
 
+  context "with an audit" do
+    let(:bag) { double(:bag, valid?: true) }
+    let(:audit) { Fabricate(:audit) }
+
+    it "records the audit in the event" do
+      described_class.perform_now(package, user, audit: audit, bag: bag)
+
+      expect(event.audit).to eq(audit)
+    end
+  end
+
   context "when the bag is valid" do
     let(:bag) { double(:bag, valid?: true) }
 
