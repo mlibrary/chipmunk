@@ -3,8 +3,33 @@
 require "rails_helper"
 
 RSpec.describe V1::AuditsController, type: :controller do
-
   describe "/v1" do
+    describe "GET #show" do
+      context "as an admin" do
+        include_context "as admin user" do
+          it "assigns an audit presenter"
+        end
+      end
+
+      context "as a non-admin" do
+        include_context "as underprivileged user"
+
+        before(:each) { request.headers.merge! auth_header }
+
+        it "returns a 403" do
+          get :index
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      context "as a user that is not logged in" do
+        it "returns a 401" do
+          get :index
+          expect(response).to have_http_status(401)
+        end
+      end
+    end
+
     describe "GET #index" do
       context "as an admin" do
         include_context "as admin user" do
@@ -15,12 +40,12 @@ RSpec.describe V1::AuditsController, type: :controller do
       context "as a non-admin" do
         include_context "as underprivileged user"
 
+        before(:each) { request.headers.merge! auth_header }
+
         it "returns a 403" do
-          request.headers.merge! auth_header
           get :index
           expect(response).to have_http_status(403)
         end
-          
       end
 
       context "as a user that is not logged in" do
@@ -37,11 +62,17 @@ RSpec.describe V1::AuditsController, type: :controller do
       # create two packages
       context "as an administrator" do
         include_context "as admin user"
-        it "starts a FixityCheckJob for each stored package" do
+
+        let!(:packages) { Array.new(2) { Fabricate(:package) } }
+        let!(:unstored_package) { Fabricate(:package, storage_location: nil) }
+
+        before(:each) do
+          # should not appear in audit since it has no storage to audit
           request.headers.merge! auth_header
           allow(FixityCheckJob).to receive(:perform_later)
-          packages = Array.new(2) { Fabricate(:package) }
+        end
 
+        it "starts a FixityCheckJob for each stored package" do
           post :create
 
           packages.each do |package|
@@ -49,7 +80,28 @@ RSpec.describe V1::AuditsController, type: :controller do
           end
         end
 
+        it "creates an Audit object" do
+          post :create
+
+          expect(Audit.count).to eql(1)
+        end
+
+        it "creates an Audit object whose owners is the current user" do
+          post :create
+
+          expect(Audit.first.user).to eq(user)
+        end
+
+        it "creates an Audit object whose count is the number of packages" do
+          post :create
+
+          expect(Audit.first.packages).to eql(2)
+        end
+
         it "does not start a FixityCheckJob for unstored packages (requests)" do
+          post :create
+
+          expect(FixityCheckJob).not_to have_received(:perform_later).with(unstored_package, user)
         end
       end
 
@@ -69,7 +121,11 @@ RSpec.describe V1::AuditsController, type: :controller do
         it "does not start any jobs" do
           expect(FixityCheckJob).not_to have_received(:perform_later)
         end
-          
+
+        it "does not create an audit object" do
+          get :index
+          expect(Audit.count).to eql(0)
+        end
       end
 
       context "as a user that is not logged in" do
@@ -84,6 +140,11 @@ RSpec.describe V1::AuditsController, type: :controller do
 
         it "does not start any jobs" do
           expect(FixityCheckJob).not_to have_received(:perform_later)
+        end
+
+        it "does not create an audit object" do
+          get :index
+          expect(Audit.count).to eql(0)
         end
       end
     end

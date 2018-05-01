@@ -5,7 +5,7 @@ require "chipmunk_bag_validator"
 class FixityCheckJob < ApplicationJob
   queue_as :default
 
-  def perform(package, user, bag: ChipmunkBag.new(db_bag.src_path))
+  def perform(package, user, audit: nil, bag: ChipmunkBag.new(db_bag.src_path))
     begin
       if bag.valid?
         outcome = "success"
@@ -19,7 +19,7 @@ class FixityCheckJob < ApplicationJob
       detail = e.to_s
     end
 
-    Event.create(package: package, user: user, event_type: "fixity check", outcome: outcome, detail: detail)
+    Event.create(package: package, user: user, audit: audit, event_type: "fixity check", outcome: outcome, detail: detail)
   end
 
 end

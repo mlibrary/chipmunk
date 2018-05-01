@@ -6,6 +6,8 @@ class Package < ApplicationRecord
   has_one :queue_item
   has_many :events
 
+  scope :stored, -> { Package.where.not(storage_location: nil) }
+
   def to_param
     bag_id
   end

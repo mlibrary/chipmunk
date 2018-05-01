@@ -12,7 +12,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_180_406_213_356) do
+ActiveRecord::Schema.define(version: 20_180_411_173_557) do
+  create_table "audits", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "packages"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_audits_on_user_id"
+  end
+
   create_table "events", force: :cascade do |t|
     t.integer "package_id"
     t.string "event_type"
@@ -21,6 +29,8 @@ ActiveRecord::Schema.define(version: 20_180_406_213_356) do
     t.string "detail"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "audit_id"
+    t.index ["audit_id"], name: "index_events_on_audit_id"
     t.index ["package_id"], name: "index_events_on_package_id"
     t.index ["user_id"], name: "index_events_on_user_id"
   end
