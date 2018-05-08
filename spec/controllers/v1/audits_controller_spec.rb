@@ -13,10 +13,18 @@ RSpec.describe V1::AuditsController, type: :controller do
 
         it "assigns an audit presenter" do
           get :show, params: { id: audit.id }
-          expect(assigns(:audit).successes).to eq(0)
+          expect(assigns(:audit).successes.count).to eq(0)
         end
 
-        it "can expand the audit"
+        it "does not expand the audit by default" do
+          get :show, params: { id: audit.id }
+          expect(assigns(:audit).expand?).to be false
+        end
+
+        it "can expand the audit" do
+          get :show, params: { id: audit.id, expand: true }
+          expect(assigns(:audit).expand?).to be true
+        end
       end
 
       context "as a non-admin" do
@@ -44,10 +52,13 @@ RSpec.describe V1::AuditsController, type: :controller do
 
         it "assigns an array of audit presenters" do
           get :index
-          expect(assigns(:audits).first.successes).to eq(0)
+          expect(assigns(:audits).first.successes.count).to eq(0)
         end
 
-        it "can expand the audit"
+        it "does not expand the audits" do
+          get :index
+          expect(assigns(:audits).first.expand?).to be false
+        end
       end
 
       context "as a non-admin" do
@@ -58,12 +69,22 @@ RSpec.describe V1::AuditsController, type: :controller do
           get :index
           expect(response).to have_http_status(403)
         end
+
+        it "renders nothing" do
+          get :index
+          expect(response).to render_template(nil)
+        end
       end
 
       context "as a user that is not logged in" do
         it "returns a 401" do
           get :index
           expect(response).to have_http_status(401)
+        end
+
+        it "renders nothing" do
+          get :index
+          expect(response).to render_template(nil)
         end
       end
     end
