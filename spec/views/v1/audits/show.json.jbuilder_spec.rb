@@ -20,10 +20,10 @@ describe "/v1/audits/show.json.jbuilder" do
         id: 1,
         successes: Array.new(success_count) {|n| double(:"success#{n}") },
         failures: Array.new(failure_count) {|n| double(:"failure#{n}") },
-        packages: Array.new(package_count) {|n| double(:"package#{n}") },
+        packages: package_count,
         user: double(:user, username: Faker::Internet.user_name),
         created_at: Time.now,
-        expand: false,
+        expand?: false,
         updated_at: Time.now)
     end
 
@@ -50,6 +50,7 @@ describe "/v1/audits/show.json.jbuilder" do
     let(:event) do
       double(:event,
         id: 1,
+        package: double(:package, bag_id: SecureRandom.uuid, external_id: SecureRandom.uuid),
         event_type: Faker::Lorem.word,
         user: double(:user, username: Faker::Internet.user_name),
         outcome: Faker::Lorem.word,
@@ -59,12 +60,11 @@ describe "/v1/audits/show.json.jbuilder" do
     end
 
     let(:expected_event) do
-      {              id:       event.id,
-                     type:     event.event_type,
-                     executor: event.user.username,
-                     outcome:  event.outcome,
-                     detail:   event.detail,
-                     date:     event.created_at.to_formatted_s(:default) }
+      {              
+        bag_id: event.package.bag_id,
+        external_id:       event.package.external_id,
+        detail:   event.detail,
+        date:     event.created_at.to_formatted_s(:default) }
     end
 
     let(:audit) do
@@ -72,10 +72,10 @@ describe "/v1/audits/show.json.jbuilder" do
         id: 1,
         successes: [event],
         failures: [],
-        packages: Array.new(package_count) {|n| double(:"package#{n}") },
+        packages: package_count,
         user: double(:user, username: Faker::Internet.user_name),
         created_at: Time.now,
-        expand: true,
+        expand?: true,
         updated_at: Time.now)
     end
 

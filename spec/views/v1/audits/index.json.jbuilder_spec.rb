@@ -12,9 +12,9 @@ describe "/v1/audits/index.json.jbuilder" do
       id: 1,
       successes: Array.new(success_count) {|n| double(:"success#{n}") },
       failures: Array.new(failure_count) {|n| double(:"failure#{n}") },
-      packages: Array.new(package_count) {|n| double(:"package#{n}") },
+      packages: package_count,
       user: double(:user, username: Faker::Internet.user_name),
-      expand: false,
+      expand?: false,
       created_at: Time.now,
       updated_at: Time.now)
   end

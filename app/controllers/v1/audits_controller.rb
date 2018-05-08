@@ -15,12 +15,15 @@ module V1
       authorize Audit
       count = 0
 
-      Package.stored.each do |package|
-        FixityCheckJob.perform_later(package, current_user)
-        count += 1
+      packages = Package.stored
+      audit = Audit.create(user: current_user, packages: packages.count)
+      if audit
+        packages.each do |package|
+          FixityCheckJob.perform_later(package: package, user: current_user, audit: audit)
+        end
+        head 201, location: v1_audit_path(audit)
       end
 
-      Audit.create(user: current_user, packages: count)
     end
 
     private

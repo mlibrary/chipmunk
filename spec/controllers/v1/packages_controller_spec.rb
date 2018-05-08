@@ -58,12 +58,12 @@ RSpec.describe V1::PackagesController, type: :controller do
 
         it "starts a FixityCheckJob for an object identified by bag_id" do
           post :fixity_check, params: { bag_id: package.bag_id }
-          expect(FixityCheckJob).to have_received(:perform_later).with(package, user)
+          expect(FixityCheckJob).to have_received(:perform_later).with(package: package, user: user)
         end
 
         it "starts a FixityCheckJob for an object identified by external_id" do
           post :fixity_check, params: { bag_id: package.external_id }
-          expect(FixityCheckJob).to have_received(:perform_later).with(package, user)
+          expect(FixityCheckJob).to have_received(:perform_later).with(package: package, user: user)
         end
       end
 

@@ -109,7 +109,7 @@ RSpec.describe V1::AuditsController, type: :controller do
           post :create
 
           packages.each do |package|
-            expect(FixityCheckJob).to have_received(:perform_later).with(package, user)
+            expect(FixityCheckJob).to have_received(:perform_later).with(package: package, user: user, audit: anything())
           end
         end
 
@@ -134,7 +134,22 @@ RSpec.describe V1::AuditsController, type: :controller do
         it "does not start a FixityCheckJob for unstored packages (requests)" do
           post :create
 
-          expect(FixityCheckJob).not_to have_received(:perform_later).with(unstored_package, user)
+          expect(FixityCheckJob).not_to have_received(:perform_later).with(package: unstored_package, user: user, audit: anything())
+        end
+
+        it "returns 201" do
+          post :create
+          expect(response).to have_http_status(201)
+        end
+
+        it "correctly sets the location header" do
+          post :create
+          expect(response.location).to eql(v1_audit_path(Audit.first))
+        end
+
+        it "renders nothing" do
+          post :create
+          expect(response).to render_template(nil)
         end
       end
 

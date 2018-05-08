@@ -9,6 +9,10 @@ RSpec.describe AuditPresenter, type: :presenter do
   it "takes an audit as a parameter" do
     expect(presenter).not_to be_nil
   end
+  
+  it "returns the audit's id" do
+    expect(presenter.id).to eq(audit.id)
+  end
 
   it "returns the audit's user" do
     expect(presenter.user).to eq(audit.user)
