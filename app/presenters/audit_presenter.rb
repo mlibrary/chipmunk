@@ -1,16 +1,23 @@
+# frozen_string_literal: true
+
 class AuditPresenter
   extend Forwardable
 
-  def initialize(audit)
+  def initialize(audit, expand: false)
     @audit = audit
+    @expand = expand
+  end
+
+  def expand?
+    @expand
   end
 
   def successes
-    audit.events.where(outcome: 'success').count
+    audit.events.where(outcome: "success")
   end
 
   def failures
-    audit.events.where(outcome: 'failure').count
+    audit.events.where(outcome: "failure")
   end
 
   def_delegators :audit, :user, :packages, :created_at
