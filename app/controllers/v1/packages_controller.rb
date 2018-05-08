@@ -33,7 +33,7 @@ module V1
 
     def fixity_check
       authorize package
-      FixityCheckJob.perform_later(package, current_user)
+      FixityCheckJob.perform_later(package: package, user: current_user)
     end
 
     private

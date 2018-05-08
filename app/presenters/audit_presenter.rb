@@ -20,7 +20,7 @@ class AuditPresenter
     audit.events.where(outcome: "failure")
   end
 
-  def_delegators :audit, :user, :packages, :created_at
+  def_delegators :audit, :id, :user, :packages, :created_at
 
   private
 
