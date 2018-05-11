@@ -2,15 +2,15 @@
 
 require "rails_helper"
 
-RSpec.describe FixityCheckJob do
+RSpec.describe PackageFixityCheckJob do
   let(:package) { Fabricate(:package) }
   let(:user) { Fabricate(:user) }
   let(:email) { double(:email, deliver_now: nil) }
   let(:mailer)  { double(:mailer, failure: email) }
   subject(:event) { package.events.last }
 
-  def run_job(extra_args={})
-    described_class.perform_now(package: package, user: user, bag: bag, mailer: mailer, **extra_args)
+  def run_job
+    described_class.perform_now(package: package, user: user, bag: bag, mailer: mailer)
   end
 
   shared_examples_for "a fixity check job" do |outcome|
@@ -25,16 +25,6 @@ RSpec.describe FixityCheckJob do
     it "records #{outcome}" do
       run_job
       expect(event.outcome).to eq(outcome.to_s)
-    end
-  end
-
-  context "with an audit" do
-    let(:bag) { double(:bag, valid?: true) }
-    let(:audit) { Fabricate(:audit) }
-
-    it "records the audit in the event" do
-      run_job(audit: audit)
-      expect(event.audit_id).to eq(audit.id)
     end
   end
 
@@ -64,17 +54,10 @@ RSpec.describe FixityCheckJob do
     end
 
     it "sends an email with the package and error" do
-      expect(mailer).to receive(:failure).with(audit: nil, package: package, error: error)
+      expect(mailer).to receive(:failure).with(package: package, error: error)
       run_job
     end
 
-    context "with an audit" do
-      let(:audit) { Fabricate(:audit) }
-      it "passes the audit to the failure mailer" do
-        expect(mailer).to receive(:failure).with(audit: audit, package: package, error: error)
-        run_job(audit: audit)
-      end
-    end
   end
 
   context "when the fixity check raises an exception" do
@@ -89,7 +72,7 @@ RSpec.describe FixityCheckJob do
     end
 
     it "sends an email with the package and error" do
-      expect(mailer).to receive(:failure).with(audit: nil, package: package, error: a_string_matching("RuntimeError"))
+      expect(mailer).to receive(:failure).with(package: package, error: a_string_matching("RuntimeError"))
       run_job
     end
   end

@@ -3,7 +3,7 @@
 class AuditPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if user&.admin?
+      if user.admin?
         scope.all
       else
         scope.none
@@ -12,14 +12,14 @@ class AuditPolicy < ApplicationPolicy
   end
 
   def create?
-    user&.admin?
+    user.admin?
   end
 
   def index?
-    user&.admin?
+    user.admin?
   end
 
   def show?
-    user&.admin?
+    user.admin?
   end
 end
