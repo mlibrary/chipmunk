@@ -13,17 +13,13 @@ module V1
 
     def create
       authorize Audit
-      count = 0
 
       packages = Package.stored
-      audit = Audit.create(user: current_user, packages: packages.count)
-      if audit
-        packages.each do |package|
-          FixityCheckJob.perform_later(package: package, user: current_user, audit: audit)
-        end
-        head 201, location: v1_audit_path(audit)
+      audit = Audit.create!(user: current_user, packages: packages.count)
+      packages.each do |package|
+        AuditFixityCheckJob.perform_later(package: package, user: current_user, audit: audit)
       end
-
+      head 201, location: v1_audit_path(audit)
     end
 
     private

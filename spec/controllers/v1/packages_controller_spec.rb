@@ -52,18 +52,18 @@ RSpec.describe V1::PackagesController, type: :controller do
         include_context "as admin user"
 
         before(:each) do
-          allow(FixityCheckJob).to receive(:perform_later)
+          allow(PackageFixityCheckJob).to receive(:perform_later)
           request.headers.merge! auth_header
         end
 
-        it "starts a FixityCheckJob for an object identified by bag_id" do
+        it "starts a PackageFixityCheckJob for an object identified by bag_id" do
           post :fixity_check, params: { bag_id: package.bag_id }
-          expect(FixityCheckJob).to have_received(:perform_later).with(package: package, user: user)
+          expect(PackageFixityCheckJob).to have_received(:perform_later).with(package: package, user: user)
         end
 
-        it "starts a FixityCheckJob for an object identified by external_id" do
+        it "starts a PackageFixityCheckJob for an object identified by external_id" do
           post :fixity_check, params: { bag_id: package.external_id }
-          expect(FixityCheckJob).to have_received(:perform_later).with(package: package, user: user)
+          expect(PackageFixityCheckJob).to have_received(:perform_later).with(package: package, user: user)
         end
       end
 
