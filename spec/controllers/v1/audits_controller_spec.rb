@@ -102,14 +102,14 @@ RSpec.describe V1::AuditsController, type: :controller do
         before(:each) do
           # should not appear in audit since it has no storage to audit
           request.headers.merge! auth_header
-          allow(FixityCheckJob).to receive(:perform_later)
+          allow(AuditFixityCheckJob).to receive(:perform_later)
         end
 
-        it "starts a FixityCheckJob for each stored package" do
+        it "starts a AuditFixityCheckJob for each stored package" do
           post :create
 
           packages.each do |package|
-            expect(FixityCheckJob).to have_received(:perform_later).with(package: package, user: user, audit: anything())
+            expect(AuditFixityCheckJob).to have_received(:perform_later).with(package: package, user: user, audit: anything())
           end
         end
 
@@ -131,10 +131,10 @@ RSpec.describe V1::AuditsController, type: :controller do
           expect(Audit.first.packages).to eql(2)
         end
 
-        it "does not start a FixityCheckJob for unstored packages (requests)" do
+        it "does not start a AuditFixityCheckJob for unstored packages (requests)" do
           post :create
 
-          expect(FixityCheckJob).not_to have_received(:perform_later).with(package: unstored_package, user: user, audit: anything())
+          expect(AuditFixityCheckJob).not_to have_received(:perform_later).with(package: unstored_package, user: user, audit: anything())
         end
 
         it "returns 201" do
@@ -157,7 +157,7 @@ RSpec.describe V1::AuditsController, type: :controller do
         include_context "as underprivileged user"
 
         before(:each) do
-          allow(FixityCheckJob).to receive(:perform_later)
+          allow(AuditFixityCheckJob).to receive(:perform_later)
           request.headers.merge! auth_header
           post :create
         end
@@ -167,7 +167,7 @@ RSpec.describe V1::AuditsController, type: :controller do
         end
 
         it "does not start any jobs" do
-          expect(FixityCheckJob).not_to have_received(:perform_later)
+          expect(AuditFixityCheckJob).not_to have_received(:perform_later)
         end
 
         it "does not create an audit object" do
@@ -178,7 +178,7 @@ RSpec.describe V1::AuditsController, type: :controller do
 
       context "as a user that is not logged in" do
         before(:each) do
-          allow(FixityCheckJob).to receive(:perform_later)
+          allow(AuditFixityCheckJob).to receive(:perform_later)
           post :create
         end
 
@@ -187,7 +187,7 @@ RSpec.describe V1::AuditsController, type: :controller do
         end
 
         it "does not start any jobs" do
-          expect(FixityCheckJob).not_to have_received(:perform_later)
+          expect(AuditFixityCheckJob).not_to have_received(:perform_later)
         end
 
         it "does not create an audit object" do
