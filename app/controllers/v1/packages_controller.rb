@@ -31,11 +31,6 @@ module V1
       end
     end
 
-    def fixity_check
-      authorize package
-      PackageFixityCheckJob.perform_later(package: package, user: current_user)
-    end
-
     private
 
     def package
