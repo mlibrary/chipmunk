@@ -38,45 +38,6 @@ RSpec.describe V1::PackagesController, type: :controller do
       end
     end
 
-    describe "POST #fixity_check" do
-      let(:package) { Fabricate(:package) }
-
-      describe "as an unauthenticated user" do
-        it "returns a 401" do
-          post :fixity_check, params: { bag_id: package.bag_id }
-          expect(response).to have_http_status(401)
-        end
-      end
-
-      describe "as an admin" do
-        include_context "as admin user"
-
-        before(:each) do
-          allow(PackageFixityCheckJob).to receive(:perform_later)
-          request.headers.merge! auth_header
-        end
-
-        it "starts a PackageFixityCheckJob for an object identified by bag_id" do
-          post :fixity_check, params: { bag_id: package.bag_id }
-          expect(PackageFixityCheckJob).to have_received(:perform_later).with(package: package, user: user)
-        end
-
-        it "starts a PackageFixityCheckJob for an object identified by external_id" do
-          post :fixity_check, params: { bag_id: package.external_id }
-          expect(PackageFixityCheckJob).to have_received(:perform_later).with(package: package, user: user)
-        end
-      end
-
-      describe "as a non-admin" do
-        include_context "as underprivileged user"
-        it "returns a 403" do
-          request.headers.merge! auth_header
-          post :fixity_check, params: { bag_id: package.bag_id }
-          expect(response).to have_http_status(403)
-        end
-      end
-    end
-
     describe "POST #create" do
       let(:attributes) do
         {
