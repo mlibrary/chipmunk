@@ -8,4 +8,8 @@ validation:
     video: "bin/validate_video.pl"
   bagger_profile:
     digital: "spec/support/fixtures/test-profile.json"
+checkpoint:
+  database: 
+    adapter: sqlite
+    database: db/checkpoint_test.sqlite3
 
