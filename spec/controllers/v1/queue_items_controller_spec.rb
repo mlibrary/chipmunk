@@ -88,9 +88,9 @@ RSpec.describe V1::QueueItemsController, type: :controller do
         request.headers.merge! auth_header
       end
 
-      context "as unauthenticated user" do
+      context "with bad auth token" do
         let!(:package) { Fabricate(:package) }
-        include_context "as unauthenticated user"
+        include_context "with bad auth token"
         it "returns 401" do
           post :create, params: { bag_id: package.bag_id }
           expect(response).to have_http_status(401)

@@ -27,12 +27,13 @@ class ApplicationController < ActionController::API
 
   # Authenticate the user with token based authentication
   def authenticate
-    authenticate_token || render_unauthorized
+    authenticate_token || redirect_to("/login")
   end
 
   def authenticate_token
+    return false unless request.has_header?('HTTP_AUTHORIZATION')
     authenticate_with_http_token do |token, _options|
-      @current_user = User.find_by(api_key: token)
+      @current_user = User.find_by(api_key: token) || render_unauthorized
     end
   end
 

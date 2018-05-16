@@ -38,9 +38,9 @@ RSpec.describe V1::AuditsController, type: :controller do
       end
 
       context "as a user that is not logged in" do
-        it "returns a 401" do
+        it "redirects to /login" do
           get :show, params: { id: audit.id }
-          expect(response).to have_http_status(401)
+          expect(response).to redirect_to("/login")
         end
       end
     end
@@ -77,9 +77,9 @@ RSpec.describe V1::AuditsController, type: :controller do
       end
 
       context "as a user that is not logged in" do
-        it "returns a 401" do
+        it "redirects to /login" do
           get :index
-          expect(response).to have_http_status(401)
+          expect(response).to redirect_to("/login")
         end
 
         it "renders nothing" do
@@ -182,8 +182,8 @@ RSpec.describe V1::AuditsController, type: :controller do
           post :create
         end
 
-        it "returns a 401" do
-          expect(response).to have_http_status(401)
+        it "redirects to /login" do
+          expect(response).to redirect_to("/login")
         end
 
         it "does not start any jobs" do

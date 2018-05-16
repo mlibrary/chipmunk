@@ -67,8 +67,8 @@ RSpec.describe V1::PackagesController, type: :controller do
         request.headers.merge! auth_header
       end
 
-      context "as unauthenticated user" do
-        include_context "as unauthenticated user"
+      context "with bad auth token" do
+        include_context "with bad auth token"
         it "returns 401" do
           post :create, params: attributes
           expect(response).to have_http_status(401)
