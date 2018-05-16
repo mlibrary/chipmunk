@@ -110,8 +110,6 @@ GEM
       byebug (~> 10.0)
       pry (~> 0.10)
     public_suffix (3.0.2)
-    pundit (1.1.0)
-      activesupport (>= 3.0.0)
     rack (2.0.4)
     rack-cors (1.0.2)
     rack-protection (2.0.1)
@@ -248,7 +246,6 @@ DEPENDENCIES
   mysql2 (~> 0.4.10)
   pry
   pry-byebug
-  pundit
   rack-cors
   rails (~> 5.1.0)
   rails-controller-testing

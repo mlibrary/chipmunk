@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ApplicationPolicy
+class CollectionPolicy
   attr_reader :user
 
   def initialize(user, scope = nil)
@@ -12,28 +12,16 @@ class ApplicationPolicy
     ApplicationRecord.none
   end
 
+  def resolve
+    scope
+  end
+
   def index?
     false
   end
 
-  def show?
-    scope.where(id: record.id).exists?
-  end
-
   def create?
     false
-  end
-
-  def update?
-    false
-  end
-
-  def destroy?
-    false
-  end
-
-  def resolve
-    scope
   end
 
   def authorize!(action, message = nil)

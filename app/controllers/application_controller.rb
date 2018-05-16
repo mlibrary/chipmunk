@@ -1,21 +1,17 @@
 # frozen_string_literal: true
 
+require 'policy_errors'
+
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
-
-  # Use pundit for authz.  Ensure that we've either called 'authorize' or
-  # 'policy_scope' in every controller action.
-  # When someone is unauthorized, render nothing and return 403.
-  include Pundit
-  after_action :verify_authorized, except: :index
-  after_action :verify_policy_scoped, only: :index
-  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   # Add a before_action to authenticate all requests.
   # Move this to subclassed controllers if you only
   # want to authenticate certain methods.
   before_action :authenticate
   before_action :set_format_to_json
+
+  rescue_from NotAuthorizedError, with: :user_not_authorized
 
   attr_reader :current_user
 
