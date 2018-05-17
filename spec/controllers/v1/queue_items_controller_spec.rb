@@ -88,23 +88,6 @@ RSpec.describe V1::QueueItemsController, type: :controller do
         request.headers.merge! auth_header
       end
 
-      context "with bad auth token" do
-        let!(:package) { Fabricate(:package) }
-        include_context "with bad auth token"
-        it "returns 401" do
-          post :create, params: { bag_id: package.bag_id }
-          expect(response).to have_http_status(401)
-        end
-        it "renders nothing" do
-          post :create, params: { bag_id: package.bag_id }
-          expect(response).to render_template(nil)
-        end
-        it "does not create the record" do
-          expect { post :create, params: { bag_id: package.bag_id } }
-            .to_not(change { QueueItem.count })
-        end
-      end
-
       context "as underprivileged user" do
         include_context "as underprivileged user"
         context "user does not own the bag" do
@@ -134,6 +117,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
           end
         end
       end
+
       context "as admin user" do
         include_context "as admin user"
         context "user does not own the bag" do

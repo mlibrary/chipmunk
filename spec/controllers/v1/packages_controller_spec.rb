@@ -67,21 +67,6 @@ RSpec.describe V1::PackagesController, type: :controller do
         request.headers.merge! auth_header
       end
 
-      context "with bad auth token" do
-        include_context "with bad auth token"
-        it "returns 401" do
-          post :create, params: attributes
-          expect(response).to have_http_status(401)
-        end
-        it "renders nothing" do
-          post :create, params: attributes
-          expect(response).to render_template(nil)
-        end
-        it "does not create the record" do
-          post :create, params: attributes
-          expect(Package.count).to eql(0)
-        end
-      end
       context "as authenticated user" do
         include_context "as underprivileged user"
         context "new record" do

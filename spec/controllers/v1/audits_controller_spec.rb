@@ -36,13 +36,6 @@ RSpec.describe V1::AuditsController, type: :controller do
           expect(response).to have_http_status(403)
         end
       end
-
-      context "as a user that is not logged in" do
-        it "redirects to /login" do
-          get :show, params: { id: audit.id }
-          expect(response).to redirect_to("/login")
-        end
-      end
     end
 
     describe "GET #index" do
@@ -68,18 +61,6 @@ RSpec.describe V1::AuditsController, type: :controller do
         it "returns a 403" do
           get :index
           expect(response).to have_http_status(403)
-        end
-
-        it "renders nothing" do
-          get :index
-          expect(response).to render_template(nil)
-        end
-      end
-
-      context "as a user that is not logged in" do
-        it "redirects to /login" do
-          get :index
-          expect(response).to redirect_to("/login")
         end
 
         it "renders nothing" do
@@ -164,26 +145,6 @@ RSpec.describe V1::AuditsController, type: :controller do
 
         it "returns a 403" do
           expect(response).to have_http_status(403)
-        end
-
-        it "does not start any jobs" do
-          expect(AuditFixityCheckJob).not_to have_received(:perform_later)
-        end
-
-        it "does not create an audit object" do
-          get :index
-          expect(Audit.count).to eql(0)
-        end
-      end
-
-      context "as a user that is not logged in" do
-        before(:each) do
-          allow(AuditFixityCheckJob).to receive(:perform_later)
-          post :create
-        end
-
-        it "redirects to /login" do
-          expect(response).to redirect_to("/login")
         end
 
         it "does not start any jobs" do

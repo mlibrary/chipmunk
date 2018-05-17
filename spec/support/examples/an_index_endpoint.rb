@@ -10,25 +10,6 @@ RSpec.shared_examples "an index endpoint" do
     request.headers.merge! auth_header
     get :index, params: {}
   end
-  context "with bad auth token" do
-    include_context "with bad auth token"
-    it "returns 401" do
-      expect(response).to have_http_status(401)
-    end
-    it "renders nothing" do
-      expect(response).to render_template(nil)
-    end
-  end
-
-  context "with no auth token" do
-    let(:auth_header) { {} }
-    it "redirects to /login" do
-      expect(response).to redirect_to("/login")
-    end
-    it "renders nothing" do
-      expect(response).to render_template(nil)
-    end
-  end
 
   context "as underprivileged user" do
     include_context "as underprivileged user"
