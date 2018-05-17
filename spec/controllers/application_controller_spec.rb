@@ -12,10 +12,12 @@ RSpec.describe ApplicationController, type: :controller do
   end
 
   let(:auth_header) { {} }
+  let(:remote_user_header) { {} }
 
   before(:each) do
     routes.draw { get "something" => "anonymous#something" }
     request.headers.merge! auth_header
+    request.headers.merge! remote_user_header
     get :something
   end
 
@@ -38,13 +40,7 @@ RSpec.describe ApplicationController, type: :controller do
     end
   end
 
-  context "without X-Remote-User" do
-    context "without Authorization" do
-      it { is_expected.to redirect_to("/login") } 
-
-      it_behaves_like "a disallowed request"
-    end
-
+  shared_examples_for "respects Authorization header" do
     context "with valid Authorization header" do
       include_context "as admin user"
 
@@ -55,34 +51,33 @@ RSpec.describe ApplicationController, type: :controller do
       it_behaves_like "an allowed request"
     end
 
-    context "with invalid Authorization header" do
+    context "with invalid Authorization" do
       include_context "with bad auth token"
-
       it { is_expected.to have_http_status(401) } 
       it_behaves_like "a disallowed request"
     end
   end
 
-  # context "with X-Remote-User" do
-  #   before(:each) { request.headers.merge!('X-Remote-User' => 'someuser') }
+  context "without X-Remote-User" do
+    context "without Authorization" do
+      it { is_expected.to redirect_to("/login") } 
 
-  #   context "without Authorization" do
-  #     it "sets current_user to a non-persisted user"
-  #     it_behaves_like "an allowed request"
-  #   end
+      it_behaves_like "a disallowed request"
+    end
 
-  #   context "with valid Authorization header" do
-  #     include_context "as admin user"
-  #     it "sets current_user to the user corresponding to the token"
-  #     it_behaves_like "an allowed request"
-  #   end
+    it_behaves_like "respects Authorization header"
+  end
 
-  #   context "with invalid Authorization" do
-  #     include_context "with bad auth token"
-  #     it "sets current_user to a non-persisted user"
-  #     it_behaves_like "an allowed request"
-  #   end
-  # end
+  context "with X-Remote-User" do
+    let(:remote_user_header) { { 'X-Remote-User' => 'someuser' } }
+
+    context "without Authorization" do
+      # it "sets current_user to a non-persisted user"
+      it_behaves_like "an allowed request"
+    end
+
+    it_behaves_like "respects Authorization header"
+  end
   
 
 end

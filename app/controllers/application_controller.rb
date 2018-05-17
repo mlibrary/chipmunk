@@ -27,14 +27,24 @@ class ApplicationController < ActionController::API
 
   # Authenticate the user with token based authentication
   def authenticate
-    authenticate_token || redirect_to("/login")
+    if request.has_header?('HTTP_AUTHORIZATION')
+      authenticate_token
+    elsif request.has_header?('HTTP_X_REMOTE_USER')
+      authenticate_remote_user
+    else
+      redirect_to("/login")
+    end
   end
 
   def authenticate_token
-    return false unless request.has_header?('HTTP_AUTHORIZATION')
     authenticate_with_http_token do |token, _options|
       @current_user = User.find_by(api_key: token) || render_unauthorized
     end
+  end
+
+  def authenticate_remote_user
+    @current_user = User.new
+    @current_user.email = "#{request.get_header('HTTP_X_REMOTE_USER')}@umich.edu"
   end
 
   def render_unauthorized(realm = "Application")
