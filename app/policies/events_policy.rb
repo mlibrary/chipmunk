@@ -2,6 +2,10 @@
 
 class EventsPolicy < CollectionPolicy
 
+  def index?
+    true
+  end
+
   def base_scope
     Event.all
   end

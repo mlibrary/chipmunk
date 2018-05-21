@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'policy_errors'
 
 class CollectionPolicy
   attr_reader :user

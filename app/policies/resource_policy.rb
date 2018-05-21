@@ -12,10 +12,6 @@ class ResourcePolicy
     false
   end
 
-  def create?
-    false
-  end
-
   def update?
     false
   end
