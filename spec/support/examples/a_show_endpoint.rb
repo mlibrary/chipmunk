@@ -19,84 +19,28 @@ RSpec.shared_examples "a show endpoint" do
     double(:nonexistent, key => "nonexistent")
   end
 
-  before(:each) do
-    request.headers.merge! auth_header
+  include_context "as underprivileged user"
+
+  context "the record belongs to the user" do
+    let(:record) { factory.call(user) }
+    it "returns 200" do
+      send_request
+      expect(response).to have_http_status(200)
+    end
+    it "renders the record" do
+      send_request
+      expect(assigns(assignee)).to eql(record)
+    end
+    it "renders the correct template" do
+      send_request
+      expect(response).to render_template(template)
+    end
   end
 
-  context "as underprivileged user" do
-    include_context "as underprivileged user"
-    context "the record belongs to the user" do
-      let(:record) { factory.call(user) }
-      it "returns 200" do
-        send_request
-        expect(response).to have_http_status(200)
-      end
-      it "renders the record" do
-        send_request
-        expect(assigns(assignee)).to eql(record)
-      end
-      it "renders the correct template" do
-        send_request
-        expect(response).to render_template(template)
-      end
-    end
-    context "the record does not belong to the user" do
-      let(:record) { factory.call }
-      it "returns 403" do
-        send_request
-        expect(response).to have_http_status(403)
-      end
-      it "renders nothing" do
-        send_request
-        expect(response).to render_template(nil)
-      end
-    end
-
-    context "the record does not exist" do
-      let(:record) { nonexistent_record }
-      it "raises an ActiveRecord::RecordNotFound" do
-        expect { send_request }.to raise_exception ActiveRecord::RecordNotFound
-      end
-    end
-  end
-  context "as admin" do
-    include_context "as admin user"
-    context "the record belongs to the user" do
-      let(:record) { factory.call(user) }
-      it "returns 200" do
-        send_request
-        expect(response).to have_http_status(200)
-      end
-      it "renders the record" do
-        send_request
-        expect(assigns(assignee)).to eql(record)
-      end
-      it "renders the correct template" do
-        send_request
-        expect(response).to render_template(template)
-      end
-    end
-    context "the record does not belong to the user" do
-      let(:record) { factory.call }
-      it "returns 200" do
-        send_request
-        expect(response).to have_http_status(200)
-      end
-      it "renders the record" do
-        send_request
-        expect(assigns(assignee)).to eql(record)
-      end
-      it "renders the correct template" do
-        send_request
-        expect(response).to render_template(template)
-      end
-    end
-
-    context "the record does not exist" do
-      let(:record) { nonexistent_record }
-      it "raises an ActiveRecord::RecordNotFound" do
-        expect { send_request }.to raise_exception ActiveRecord::RecordNotFound
-      end
+  context "the record does not exist" do
+    let(:record) { nonexistent_record }
+    it "raises an ActiveRecord::RecordNotFound" do
+      expect { send_request }.to raise_exception ActiveRecord::RecordNotFound
     end
   end
 end

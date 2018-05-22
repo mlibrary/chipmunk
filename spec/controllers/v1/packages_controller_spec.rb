@@ -25,16 +25,13 @@ RSpec.describe V1::PackagesController, type: :controller do
     end
 
     describe "GET #show/:external_id" do
-      context "as an admin" do
-        include_context "as admin user"
-        let(:package) { Fabricate(:package) }
+      include_context "as underprivileged user"
+      let(:package) { Fabricate(:package, user: user) }
 
-        it "can fetch a package by external id" do
-          request.headers.merge! auth_header
-          get :show, params: { bag_id: package.external_id }
+      it "can fetch a package by external id" do
+        get :show, params: { bag_id: package.external_id }
 
-          expect(assigns(:package)).to eql(package)
-        end
+        expect(assigns(:package)).to eql(package)
       end
     end
 
@@ -61,10 +58,6 @@ RSpec.describe V1::PackagesController, type: :controller do
           allow(RequestBuilder).to receive(:new).and_return(builder)
           allow(builder).to receive(:create).and_return([result_status, result_request])
         end
-      end
-
-      before(:each) do
-        request.headers.merge! auth_header
       end
 
       context "as authenticated user" do

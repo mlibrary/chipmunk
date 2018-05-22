@@ -9,16 +9,22 @@ RSpec.describe ApplicationController, type: :controller do
       render AN_EXISTING_TEMPLATE
       @something = "success"
     end
+
+    def unauthorized
+      raise NotAuthorizedError
+    end
   end
 
   let(:auth_header) { {} }
   let(:remote_user_header) { {} }
 
   before(:each) do
-    routes.draw { get "something" => "anonymous#something" }
+    routes.draw do 
+      get "something" => "anonymous#something"
+      get "unauthorized" => "anonymous#unauthorized"
+    end
     request.headers.merge! auth_header
     request.headers.merge! remote_user_header
-    get :something
   end
 
   subject { response }
@@ -42,7 +48,8 @@ RSpec.describe ApplicationController, type: :controller do
 
   shared_examples_for "respects Authorization header" do
     context "with valid Authorization header" do
-      include_context "as admin user"
+      let(:user) { Fabricate(:user, admin: true) }
+      let(:auth_header) { { "Authorization" => "Token token=#{user.api_key}" } }
 
       it "sets current_user to the user corresponding to the token" do
         expect(controller.current_user).to eq(user)
@@ -52,31 +59,44 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     context "with invalid Authorization" do
-      include_context "with bad auth token"
+      let(:auth_header) { { "Authorization" => "Token token=bad_token" } }
       it { is_expected.to have_http_status(401) } 
       it_behaves_like "a disallowed request"
     end
   end
 
-  context "without X-Remote-User" do
-    context "without Authorization" do
-      it { is_expected.to redirect_to("/login") } 
+  context "with a request that will succeed if authenticated" do
+    before(:each) { get :something }
 
-      it_behaves_like "a disallowed request"
+    context "without X-Remote-User" do
+      context "without Authorization" do
+        it { is_expected.to redirect_to("/login") } 
+
+        it_behaves_like "a disallowed request"
+      end
+
+      it_behaves_like "respects Authorization header"
     end
 
-    it_behaves_like "respects Authorization header"
+    context "with X-Remote-User" do
+      let(:remote_user_header) { { 'X-Remote-User' => 'someuser' } }
+
+      context "without Authorization" do
+        # it "sets current_user to a non-persisted user"
+        it_behaves_like "an allowed request"
+      end
+
+      it_behaves_like "respects Authorization header"
+    end
   end
 
-  context "with X-Remote-User" do
-    let(:remote_user_header) { { 'X-Remote-User' => 'someuser' } }
+  context "with a request that will fail even if authenticated" do
+    before(:each) { get :unauthorized }
+    let(:user) { Fabricate(:user, admin: true) }
+    let(:auth_header) { { "Authorization" => "Token token=#{user.api_key}" } }
 
-    context "without Authorization" do
-      # it "sets current_user to a non-persisted user"
-      it_behaves_like "an allowed request"
-    end
-
-    it_behaves_like "respects Authorization header"
+    it { is_expected.to have_http_status(403) }
+    it_behaves_like "a disallowed request"
   end
   
 

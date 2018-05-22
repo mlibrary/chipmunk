@@ -15,6 +15,10 @@ class ApplicationController < ActionController::API
 
   attr_reader :current_user
 
+  def fake_user(user)
+    @current_user = user if Rails.env.test?
+  end
+
   protected
 
   def user_not_authorized
@@ -27,6 +31,7 @@ class ApplicationController < ActionController::API
 
   # Authenticate the user with token based authentication
   def authenticate
+    return if @current_user && Rails.env.test?
     if request.has_header?('HTTP_AUTHORIZATION')
       authenticate_token
     elsif request.has_header?('HTTP_X_REMOTE_USER')

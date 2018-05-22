@@ -6,15 +6,14 @@ RSpec.shared_examples "an index endpoint" do
   let(:template) do
     described_class.to_s.gsub("Controller", "").underscore + "/index"
   end
-  before(:each) do
-    request.headers.merge! auth_header
-    get :index, params: {}
-  end
+
+  let!(:other) { factory.call }
+  let!(:mine) { factory.call(user) }
 
   context "as underprivileged user" do
     include_context "as underprivileged user"
-    let!(:other) { factory.call }
-    let!(:mine) { factory.call(user) }
+    before(:each) { get :index, params: {} }
+
     it "returns 200" do
       expect(response).to have_http_status(200)
     end
@@ -28,16 +27,10 @@ RSpec.shared_examples "an index endpoint" do
 
   context "as admin" do
     include_context "as admin user"
-    let!(:other) { factory.call }
-    let!(:mine) { factory.call(user) }
-    it "returns 200" do
-      expect(response).to have_http_status(200)
-    end
+    before(:each) { get :index, params: {} }
+
     it "renders all records" do
       expect(assigns(assignee)).to contain_exactly(mine, other)
-    end
-    it "renders the correct template" do
-      expect(response).to render_template(template)
     end
   end
 end
