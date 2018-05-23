@@ -2,6 +2,8 @@
 
 class User < ApplicationRecord
 
+  attr_accessor :identity
+
   validates :email, presence: true
   validates :admin, inclusion: { in: [true, false] }
   validates :api_key, presence: true
@@ -15,6 +17,18 @@ class User < ApplicationRecord
   # Generate a unique API key
   def generate_api_key
     SecureRandom.uuid.delete("-")
+  end
+
+  def known?
+    persisted?
+  end
+
+  def agent_type
+    'user'
+  end
+
+  def agent_id
+    username
   end
 
 end

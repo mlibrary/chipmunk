@@ -49,4 +49,8 @@ class Package < ApplicationRecord
     Rails.application.config.validation["bagger_profile"][content_type.to_s]
   end
 
+  def resource_type
+    content_type
+  end
+
 end

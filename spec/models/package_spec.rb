@@ -104,4 +104,11 @@ RSpec.describe Package, type: :model do
       expect(Fabricate.build(:package, bag_id: bag_id).to_param).to eq(bag_id)
     end
   end
+
+  describe "#resource_type" do
+    it "returns the content type" do
+      package = Fabricate.build(:package, content_type: Faker::Lorem.word)
+      expect(package.resource_type).to eq(package.content_type)
+    end
+  end
 end

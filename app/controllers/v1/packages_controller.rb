@@ -43,8 +43,5 @@ module V1
         .symbolize_keys
     end
 
-    def set_policy
-    end
-
   end
 end

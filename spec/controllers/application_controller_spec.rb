@@ -36,6 +36,10 @@ RSpec.describe ApplicationController, type: :controller do
     it "executes the controller action" do
       expect(assigns(:something)).to eq('success')
     end
+    
+    it "sets user identity" do
+      expect(controller.current_user.identity).to respond_to(:all)
+    end
   end
 
   shared_examples_for "a disallowed request" do
@@ -43,6 +47,10 @@ RSpec.describe ApplicationController, type: :controller do
 
     it "does not execute the controller action" do
       expect(assigns(:something)).to be(nil)
+    end
+
+    it "does not set current_user" do
+      expect(controller.current_user).to be nil
     end
   end
 
@@ -53,6 +61,10 @@ RSpec.describe ApplicationController, type: :controller do
 
       it "sets current_user to the user corresponding to the token" do
         expect(controller.current_user).to eq(user)
+      end
+
+      it "sets identity[:username] to user.username" do
+        expect(controller.current_user.identity[:username]).to eq(user.username)
       end
 
       it_behaves_like "an allowed request"
@@ -79,14 +91,21 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     context "with X-Remote-User" do
-      let(:remote_user_header) { { 'X-Remote-User' => 'someuser' } }
+      let(:username) { Faker::Internet.user_name }
+      let(:remote_user_header) { { 'X-Remote-User' => username } }
 
       context "without Authorization" do
-        # it "sets current_user to a non-persisted user"
+        it "sets current_user to a non-persisted user" do
+          expect(controller.current_user.persisted?).to be false
+        end
         it_behaves_like "an allowed request"
       end
 
       it_behaves_like "respects Authorization header"
+
+      it "sets identity[:username] to the X-Remote-User value" do
+        expect(controller.current_user.identity[:username]).to eq(username)
+      end
     end
   end
 
@@ -96,8 +115,6 @@ RSpec.describe ApplicationController, type: :controller do
     let(:auth_header) { { "Authorization" => "Token token=#{user.api_key}" } }
 
     it { is_expected.to have_http_status(403) }
-    it_behaves_like "a disallowed request"
   end
-  
 
 end

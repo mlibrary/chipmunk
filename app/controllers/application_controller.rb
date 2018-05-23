@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'policy_errors'
+require 'user_attributes'
 
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
@@ -16,7 +17,9 @@ class ApplicationController < ActionController::API
   attr_reader :current_user
 
   def fake_user(user)
-    @current_user = user if Rails.env.test?
+    raise "only for testing" unless Rails.env.test?
+    @current_user = user
+    @current_user.identity ||= {}
   end
 
   protected
@@ -43,13 +46,17 @@ class ApplicationController < ActionController::API
 
   def authenticate_token
     authenticate_with_http_token do |token, _options|
-      @current_user = User.find_by(api_key: token) || render_unauthorized
+      if @current_user = User.find_by(api_key: token)
+        @current_user.identity = UserAttributes.new(username: @current_user.username)
+      else
+        render_unauthorized
+      end
     end
   end
 
   def authenticate_remote_user
     @current_user = User.new
-    @current_user.email = "#{request.get_header('HTTP_X_REMOTE_USER')}@umich.edu"
+    @current_user.identity = UserAttributes.new(username: request.get_header('HTTP_X_REMOTE_USER'))
   end
 
   def render_unauthorized(realm = "Application")
