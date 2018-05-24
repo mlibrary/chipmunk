@@ -15,6 +15,11 @@ module V1
       PackagePolicy.new(current_user, package).authorize! :show?
     end
 
+    def sendfile
+      PackagePolicy.new(current_user, package).authorize! :show?
+      response.headers.merge!(PackageFileGetter.new(package).sendfile(params[:file]))
+    end
+
     # POST /v1/requests
     def create
       PackagesPolicy.new(current_user).authorize! :create?

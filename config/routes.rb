@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
     resources :packages, only: [:index, :show], param: :bag_id
     get "/packages/:bag_id/events", controller: :events, action: :index
+    get "/packages/:bag_id/:file", controller: :packages, action: :sendfile, file: /.*/
 
     resources :events, only: [:index]
 

@@ -13,6 +13,10 @@ RSpec.describe ApplicationController, type: :controller do
     def unauthorized
       raise NotAuthorizedError
     end
+
+    def not_found
+      raise FileNotFoundError
+    end
   end
 
   let(:auth_header) { {} }
@@ -22,6 +26,7 @@ RSpec.describe ApplicationController, type: :controller do
     routes.draw do 
       get "something" => "anonymous#something"
       get "unauthorized" => "anonymous#unauthorized"
+      get "not_found" => "anonymous#not_found"
     end
     request.headers.merge! auth_header
     request.headers.merge! remote_user_header
@@ -110,11 +115,21 @@ RSpec.describe ApplicationController, type: :controller do
   end
 
   context "with a request that will fail even if authenticated" do
-    before(:each) { get :unauthorized }
     let(:user) { Fabricate(:user, admin: true) }
     let(:auth_header) { { "Authorization" => "Token token=#{user.api_key}" } }
 
+    before(:each) { get :unauthorized }
+
     it { is_expected.to have_http_status(403) }
+  end
+
+  context "with a request that raises a FileNotFound error" do
+    let(:user) { Fabricate(:user, admin: true) }
+    let(:auth_header) { { "Authorization" => "Token token=#{user.api_key}" } }
+
+    before(:each) { get :not_found }
+    
+    it { is_expected.to have_http_status(404) }
   end
 
 end

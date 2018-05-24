@@ -24,6 +24,49 @@ RSpec.describe V1::PackagesController, type: :controller do
       end
     end
 
+    describe "GET #sendfile" do
+      include_context "as underprivileged user"
+
+      context "with mocked storage" do
+        let(:package) { Fabricate(:package, user: user, storage_location: '/foo') }
+        let(:bag) { double(:bag, data_dir: '/foo/data', bag_files: ['/foo/data/samplefile.jpg'] ) }
+        let(:storage) { double(:storage, new: bag) }
+
+        before(:each) do
+          @old_storage = Services.storage
+          Services.register(:storage) { storage }
+        end
+
+        after(:each) do
+          Services.register(:storage) { @old_storage }
+        end
+
+        let(:service) { described_class.new(package, storage: storage) }
+
+        it "can retrieve a file from the package" do
+          get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
+
+          expect(response.get_header("X-Sendfile")).to eq("/foo/data/samplefile.jpg")
+        end
+
+        it "returns a 404 if the file isn't present in the bag" do
+          get :sendfile, params: { bag_id: package.bag_id, file: "nonexistent" }
+
+          expect(response).to have_http_status(404)
+        end
+        
+        it "checks PackagePolicy with the show? action" do
+          policy = double(:policy)
+          allow(PackagePolicy).to receive(:new).with(user,package).and_return(policy)
+          expect(policy).to receive(:authorize!).with(:show?)
+
+          get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
+        end
+
+      end
+      
+    end
+
     describe "GET #show/:external_id" do
       include_context "as underprivileged user"
       let(:package) { Fabricate(:package, user: user) }

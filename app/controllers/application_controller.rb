@@ -2,6 +2,7 @@
 
 require 'policy_errors'
 require 'user_attributes'
+require 'file_errors'
 
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
@@ -13,6 +14,7 @@ class ApplicationController < ActionController::API
   before_action :set_format_to_json
 
   rescue_from NotAuthorizedError, with: :user_not_authorized
+  rescue_from FileNotFoundError, with: :file_not_found
 
   attr_reader :current_user
 
@@ -26,6 +28,10 @@ class ApplicationController < ActionController::API
 
   def user_not_authorized
     head 403
+  end
+
+  def file_not_found
+    head 404
   end
 
   def set_format_to_json

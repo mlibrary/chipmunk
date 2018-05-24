@@ -5,7 +5,7 @@ require "chipmunk_bag_validator"
 class AuditFixityCheckJob < ApplicationJob
   queue_as :default
 
-  def perform(package:, user:, audit:, bag: ChipmunkBag.new(package.storage_location), mailer: AuditMailer)
+  def perform(package:, user:, audit:, storage: Services.storage, bag: storage.new(package.storage_location), mailer: AuditMailer)
     begin
       if bag.valid?
         outcome = "success"
