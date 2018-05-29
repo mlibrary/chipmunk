@@ -3,12 +3,18 @@ RSpec.describe PackageFileGetter do
     File.join(Rails.application.root, "spec", "support", "fixtures", *args)
   end
 
-  let(:package) { double(:package, storage_location: fixture("test_bag")) }
+  let(:package) { double(:package, storage_location: fixture("test_bag"), stored?: true) }
   let(:service) { described_class.new(package) }
 
   describe "#files" do
     it "returns the list of files in the package's data directory" do
       expect(service.files).to contain_exactly(Pathname.new('samplefile'))
+    end
+  end
+
+  describe "#initialize" do
+    it "raises a RuntimeError if the package is not stored" do
+      expect { described_class.new(double(:package, storage_location: nil, stored?: false)) }.to raise_error(RuntimeError)
     end
   end
 
