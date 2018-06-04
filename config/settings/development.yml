@@ -12,5 +12,9 @@ checkpoint:
   database: 
     adapter: sqlite
     database: db/checkpoint_dev.sqlite3
+keycard:
+  database: 
+    adapter: sqlite
+    database: db/keycard_dev.sqlite3
 
 

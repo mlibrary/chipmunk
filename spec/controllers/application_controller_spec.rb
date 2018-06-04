@@ -53,10 +53,6 @@ RSpec.describe ApplicationController, type: :controller do
     it "does not execute the controller action" do
       expect(assigns(:something)).to be(nil)
     end
-
-    it "does not set current_user" do
-      expect(controller.current_user).to be nil
-    end
   end
 
   shared_examples_for "respects Authorization header" do
@@ -87,7 +83,9 @@ RSpec.describe ApplicationController, type: :controller do
 
     context "without X-Remote-User" do
       context "without Authorization" do
-        it { is_expected.to redirect_to("/login") } 
+        it do
+          is_expected.to redirect_to("/login")
+        end
 
         it_behaves_like "a disallowed request"
       end

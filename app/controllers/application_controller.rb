@@ -43,11 +43,10 @@ class ApplicationController < ActionController::API
     return if @current_user && Rails.env.test?
     if request.has_header?('HTTP_AUTHORIZATION')
       authenticate_token
-    elsif request.has_header?('HTTP_X_REMOTE_USER')
-      authenticate_remote_user
     else
-      redirect_to("/login")
+      authenticate_keycard
     end
+
   end
 
   def authenticate_token
@@ -60,9 +59,10 @@ class ApplicationController < ActionController::API
     end
   end
 
-  def authenticate_remote_user
+  def authenticate_keycard
     @current_user = User.new
-    @current_user.identity = UserAttributes.new(username: request.get_header('HTTP_X_REMOTE_USER'))
+    @current_user.identity = Keycard::RequestAttributes.new(request)
+    redirect_to("/login") unless @current_user.identity[:username].present?
   end
 
   def render_unauthorized(realm = "Application")

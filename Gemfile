@@ -24,6 +24,7 @@ gem "resque"
 gem "resque-pool"
 
 gem 'checkpoint', github: 'mlibrary/checkpoint'
+gem 'keycard', github: 'mlibrary/keycard'
 
 group :development, :test do
   gem "byebug", platforms: [:mri]

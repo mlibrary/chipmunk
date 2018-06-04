@@ -12,4 +12,9 @@ checkpoint:
   database: 
     adapter: sqlite
     database: db/checkpoint_test.sqlite3
+keycard:
+  database: 
+    adapter: sqlite
+    database: db/keycard_test.sqlite3
+  access: proxy
 

@@ -7,6 +7,14 @@ GIT
       mysql2 (~> 0.4.10)
       sequel (~> 5.6)
 
+GIT
+  remote: https://github.com/mlibrary/keycard.git
+  revision: 80660a8f6c9ef9c4cadc7675463f842603b55e80
+  specs:
+    keycard (0.1.1)
+      mysql2
+      sequel
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -243,6 +251,7 @@ DEPENDENCIES
   fabrication
   faker
   jbuilder
+  keycard!
   mysql2 (~> 0.4.10)
   pry
   pry-byebug
