@@ -3,11 +3,11 @@
 class PackagesPolicy < CollectionPolicy
 
   def index?
-    true
+    user.known?
   end
 
   def create?
-    !user.nil?
+    user.known?
   end
 
   def base_scope
@@ -17,8 +17,10 @@ class PackagesPolicy < CollectionPolicy
   def resolve
     if user.admin?
       scope.all
+    elsif user.known?
+      scope.owned(user.id)
     else
-      scope.where(user_id: user.id)
+      scope.none
     end
   end
 end

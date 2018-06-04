@@ -4,27 +4,26 @@ require "spec_helper"
 require_relative "policy_helpers"
 
 RSpec.describe PackagesPolicy do
-  context "with an admin user" do
-    let(:user) { double(:user, admin?: true) }
+  context "as an admin" do
+    let(:user) { FakeUser.new(admin?: true) }
 
-    it_allows(*collection_actions)
+    it_allows :index?, :create?
     it_resolves :all
   end
 
-  context "with a non-admin user with an api token" do
-    let(:user) { double(:user, admin?: false, api_token: SecureRandom.uuid.delete("-")) }
+  context "as a persisted non-admin user" do
+    let(:user) { FakeUser.new(admin?: false) }
 
-    it_allows(*collection_actions)
+    it_allows :index?, :create?
 
-    describe "#resolve" do
-      it "returns owned packages only"
-    end
+    it_resolves_owned
   end
 
-  context "with a user identifier by X-Remote-User" do
-    #    let(:user) { ... }
-    #    it_disallows(*collection_actions)
-    #    it_resolves :none
+  context "as an externally-identified user" do
+    let(:user) { FakeUser.with_external_identity() }
+
+    it_disallows :index?, :create?
+    it_resolves :none
   end
 
   it_has_base_scope(Package.all)

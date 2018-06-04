@@ -3,7 +3,7 @@
 class EventsPolicy < CollectionPolicy
 
   def index?
-    true
+    user.known?
   end
 
   def base_scope
@@ -13,10 +13,10 @@ class EventsPolicy < CollectionPolicy
   def resolve
     if user.admin?
       scope.all
+    elsif user.known?
+      scope.owned(user.id)
     else
-      # non-privileged users are allowed to see events relating to any bags
-      # they own, regardless of who created the event
-      scope.joins(:package).where(packages: { user_id: user.id })
+      scope.none
     end
   end
 

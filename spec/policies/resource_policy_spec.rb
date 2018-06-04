@@ -7,10 +7,10 @@ RSpec.describe ResourcePolicy do
   let(:resource) { double(:resource) }
   let(:user) { double(:user) }
 
-  it_disallows(*resource_actions)
+  it_disallows :show?, :update?, :destroy?
 
   describe "authorize!" do
-    resource_actions.each do |action|
+    [:show?, :update?, :destroy?].each do |action|
       it "raises an exception for #{action}" do
         expect { described_class.new(user, resource).authorize!(action) }.to raise_error(NotAuthorizedError)
       end

@@ -7,7 +7,7 @@ class QueueItemsPolicy < CollectionPolicy
   end
 
   def index?
-    true
+    user.known?
   end
 
   def create?(request)
@@ -17,8 +17,10 @@ class QueueItemsPolicy < CollectionPolicy
   def resolve
     if user.admin?
       scope.all
+    elsif user.known?
+      scope.owned(user.id)
     else
-      scope.joins(:package).where(packages: { user_id: user.id })
+      scope.none
     end
   end
 end

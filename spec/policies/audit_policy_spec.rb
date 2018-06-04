@@ -6,21 +6,22 @@ require_relative "policy_helpers"
 RSpec.describe AuditPolicy do
   let(:resource) { double(:resource) }
 
-  context "with an admin" do
-    let(:user) { double(:user, admin?: true) }
+  context "as an admin" do
+    let(:user) { FakeUser.new(admin?: true) }
 
     it_allows :show?
     it_disallows :update?, :destroy?
   end
 
-  context "with a non-admin user with an api token" do
-    let(:user) { double(:user, admin?: false, api_token: SecureRandom.uuid.delete("-")) }
+  context "as a persisted non-admin user" do
+    let(:user) { FakeUser.new(admin?: false) }
 
-    it_disallows(*resource_actions)
+    it_disallows :show?, :update?, :destroy?
   end
 
-  context "with a user identified by X-Remote-User" do
-    # let(:user) { ... }
-    # it_disallows(*resource_actions)
+  context "as an externally-identified user" do
+    let(:user) { FakeUser.with_external_identity() }
+
+    it_disallows :show?, :update?, :destroy?
   end
 end

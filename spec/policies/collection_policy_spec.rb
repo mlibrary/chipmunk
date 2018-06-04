@@ -20,10 +20,10 @@ RSpec.describe CollectionPolicy, type: :policy do
     end
   end
 
-  it_disallows(*collection_actions)
+  it_disallows :index?, :create?
 
   describe "authorize!" do
-    collection_actions.each do |action|
+    [:index?, :create?].each do |action|
       it "raises an exception for #{action}" do
         expect { described_class.new(user).authorize!(action) }.to raise_error(NotAuthorizedError)
       end
