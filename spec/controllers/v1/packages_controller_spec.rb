@@ -43,11 +43,8 @@ RSpec.describe V1::PackagesController, type: :controller do
 
         let(:service) { described_class.new(package, storage: storage) }
 
-        it "can retrieve a file from the package" do
-          get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
-
-          expect(response.get_header("X-Sendfile")).to eq("/foo/data/samplefile.jpg")
-        end
+        # needs the full rack stack to test X-Sendfile; see requests/v1/packages_file_spec.rb
+        # it "can retrieve a file from the package"
 
         it "returns a 404 if the file isn't present in the bag" do
           get :sendfile, params: { bag_id: package.bag_id, file: "nonexistent" }
@@ -55,9 +52,11 @@ RSpec.describe V1::PackagesController, type: :controller do
           expect(response).to have_http_status(404)
         end
         
+        # so painful
         it "checks PackagePolicy with the show? action" do
           policy = double(:policy)
           allow(PackagePolicy).to receive(:new).with(user,package).and_return(policy)
+          allow(controller).to receive(:send_file).and_return(nil)
           expect(policy).to receive(:authorize!).with(:show?)
 
           get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }

@@ -14,9 +14,8 @@ class PackageFileGetter
   def sendfile(file)
     raise FileNotFoundError, "No such file #{file} in bag" unless files.include?(Pathname.new(file))
 
-    { "X-Sendfile" => File.join(bag.data_dir,file),
-      "Content-Type" => Rack::Mime.mime_type(File.extname(file)),
-      "Content-Disposition" => "attachment; filename=\"#{file}\"" }
+    [ File.join(bag.data_dir, file),
+      type: Rack::Mime.mime_type(File.extname(file)) ]
   end
 
   private

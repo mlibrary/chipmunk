@@ -4,7 +4,6 @@ GIT
   specs:
     checkpoint (1.0.0)
       ettin (~> 1.1)
-      mysql2 (~> 0.4.10)
       sequel (~> 5.6)
 
 GIT
@@ -12,7 +11,6 @@ GIT
   revision: 80660a8f6c9ef9c4cadc7675463f842603b55e80
   specs:
     keycard (0.1.1)
-      mysql2
       sequel
 
 GEM
@@ -198,7 +196,7 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.9.0)
     safe_yaml (1.0.4)
-    sequel (5.8.0)
+    sequel (5.9.0)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)

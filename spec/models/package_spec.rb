@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "pry"
 
 RSpec.describe Package, type: :model do
   let(:upload_path) { Rails.application.config.upload["upload_path"] }

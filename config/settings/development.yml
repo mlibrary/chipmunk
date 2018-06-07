@@ -16,5 +16,3 @@ keycard:
   database: 
     adapter: sqlite
     database: db/keycard_dev.sqlite3
-
-
