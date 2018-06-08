@@ -84,67 +84,10 @@ RSpec.describe V1::QueueItemsController, type: :controller do
         end
       end
 
-      before(:each) do
-        request.headers.merge! auth_header
-      end
-
-      context "as unauthenticated user" do
-        let!(:package) { Fabricate(:package) }
-        include_context "as unauthenticated user"
-        it "returns 401" do
-          post :create, params: { bag_id: package.bag_id }
-          expect(response).to have_http_status(401)
-        end
-        it "renders nothing" do
-          post :create, params: { bag_id: package.bag_id }
-          expect(response).to render_template(nil)
-        end
-        it "does not create the record" do
-          expect { post :create, params: { bag_id: package.bag_id } }
-            .to_not(change { QueueItem.count })
-        end
-      end
-
-      context "as underprivileged user" do
+      context "as user that should have permission to call QueueItemBuilder" do
         include_context "as underprivileged user"
-        context "user does not own the bag" do
-          include_context "mocked QueueItemBuilder", :unused
-          let(:builder) { double(:builder) }
-          let!(:package) { Fabricate(:package) }
-          it "responds with 403" do
-            post :create, params: { bag_id: package.bag_id }
-            expect(response).to have_http_status(403)
-          end
-          it "renders nothing" do
-            post :create, params: { bag_id: package.bag_id }
-            expect(response).to render_template(nil)
-          end
-          it "does not invoke QueueItemBuilder" do
-            post :create, params: { bag_id: package.bag_id }
-            expect(builder).to_not have_received(:create)
-          end
-          it "does not create the record" do
-            expect { post :create, params: { bag_id: package.bag_id } }
-              .to_not(change { QueueItem.count })
-          end
-        end
-        context "user owns the bag" do
-          it_behaves_like "it calls QueueItemBuilder" do
-            let!(:package) { Fabricate(:package, user: user) }
-          end
-        end
-      end
-      context "as admin user" do
-        include_context "as admin user"
-        context "user does not own the bag" do
-          it_behaves_like "it calls QueueItemBuilder" do
-            let!(:package) { Fabricate(:package) }
-          end
-        end
-        context "user owns the bag" do
-          it_behaves_like "it calls QueueItemBuilder" do
-            let!(:package) { Fabricate(:package, user: user) }
-          end
+        it_behaves_like "it calls QueueItemBuilder" do
+          let!(:package) { Fabricate(:package, user: user) }
         end
       end
     end

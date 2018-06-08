@@ -22,6 +22,18 @@ RSpec.describe V1::PackagesController, type: :routing do
       it "routes to #show" do
         expect(get: "/v1/packages/1").to route_to("v1/packages#show", bag_id: "1")
       end
+
+      it "routes to #show" do
+        expect(get: "/v1/packages/1/").to route_to("v1/packages#show", bag_id: "1")
+      end
+
+      it "routes to #sendfile" do
+        expect(get: "/v1/packages/1/foo.jpg").to route_to("v1/packages#sendfile", bag_id: "1", file: "foo.jpg")
+      end
+
+      it "routes to #sendfile" do
+        expect(get: "/v1/packages/1/somepath/bar.txt").to route_to("v1/packages#sendfile", bag_id: "1", file: "somepath/bar.txt")
+      end
     end
 
     describe "v1/requests" do

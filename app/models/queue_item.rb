@@ -2,6 +2,8 @@
 
 class QueueItem < ApplicationRecord
 
+  scope :owned, ->(user_id) { joins(:package).where(packages: { user_id: user_id }) if user_id }
+
   enum status: {
     pending: 0,
     failed:  1,

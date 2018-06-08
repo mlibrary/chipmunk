@@ -24,17 +24,56 @@ RSpec.describe V1::PackagesController, type: :controller do
       end
     end
 
-    describe "GET #show/:external_id" do
-      context "as an admin" do
-        include_context "as admin user"
-        let(:package) { Fabricate(:package) }
+    describe "GET #sendfile" do
+      include_context "as underprivileged user"
 
-        it "can fetch a package by external id" do
-          request.headers.merge! auth_header
-          get :show, params: { bag_id: package.external_id }
+      context "with mocked storage" do
+        let(:package) { Fabricate(:package, user: user, storage_location: '/foo') }
+        let(:bag) { double(:bag, data_dir: '/foo/data', bag_files: ['/foo/data/samplefile.jpg'] ) }
+        let(:storage) { double(:storage, new: bag) }
 
-          expect(assigns(:package)).to eql(package)
+        before(:each) do
+          @old_storage = Services.storage
+          Services.register(:storage) { storage }
         end
+
+        after(:each) do
+          Services.register(:storage) { @old_storage }
+        end
+
+        let(:service) { described_class.new(package, storage: storage) }
+
+        # needs the full rack stack to test X-Sendfile; see requests/v1/packages_file_spec.rb
+        # it "can retrieve a file from the package"
+
+        it "returns a 404 if the file isn't present in the bag" do
+          get :sendfile, params: { bag_id: package.bag_id, file: "nonexistent" }
+
+          expect(response).to have_http_status(404)
+        end
+        
+        # so painful
+        it "checks PackagePolicy with the show? action" do
+          policy = double(:policy)
+          allow(PackagePolicy).to receive(:new).with(user,package).and_return(policy)
+          allow(controller).to receive(:send_file).and_return(nil)
+          expect(policy).to receive(:authorize!).with(:show?)
+
+          get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
+        end
+
+      end
+      
+    end
+
+    describe "GET #show/:external_id" do
+      include_context "as underprivileged user"
+      let(:package) { Fabricate(:package, user: user) }
+
+      it "can fetch a package by external id" do
+        get :show, params: { bag_id: package.external_id }
+
+        expect(assigns(:package)).to eql(package)
       end
     end
 
@@ -63,25 +102,6 @@ RSpec.describe V1::PackagesController, type: :controller do
         end
       end
 
-      before(:each) do
-        request.headers.merge! auth_header
-      end
-
-      context "as unauthenticated user" do
-        include_context "as unauthenticated user"
-        it "returns 401" do
-          post :create, params: attributes
-          expect(response).to have_http_status(401)
-        end
-        it "renders nothing" do
-          post :create, params: attributes
-          expect(response).to render_template(nil)
-        end
-        it "does not create the record" do
-          post :create, params: attributes
-          expect(Package.count).to eql(0)
-        end
-      end
       context "as authenticated user" do
         include_context "as underprivileged user"
         context "new record" do

@@ -2,5 +2,5 @@
 
 RSpec.shared_context "as admin user" do
   let(:user) { Fabricate(:user, admin: true) }
-  let(:auth_header) { { "Authorization" => "Token token=#{user.api_key}" } }
+  before(:each) { controller.fake_user(user) }
 end

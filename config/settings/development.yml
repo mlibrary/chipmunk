@@ -8,5 +8,11 @@ validation:
     video: "bin/validate_video.pl"
   bagger_profile:
     digital: "http://uri_to_bagger_profile"
-
-
+checkpoint:
+  database: 
+    adapter: sqlite
+    database: db/checkpoint_dev.sqlite3
+keycard:
+  database: 
+    adapter: sqlite
+    database: db/keycard_dev.sqlite3

@@ -59,6 +59,7 @@ Feature: End to End functionality
       | user          | <username>                           |
       | content_type  | audio                                |
       | external_id   | <external_id>                        |
+      | files         | samplefile                           |
       # see PFDR-66 (this is present for completed bags after the request/bag merger)
       | stored        | true                                 |
       | upload_link   | localhost:/tmp/chipmunk/inc/<bag_id> |

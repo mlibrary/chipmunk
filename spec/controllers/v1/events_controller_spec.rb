@@ -30,7 +30,6 @@ RSpec.describe V1::EventsController, type: :controller do
         before(:each) do
           # create an extra event that shouldn't be in the output
           Fabricate(:event)
-          request.headers.merge! auth_header
         end
 
         it "can show only events for an object identified by bag_id" do

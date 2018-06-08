@@ -3,16 +3,17 @@
 module V1
   class AuditsController < ApplicationController
     def index
-      authorize Audit
-      @audits = policy_scope(Audit).map {|audit| AuditPresenter.new(audit, expand: expand?) }
+      policy = AuditsPolicy.new(current_user)
+      policy.authorize! :index?
+      @audits = policy.resolve.map {|audit| AuditPresenter.new(audit, expand: expand?) }
     end
 
     def show
-      @audit = AuditPresenter.new(Audit.find(params[:id]).tap {|a| authorize(a) }, expand: expand?)
+      @audit = AuditPresenter.new(Audit.find(params[:id]).tap {|a| AuditPolicy.new(current_user,a).authorize! :show? }, expand: expand?)
     end
 
     def create
-      authorize Audit
+      AuditsPolicy.new(current_user).authorize! :create?
 
       packages = Package.stored
       audit = Audit.create!(user: current_user, packages: packages.count)

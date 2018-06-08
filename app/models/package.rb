@@ -7,6 +7,7 @@ class Package < ApplicationRecord
   has_many :events
 
   scope :stored, -> { Package.where.not(storage_location: nil) }
+  scope :owned, ->(user_id) { Package.where(user_id: user_id) }
 
   def to_param
     bag_id
@@ -47,6 +48,10 @@ class Package < ApplicationRecord
 
   def bagger_profile
     Rails.application.config.validation["bagger_profile"][content_type.to_s]
+  end
+
+  def resource_type
+    content_type
   end
 
 end

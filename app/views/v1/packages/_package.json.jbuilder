@@ -11,3 +11,6 @@ end
 json.stored package.stored?
 json.created_at package.created_at.to_formatted_s(:default)
 json.updated_at package.updated_at.to_formatted_s(:default)
+if expand and package.stored?
+  json.files PackageFileGetter.new(package).files
+end

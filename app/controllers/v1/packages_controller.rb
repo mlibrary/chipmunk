@@ -4,21 +4,25 @@ require "request_builder"
 
 module V1
   class PackagesController < ApplicationController
-
     # GET /packages
     def index
-      @packages = policy_scope(Package)
+      @packages = PackagesPolicy.new(current_user).resolve
     end
 
     # GET /packages/1
     # GET /packages/39015012345678
     def show
-      authorize package
+      PackagePolicy.new(current_user, package).authorize! :show?
+    end
+
+    def sendfile
+      PackagePolicy.new(current_user, package).authorize! :show?
+      send_file(*PackageFileGetter.new(package).sendfile(params[:file]))
     end
 
     # POST /v1/requests
     def create
-      authorize Package
+      PackagesPolicy.new(current_user).authorize! :create?
       status, @request_record = RequestBuilder.new
         .create(create_params.merge(user: current_user))
       case status
