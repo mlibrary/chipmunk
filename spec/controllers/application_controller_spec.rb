@@ -83,11 +83,12 @@ RSpec.describe ApplicationController, type: :controller do
 
     context "without X-Remote-User" do
       context "without Authorization" do
-        it do
-          is_expected.to redirect_to("/login")
-        end
-
+        it { is_expected.to redirect_to("/login") }
         it_behaves_like "a disallowed request"
+
+        it "stores the requested return path in the session" do
+          expect(session[:return_to]).to eq("/something")
+        end
       end
 
       it_behaves_like "respects Authorization header"

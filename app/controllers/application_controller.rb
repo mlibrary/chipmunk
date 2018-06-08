@@ -62,7 +62,16 @@ class ApplicationController < ActionController::API
   def authenticate_keycard
     @current_user = User.new
     @current_user.identity = Keycard::RequestAttributes.new(request)
-    redirect_to("/login") unless @current_user.identity[:username].present?
+    if @current_user.identity[:username].empty?
+      if request.get? && !request.xhr?
+        session[:return_to] = request.path
+        redirect_to("/login")
+      else
+        # redirecting to an interactive login page isn't a good idea with POST
+        # or non-interactive (XMLHttpRequest) requests - cribbed from Sorcery
+        render_unauthorized
+      end
+    end
   end
 
   def render_unauthorized(realm = "Application")

@@ -19,4 +19,6 @@ Rails.application.routes.draw do
 
     resources :audits, only: [:index, :create, :show]
   end
+
+  get "/login", controller: :users, action: :login
 end
