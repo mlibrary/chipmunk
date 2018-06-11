@@ -6,6 +6,7 @@ RSpec.describe V1::EventsController, type: :controller do
   describe "/v1" do
     describe "GET #index" do
       it_behaves_like "an index endpoint" do
+        let(:policy) { EventsPolicy }
         let(:key) { :event_id }
         # for underprivileged users, should only render events where the package
         # belongs to the user

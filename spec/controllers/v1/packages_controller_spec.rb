@@ -6,6 +6,7 @@ RSpec.describe V1::PackagesController, type: :controller do
   describe "/v1" do
     describe "GET #index" do
       it_behaves_like "an index endpoint" do
+        let(:policy) { PackagesPolicy }
         let(:key) { :bag_id }
         let(:factory) do
           proc {|user| user ? Fabricate(:package, user: user) : Fabricate(:package) }
@@ -16,6 +17,7 @@ RSpec.describe V1::PackagesController, type: :controller do
 
     describe "GET #show" do
       it_behaves_like "a show endpoint" do
+        let(:policy) { PackagePolicy }
         let(:key) { :bag_id }
         let(:factory) do
           proc {|user| user ? Fabricate(:package, user: user) : Fabricate(:package) }
@@ -52,12 +54,9 @@ RSpec.describe V1::PackagesController, type: :controller do
           expect(response).to have_http_status(404)
         end
 
-        # so painful
         it "checks PackagePolicy with the show? action" do
-          policy = double(:policy)
-          allow(PackagePolicy).to receive(:new).with(user, package).and_return(policy)
           allow(controller).to receive(:send_file).and_return(nil)
-          expect(policy).to receive(:authorize!).with(:show?)
+          expect_resource_policy_check(policy: PackagePolicy, resource: package, user: user, action: :show?)
 
           get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
         end
@@ -72,6 +71,12 @@ RSpec.describe V1::PackagesController, type: :controller do
         get :show, params: { bag_id: package.external_id }
 
         expect(assigns(:package)).to eql(package)
+      end
+
+      it "checks PackagePolicy with the show? action" do
+        expect_resource_policy_check(policy: PackagePolicy, resource: package, user: user, action: :show?)
+
+        get :show, params: { bag_id: package.external_id }
       end
     end
 
@@ -106,6 +111,11 @@ RSpec.describe V1::PackagesController, type: :controller do
           context "RequestBuilder returns a valid record" do
             include_context "mocked RequestBuilder", :created
 
+            it "checks PackagesPolicy with the create? action" do
+              expect_collection_policy_check(policy: PackagesPolicy, user: user, action: :create?)
+              post :create, params: attributes
+            end
+
             it "passes the parameters to a RequestBuilder" do
               post :create, params: attributes
               expect(RequestBuilder).to have_received(:new)
@@ -138,6 +148,12 @@ RSpec.describe V1::PackagesController, type: :controller do
         end
         context "as duplicate record" do
           include_context "mocked RequestBuilder", :duplicate
+
+          it "checks PackagesPolicy with the create? action" do
+            expect_collection_policy_check(policy: PackagesPolicy, user: user, action: :create?)
+            post :create, params: attributes
+          end
+
           it "does not create an additional record" do
             post :create, params: attributes
             expect(Package.count).to eql(1)
