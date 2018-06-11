@@ -3,7 +3,9 @@
 module V1
   class EventsController < ApplicationController
     def index
-      @events = EventsPolicy.new(current_user, Event.package(params[:bag_id])).resolve
+      policy = EventsPolicy.new(current_user, Event.package(params[:bag_id]))
+      policy.authorize! :index?
+      @events = policy.resolve
     end
   end
 end

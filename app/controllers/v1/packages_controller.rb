@@ -6,7 +6,10 @@ module V1
   class PackagesController < ApplicationController
     # GET /packages
     def index
-      @packages = PackagesPolicy.new(current_user).resolve
+      policy = PackagesPolicy.new(current_user)
+      policy.authorize! :index?
+
+      @packages = policy.resolve
     end
 
     # GET /packages/1

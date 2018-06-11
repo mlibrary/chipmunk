@@ -11,25 +11,39 @@ RSpec.shared_examples "an index endpoint" do
 
   context "as underprivileged user" do
     include_context "as underprivileged user"
-    before(:each) { get :index, params: {} }
 
     it "returns 200" do
+      get :index
       expect(response).to have_http_status(200)
     end
+
     it "renders only the user's records" do
+      get :index
       expect(assigns(assignee)).to contain_exactly(mine)
     end
+
     it "renders the correct template" do
+      get :index
       expect(response).to render_template(template)
+    end
+
+    it "checks the policy" do
+      expect_collection_policy_check(policy: policy, user: user, action: :index?)
+      get :index
     end
   end
 
   context "as admin" do
     include_context "as admin user"
-    before(:each) { get :index, params: {} }
 
     it "renders all records" do
+      get :index
       expect(assigns(assignee)).to contain_exactly(mine, other)
+    end
+
+    it "checks the policy" do
+      expect_collection_policy_check(policy: policy, user: user, action: :index?)
+      get :index
     end
   end
 end

@@ -6,7 +6,10 @@ module V1
   class QueueItemsController < ApplicationController
     # GET /v1/queue
     def index
-      @queue_items = QueueItemsPolicy.new(current_user).resolve
+      policy = QueueItemsPolicy.new(current_user)
+      policy.authorize! :index?
+
+      @queue_items = policy.resolve
     end
 
     # GET /v1/queue/:id

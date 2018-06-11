@@ -85,3 +85,19 @@ def it_has_base_scope(scope)
     end
   end
 end
+
+def expect_resource_policy_check(policy:, resource:, user:, action:)
+  policy_double = double(:policy)
+  allow(policy).to receive(:new).with(user, resource).and_return(policy_double)
+  expect(policy_double).to receive(:authorize!).with(action)
+end
+
+def expect_collection_policy_check(policy:, user:, action:)
+  policy_double = double(:policy, resolve: [])
+
+  allow(policy).to receive(:new).with(user).and_return(policy_double)
+  # optional base scope
+  allow(policy).to receive(:new).with(user,anything).and_return(policy_double)
+
+  expect(policy_double).to receive(:authorize!).with(action)
+end

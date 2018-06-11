@@ -4,9 +4,9 @@ require "rails_helper"
 
 RSpec.describe V1::AuditsController, type: :controller do
   describe "/v1" do
-    let!(:audit) { Fabricate(:audit) }
 
     describe "GET #show" do
+      let!(:audit) { Fabricate(:audit) }
       include_context "as admin user"
 
       it "assigns an audit presenter" do
@@ -23,9 +23,16 @@ RSpec.describe V1::AuditsController, type: :controller do
         get :show, params: { id: audit.id, expand: true }
         expect(assigns(:audit).expand?).to be true
       end
+      
+      it "checks the policy" do
+        expect_resource_policy_check(policy: AuditPolicy, user: user, resource: audit, action: :show?)
+
+        get :show, params: { id: audit.id }
+      end
     end
 
     describe "GET #index" do
+      let!(:audit) { Fabricate(:audit) }
       include_context "as admin user"
 
       it "assigns an array of audit presenters" do
@@ -37,10 +44,14 @@ RSpec.describe V1::AuditsController, type: :controller do
         get :index
         expect(assigns(:audits).first.expand?).to be false
       end
-    end
-  end
 
-  describe "/v1" do
+      it "checks the policy" do
+        expect_collection_policy_check(policy: AuditsPolicy, user: user, action: :index?)
+
+        get :index
+      end
+    end
+
     describe "POST #create" do
       # create two packages
       include_context "as admin user"
@@ -98,6 +109,12 @@ RSpec.describe V1::AuditsController, type: :controller do
       it "renders nothing" do
         post :create
         expect(response).to render_template(nil)
+      end
+
+      it "checks the policy" do
+        expect_collection_policy_check(policy: AuditsPolicy, user: user, action: :create?)
+
+        post :create
       end
     end
   end
