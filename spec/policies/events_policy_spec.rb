@@ -4,8 +4,7 @@ require "spec_helper"
 require_relative "policy_helpers"
 
 RSpec.describe EventsPolicy do
-
-  let(:policy) { described_class.new(user,FakeCollection.new()) }
+  let(:policy) { described_class.new(user, FakeCollection.new) }
 
   context "as an admin" do
     let(:user) { FakeUser.new(admin?: true) }
@@ -26,7 +25,7 @@ RSpec.describe EventsPolicy do
   end
 
   context "as an externally-identified user" do
-    let(:user) { FakeUser.with_external_identity() }
+    let(:user) { FakeUser.with_external_identity }
 
     it_disallows :index?, :create?
     it_resolves :none

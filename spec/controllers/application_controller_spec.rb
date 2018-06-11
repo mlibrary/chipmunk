@@ -1,8 +1,10 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 RSpec.describe ApplicationController, type: :controller do
   # doesn't matter what, just needs to exist
-  AN_EXISTING_TEMPLATE = 'v1/audits/show'
+  AN_EXISTING_TEMPLATE = "v1/audits/show"
 
   controller do
     def something
@@ -23,7 +25,7 @@ RSpec.describe ApplicationController, type: :controller do
   let(:remote_user_header) { {} }
 
   before(:each) do
-    routes.draw do 
+    routes.draw do
       get "something" => "anonymous#something"
       get "unauthorized" => "anonymous#unauthorized"
       get "not_found" => "anonymous#not_found"
@@ -35,20 +37,20 @@ RSpec.describe ApplicationController, type: :controller do
   subject { response }
 
   shared_examples_for "an allowed request" do
-    it { is_expected.to have_http_status(200) } 
-    it { is_expected.to render_template(AN_EXISTING_TEMPLATE) } 
+    it { is_expected.to have_http_status(200) }
+    it { is_expected.to render_template(AN_EXISTING_TEMPLATE) }
 
     it "executes the controller action" do
-      expect(assigns(:something)).to eq('success')
+      expect(assigns(:something)).to eq("success")
     end
-    
+
     it "sets user identity" do
       expect(controller.current_user.identity).to respond_to(:all)
     end
   end
 
   shared_examples_for "a disallowed request" do
-    it { is_expected.to render_template(nil) } 
+    it { is_expected.to render_template(nil) }
 
     it "does not execute the controller action" do
       expect(assigns(:something)).to be(nil)
@@ -73,7 +75,7 @@ RSpec.describe ApplicationController, type: :controller do
 
     context "with invalid Authorization" do
       let(:auth_header) { { "Authorization" => "Token token=bad_token" } }
-      it { is_expected.to have_http_status(401) } 
+      it { is_expected.to have_http_status(401) }
       it_behaves_like "a disallowed request"
     end
   end
@@ -96,7 +98,7 @@ RSpec.describe ApplicationController, type: :controller do
 
     context "with X-Remote-User" do
       let(:username) { Faker::Internet.user_name }
-      let(:remote_user_header) { { 'X-Remote-User' => username } }
+      let(:remote_user_header) { { "X-Remote-User" => username } }
 
       context "without Authorization" do
         it "sets current_user to a non-persisted user" do
@@ -127,8 +129,7 @@ RSpec.describe ApplicationController, type: :controller do
     let(:auth_header) { { "Authorization" => "Token token=#{user.api_key}" } }
 
     before(:each) { get :not_found }
-    
+
     it { is_expected.to have_http_status(404) }
   end
-
 end

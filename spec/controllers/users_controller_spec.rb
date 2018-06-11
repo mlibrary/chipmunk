@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe UsersController, type: :controller do
   describe "GET #login" do
     context "with X-Remote-user" do
-      before(:each) { request.headers.merge!( { "X-Remote-User" => "someuser" } ) }
+      before(:each) { request.headers.merge!("X-Remote-User" => "someuser") }
 
       context "with session[:return_to]" do
         before(:each) { session[:return_to] = "/something" }
@@ -31,7 +31,6 @@ RSpec.describe UsersController, type: :controller do
           expect(response).to redirect_to("/v1/packages")
         end
       end
-
     end
   end
 end

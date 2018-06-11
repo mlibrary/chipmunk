@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'policy_errors'
-require 'user_attributes'
-require 'file_errors'
+require "policy_errors"
+require "user_attributes"
+require "file_errors"
 
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
@@ -41,17 +41,16 @@ class ApplicationController < ActionController::API
   # Authenticate the user with token based authentication
   def authenticate
     return if @current_user && Rails.env.test?
-    if request.has_header?('HTTP_AUTHORIZATION')
+    if request.has_header?("HTTP_AUTHORIZATION")
       authenticate_token
     else
       authenticate_keycard
     end
-
   end
 
   def authenticate_token
     authenticate_with_http_token do |token, _options|
-      if @current_user = User.find_by(api_key: token)
+      if (@current_user = User.find_by(api_key: token))
         @current_user.identity = UserAttributes.new(username: @current_user.username)
       else
         render_unauthorized

@@ -5,7 +5,15 @@ require "chipmunk_bag_validator"
 class AuditFixityCheckJob < ApplicationJob
   queue_as :default
 
-  def perform(package:, user:, audit:, storage: Services.storage, bag: storage.new(package.storage_location), mailer: AuditMailer)
+  def perform(package:, user:, audit:, **kwargs)
+    @package = package
+    @user = user
+    @audit = audit
+
+    save_event(*validate_bag(**kwargs))
+  end
+
+  def validate_bag(storage: Services.storage, bag: storage.new(package.storage_location), mailer: AuditMailer)
     begin
       if bag.valid?
         outcome = "success"
@@ -13,7 +21,7 @@ class AuditFixityCheckJob < ApplicationJob
       else
         outcome = "failure"
         detail = bag.errors.full_messages.join("\n")
-        mailer.failure(emails: [audit.user.email],package: package, error: detail).deliver_now
+        mailer.failure(emails: [audit.user.email], package: package, error: detail).deliver_now
       end
     rescue RuntimeError => e
       outcome = "failure"
@@ -21,6 +29,10 @@ class AuditFixityCheckJob < ApplicationJob
       mailer.failure(emails: [audit.user.email], package: package, error: detail).deliver_now
     end
 
+    [outcome, detail]
+  end
+
+  def save_event(outcome, detail)
     Event.create(
       package: package,
       user: user,
@@ -30,5 +42,9 @@ class AuditFixityCheckJob < ApplicationJob
       detail: detail
     )
   end
+
+  private
+
+  attr_reader :package, :user, :audit
 
 end

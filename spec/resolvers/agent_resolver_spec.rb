@@ -5,7 +5,7 @@ require "agent_resolver"
 module Swapmeet
   RSpec.describe AgentResolver do
     subject(:agent_resolver) do
-      described_class.new()
+      described_class.new
     end
 
     def fake_attrs(attrs)
@@ -22,7 +22,7 @@ module Swapmeet
 
       context "with some attributes" do
         subject(:agent_resolver) do
-          described_class.new()
+          described_class.new
         end
 
         let(:attrs) { fake_attrs("foo" => "bar") }
@@ -36,7 +36,7 @@ module Swapmeet
 
       context "with some different attributes" do
         let(:attrs) { fake_attrs("baz" => "quux") }
-        let(:agent) { agent_from(type: 'baz', id: 'quux') }
+        let(:agent) { agent_from(type: "baz", id: "quux") }
 
         it "turns the attributes into agents" do
           resolved_agents = agent_resolver.resolve(actor)
@@ -45,11 +45,11 @@ module Swapmeet
       end
 
       context "with a multi-value attribute" do
-        let(:attrs) { fake_attrs("foo" => ['bar', 'baz']) }
+        let(:attrs) { fake_attrs("foo" => ["bar", "baz"]) }
         let(:agents) do
-          [ base_agent,
-            agent_from(type: 'foo', id: 'bar'),
-            agent_from(type: 'foo', id: 'baz') ]
+          [base_agent,
+           agent_from(type: "foo", id: "bar"),
+           agent_from(type: "foo", id: "baz")]
         end
 
         it "returns two agents" do
@@ -57,9 +57,7 @@ module Swapmeet
           expect(resolved_agents.length).to eq(agents.length)
           expect(resolved_agents).to contain_exactly(*agents)
         end
-
       end
-
     end
   end
 end

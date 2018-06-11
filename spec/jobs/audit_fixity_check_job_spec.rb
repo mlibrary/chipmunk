@@ -81,6 +81,5 @@ RSpec.describe AuditFixityCheckJob do
       run_job
       expect(event.detail).to match("RuntimeError")
     end
-
   end
 end

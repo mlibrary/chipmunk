@@ -21,7 +21,7 @@ class ResourcePolicy
   end
 
   def authorize!(action, message = nil)
-    raise NotAuthorizedError.new(message) unless public_send(action)
+    raise NotAuthorizedError, message unless public_send(action)
   end
 
   protected

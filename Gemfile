@@ -14,8 +14,8 @@ end
 
 gem "bagit"
 gem "bcrypt", "~> 3.1.7"
-gem "ettin"
 gem "canister"
+gem "ettin"
 gem "jbuilder"
 gem "mysql2", "~>0.4.10"
 gem "rack-cors"
@@ -23,8 +23,8 @@ gem "rails", "~> 5.1.0"
 gem "resque"
 gem "resque-pool"
 
-gem 'checkpoint', github: 'mlibrary/checkpoint'
-gem 'keycard', github: 'mlibrary/keycard'
+gem "checkpoint", github: "mlibrary/checkpoint"
+gem "keycard", github: "mlibrary/keycard"
 
 group :development, :test do
   gem "byebug", platforms: [:mri]

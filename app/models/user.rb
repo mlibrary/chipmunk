@@ -24,7 +24,7 @@ class User < ApplicationRecord
   end
 
   def agent_type
-    'user'
+    "user"
   end
 
   def agent_id

@@ -60,11 +60,12 @@ describe "/v1/audits/show.json.jbuilder" do
     end
 
     let(:expected_event) do
-      {              
-        bag_id: event.package.bag_id,
-        external_id:       event.package.external_id,
-        detail:   event.detail,
-        date:     event.created_at.to_formatted_s(:default) }
+      {
+        bag_id:      event.package.bag_id,
+        external_id: event.package.external_id,
+        detail:      event.detail,
+        date:        event.created_at.to_formatted_s(:default)
+      }
     end
 
     let(:audit) do

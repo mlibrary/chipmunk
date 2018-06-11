@@ -8,10 +8,10 @@ require "ostruct"
 
 RSpec.describe PackagePolicy do
   let(:resource) do
-    double(:resource, 
-           user: double, 
-           resource_type: Faker::Lorem.word,
-           id: 1)
+    double(:resource,
+      user: double,
+      resource_type: Faker::Lorem.word,
+      id: 1)
   end
 
   context "as an admin" do
@@ -44,21 +44,21 @@ RSpec.describe PackagePolicy do
     end
 
     context "with a grant for that user & resource" do
-      before(:each) do 
-        new_permit(agent(type: 'username', id: username),
-                   make_permission(:show),
-                   Checkpoint::Resource::AllOfType.new(resource.resource_type)).save
+      before(:each) do
+        new_permit(agent(type: "username", id: username),
+          make_permission(:show),
+          Checkpoint::Resource::AllOfType.new(resource.resource_type)).save
       end
 
       it_allows :show?
       it_disallows :update?, :destroy?
     end
-    
+
     context "with a grant for a different user" do
-      before(:each) do 
-        new_permit(agent(type: 'username', id: Faker::Internet.user_name),
-                   make_permission(:show),
-                   Checkpoint::Resource::AllOfType.new(resource.resource_type)).save
+      before(:each) do
+        new_permit(agent(type: "username", id: Faker::Internet.user_name),
+          make_permission(:show),
+          Checkpoint::Resource::AllOfType.new(resource.resource_type)).save
       end
 
       it_disallows :show?, :update?, :destroy?

@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 # until keycard
 
-require 'ostruct'
+require "ostruct"
 
 class UserAttributes < OpenStruct
   def all
-    self.to_h
+    to_h
   end
 
   def [](attr)

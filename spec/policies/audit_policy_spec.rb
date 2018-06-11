@@ -20,7 +20,7 @@ RSpec.describe AuditPolicy do
   end
 
   context "as an externally-identified user" do
-    let(:user) { FakeUser.with_external_identity() }
+    let(:user) { FakeUser.with_external_identity }
 
     it_disallows :show?, :update?, :destroy?
   end

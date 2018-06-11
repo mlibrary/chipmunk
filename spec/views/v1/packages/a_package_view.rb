@@ -27,20 +27,20 @@ RSpec.shared_examples_for "a package view" do |assignee, wrapper, expand|
       upload_link:  package.upload_link,
       created_at:   package.created_at.to_formatted_s(:default),
       updated_at:   package.updated_at.to_formatted_s(:default),
-      files:        [ package_file ],
+      files:        [package_file],
       stored:       package.stored?
     }
   end
   let(:bag) do
     double(:bag,
-           data_dir: File.join(package.storage_location,"data"),
-           bag_files: [File.join(package.storage_location,"data",package_file)])
+      data_dir: File.join(package.storage_location, "data"),
+      bag_files: [File.join(package.storage_location, "data", package_file)])
   end
   let(:admin_user) { double(:admin_user, admin?: true) }
   let(:unprivileged_user) { double(:unpriv_user, admin?: false) }
 
   before(:each) do
-    if !expand
+    unless expand
       expected.delete(:files)
     end
 

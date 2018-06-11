@@ -28,8 +28,8 @@ RSpec.describe V1::PackagesController, type: :controller do
       include_context "as underprivileged user"
 
       context "with mocked storage" do
-        let(:package) { Fabricate(:package, user: user, storage_location: '/foo') }
-        let(:bag) { double(:bag, data_dir: '/foo/data', bag_files: ['/foo/data/samplefile.jpg'] ) }
+        let(:package) { Fabricate(:package, user: user, storage_location: "/foo") }
+        let(:bag) { double(:bag, data_dir: "/foo/data", bag_files: ["/foo/data/samplefile.jpg"]) }
         let(:storage) { double(:storage, new: bag) }
 
         before(:each) do
@@ -51,19 +51,17 @@ RSpec.describe V1::PackagesController, type: :controller do
 
           expect(response).to have_http_status(404)
         end
-        
+
         # so painful
         it "checks PackagePolicy with the show? action" do
           policy = double(:policy)
-          allow(PackagePolicy).to receive(:new).with(user,package).and_return(policy)
+          allow(PackagePolicy).to receive(:new).with(user, package).and_return(policy)
           allow(controller).to receive(:send_file).and_return(nil)
           expect(policy).to receive(:authorize!).with(:show?)
 
           get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
         end
-
       end
-      
     end
 
     describe "GET #show/:external_id" do

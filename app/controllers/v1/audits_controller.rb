@@ -9,7 +9,7 @@ module V1
     end
 
     def show
-      @audit = AuditPresenter.new(Audit.find(params[:id]).tap {|a| AuditPolicy.new(current_user,a).authorize! :show? }, expand: expand?)
+      @audit = AuditPresenter.new(Audit.find(params[:id]).tap {|a| AuditPolicy.new(current_user, a).authorize! :show? }, expand: expand?)
     end
 
     def create

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'policy_errors'
+
+require "policy_errors"
 
 class CollectionPolicy
   attr_reader :user
@@ -26,10 +27,10 @@ class CollectionPolicy
   end
 
   def authorize!(action, message = nil)
-    raise NotAuthorizedError.new(message) unless public_send(action)
+    raise NotAuthorizedError, message unless public_send(action)
   end
 
   private
 
-    attr_reader :scope
+  attr_reader :scope
 end

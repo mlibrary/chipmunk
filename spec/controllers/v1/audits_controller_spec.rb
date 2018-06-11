@@ -42,7 +42,7 @@ RSpec.describe V1::AuditsController, type: :controller do
 
   describe "/v1" do
     describe "POST #create" do
-    # create two packages
+      # create two packages
       include_context "as admin user"
 
       let!(:packages) { Array.new(2) { Fabricate(:package) } }
@@ -57,7 +57,7 @@ RSpec.describe V1::AuditsController, type: :controller do
         post :create
 
         packages.each do |package|
-          expect(AuditFixityCheckJob).to have_received(:perform_later).with(package: package, user: user, audit: anything())
+          expect(AuditFixityCheckJob).to have_received(:perform_later).with(package: package, user: user, audit: anything)
         end
       end
 
@@ -82,7 +82,7 @@ RSpec.describe V1::AuditsController, type: :controller do
       it "does not start a AuditFixityCheckJob for unstored packages (requests)" do
         post :create
 
-        expect(AuditFixityCheckJob).not_to have_received(:perform_later).with(package: unstored_package, user: user, audit: anything())
+        expect(AuditFixityCheckJob).not_to have_received(:perform_later).with(package: unstored_package, user: user, audit: anything)
       end
 
       it "returns 201" do

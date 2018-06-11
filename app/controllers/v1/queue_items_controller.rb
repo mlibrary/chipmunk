@@ -12,7 +12,7 @@ module V1
     # GET /v1/queue/:id
     def show
       @queue_item = QueueItem.find(params[:id])
-      QueueItemPolicy.new(current_user,@queue_item).authorize! :show?
+      QueueItemPolicy.new(current_user, @queue_item).authorize! :show?
       render template: "v1/queue_items/show", status: 200
     end
 

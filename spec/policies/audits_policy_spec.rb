@@ -8,7 +8,7 @@ RSpec.describe AuditsPolicy do
     let(:user) { FakeUser.new(admin?: true) }
 
     it_allows :index?, :create?
-    it_resolves :all 
+    it_resolves :all
   end
 
   context "as a persisted non-admin user" do

@@ -1,11 +1,15 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.describe AuditMailer, type: :mailer do
   let(:package_user) { double(:package_user, email: Faker::Internet.email) }
-  let(:package) { double(:package,
-                         user: package_user,
-                         content_type: Faker::Lorem.word,
-                         external_id: SecureRandom.uuid) }
+  let(:package) do
+    double(:package,
+      user: package_user,
+      content_type: Faker::Lorem.word,
+      external_id: SecureRandom.uuid)
+  end
   let(:mailer) { described_class }
   let(:email) { ActionMailer::Base.deliveries.last }
   let(:addressee) { "somebody@example.com" }
