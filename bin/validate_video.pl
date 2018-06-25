@@ -20,32 +20,32 @@ delete $files{'closedcaptioning.srt'};
 
 my $seq_ok = 1;
 foreach my $i ((1..20)) {
-    my $seq = sprintf("%04d",$i);
-    if($files{"miam$seq.mov"}) {
-        delete($files{"miam$seq.mov"});
+    my $seq = sprintf("%03d",$i);
+    if($files{"miam-${EXTERNAL_ID}-$seq.mov"}) {
+        delete($files{"miam-${EXTERNAL_ID}-$seq.mov"});
     } else {
         $seq_ok = 0;
     }
 
     # there can be 1-5 thumbnails per track
-    if($files{"tn${seq}_1.jpg"}) {
-        delete($files{"tn${seq}_1.jpg"});
+    if($files{"mitn-${EXTERNAL_ID}-${seq}_1.jpg"}) {
+        delete($files{"mitn-${EXTERNAL_ID}-${seq}_1.jpg"});
     } else {
         $seq_ok = 0;
     }
     foreach my $j ((2..5)) {
-        if($files{"tn${seq}_$j.jpg"}) {
+        if($files{"mitn-${EXTERNAL_ID}-${seq}_$j.jpg"}) {
             if($seq_ok) {
-                delete($files{"tn${seq}_$j.jpg"});
+                delete($files{"mitn-${EXTERNAL_ID}-${seq}_$j.jpg"});
             } else {
-                die("Not all files present in $DIRECTORY for seq=$seq but tn${seq}_$j.jpg exists!\n");
+                die("Not all files present in $DIRECTORY for seq=$seq but mitn-${EXTERNAL_ID}-${seq}_$j.jpg exists!\n");
             }
         } else { 
             last;
         }
     }
     # optional
-    delete($files{"mipm${seq}.mov"}) if $seq_ok;
+    delete($files{"mipm-${EXTERNAL_ID}-${seq}.mov"}) if $seq_ok;
 
 }
 

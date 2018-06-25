@@ -1,4 +1,4 @@
-External-Identifier: video_test
+External-Identifier: 39015083611155
 Chipmunk-Content-Type: video
 Bag-ID: goodbag
 Metadata-URL: http://mirlyn.lib.umich.edu/Record/011500592.xml
