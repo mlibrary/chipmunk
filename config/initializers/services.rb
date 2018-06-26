@@ -15,4 +15,5 @@ end
 Services = Canister.new
 
 Services.register(:checkpoint) { Checkpoint::Authority.new(agent_resolver: AgentResolver.new) }
+require "chipmunk_bag"
 Services.register(:storage) { ChipmunkBag }
