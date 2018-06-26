@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "request_builder"
+require "package_file_getter"
 
 module V1
   class PackagesController < ApplicationController

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "package_file_getter"
 
 json.bag_id package.bag_id
 json.user package.user.username
