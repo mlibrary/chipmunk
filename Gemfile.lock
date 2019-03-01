@@ -8,9 +8,9 @@ GIT
 
 GIT
   remote: https://github.com/mlibrary/keycard.git
-  revision: 80660a8f6c9ef9c4cadc7675463f842603b55e80
+  revision: 7f32572648d86abf6ed88d654d6e04a09ffd7014
   specs:
-    keycard (0.1.1)
+    keycard (0.2.4)
       sequel
 
 GEM
@@ -198,7 +198,7 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.9.0)
     safe_yaml (1.0.4)
-    sequel (5.9.0)
+    sequel (5.18.0)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -271,4 +271,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.16.1
+   1.17.3
