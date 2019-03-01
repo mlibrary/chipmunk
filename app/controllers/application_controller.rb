@@ -50,8 +50,8 @@ class ApplicationController < ActionController::API
 
   def authenticate_token
     authenticate_with_http_token do |token, _options|
-      if (@current_user = User.find_by(api_key: token))
-        @current_user.identity = UserAttributes.new(username: @current_user.username)
+      if (@current_user = User.find_by(api_key_digest: Keycard::ApiKey.new(token).digest))
+        @current_user.identity = UserAttributes.new(username: @current_user.username).all
       else
         render_unauthorized
       end

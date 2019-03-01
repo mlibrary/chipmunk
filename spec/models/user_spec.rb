@@ -8,7 +8,7 @@ RSpec.describe User, type: :model do
              username: Faker::Internet.user_name)
   end
 
-  [:email, :admin, :api_key, :username].each do |field|
+  [:email, :admin, :api_key_digest, :username].each do |field|
     it "#{field} is required" do
       expect(Fabricate.build(:user, field => nil)).to_not be_valid
     end
@@ -32,8 +32,6 @@ RSpec.describe User, type: :model do
     end
   end
 
-  let(:user) {}
-
   describe "#admin" do
     it "defaults to false" do
       expect(minimal_user.admin).to be false
@@ -42,12 +40,18 @@ RSpec.describe User, type: :model do
 
   describe "#api_key" do
     it "generates an api_key by default" do
-      expect(minimal_user.api_key).to_not be_nil
+      expect(minimal_user.api_key_digest).to_not be_nil
     end
     it "a user can be found by api_key" do
       user = User.create(email: Faker::Internet.email,
                          username: Faker::Internet.user_name)
-      expect(User.find_by_api_key(user.api_key)).to eql(user)
+      digest = user.api_key.digest
+      expect(User.find_by_api_key_digest(digest)).to eql(user)
+    end
+    it "raises if we try to access a persisted user's key" do
+      user = Fabricate(:user)
+      expect { User.find(user.id).api_key.to_s }
+        .to raise_error(Keycard::ApiKey::HiddenKeyError)
     end
   end
 end

@@ -6,17 +6,20 @@ class User < ApplicationRecord
 
   validates :email, presence: true
   validates :admin, inclusion: { in: [true, false] }
-  validates :api_key, presence: true
+  validates :api_key_digest, presence: true
   validates :username, presence: true
 
   # Assign an API key
-  before_create do |user|
-    user.api_key = user.generate_api_key
+  before_create do
+    self.api_key_digest = api_key.digest
   end
 
-  # Generate a unique API key
-  def generate_api_key
-    SecureRandom.uuid.delete("-")
+  def api_key
+    @api_key ||= if [nil, 'x'].include?(api_key_digest)
+      Keycard::ApiKey.new
+    else
+      Keycard::ApiKey::Hidden.new
+    end
   end
 
   def known?

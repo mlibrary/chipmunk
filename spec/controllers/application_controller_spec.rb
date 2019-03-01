@@ -44,9 +44,8 @@ RSpec.describe ApplicationController, type: :controller do
       expect(assigns(:something)).to eq("success")
     end
 
-    xit "sets user identity" do
-      # Unclear what this should be doing
-      expect(controller.current_user.identity).to respond_to(:all)
+    it "sets user identity" do
+      expect(controller.current_user.identity).to be_a(Hash)
     end
   end
 

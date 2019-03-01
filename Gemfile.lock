@@ -10,7 +10,7 @@ GIT
   remote: https://github.com/mlibrary/keycard.git
   revision: 7f32572648d86abf6ed88d654d6e04a09ffd7014
   specs:
-    keycard (0.2.4)
+    keycard (0.3.0)
       sequel
 
 GEM
@@ -251,7 +251,7 @@ DEPENDENCIES
   fabrication
   faker
   jbuilder
-  keycard!
+  keycard (~> 0.3.0)!
   mysql2 (~> 0.4.10)
   pry
   pry-byebug
