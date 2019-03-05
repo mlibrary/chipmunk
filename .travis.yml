@@ -1,0 +1,17 @@
+sudo: false
+language: ruby
+rvm:
+  - 2.4
+  - 2.5
+  - 2.6
+
+branches:
+  only:
+    - master
+    - develop
+
+before_install: gem install bundler
+
+script:
+    - bundle exec rspec
+
