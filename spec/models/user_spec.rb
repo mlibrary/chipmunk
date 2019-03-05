@@ -4,8 +4,7 @@ require "rails_helper"
 
 RSpec.describe User, type: :model do
   def minimal_user
-    User.new(email: Faker::Internet.email,
-             username: Faker::Internet.user_name)
+    Fabricate.build(:user)
   end
 
   [:email, :admin, :api_key_digest, :username].each do |field|
@@ -43,8 +42,7 @@ RSpec.describe User, type: :model do
       expect(minimal_user.api_key_digest).to_not be_nil
     end
     it "a user can be found by api_key" do
-      user = User.create(email: Faker::Internet.email,
-                         username: Faker::Internet.user_name)
+      user = Fabricate.create(:user)
       digest = user.api_key.digest
       expect(User.find_by_api_key_digest(digest)).to eql(user)
     end

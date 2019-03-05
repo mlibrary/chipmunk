@@ -3,13 +3,14 @@
 require "rails_helper"
 
 RSpec.describe "GET /v1/packages/:bag_id/:file", type: :request do
-  let(:user) { Fabricate(:user, admin: false) }
+  let(:key)  { Keycard::ApiKey.new }
+  let(:user) { Fabricate(:user, admin: false, api_key_digest: key.digest) }
   let(:fixture_path) { fixture("video/upload/goodbag") }
   let(:package) { Fabricate(:package, user: user, storage_location: fixture_path) }
 
   let(:headers) do
     { "X-SendFile-Type" => "X-Sendfile",
-      "Authorization"   => "Token token=#{user.api_key}" }
+      "Authorization"   => "Token token=#{key.to_s}" }
   end
 
   it "can retrieve a file from the package with X-Sendfile" do

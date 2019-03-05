@@ -23,8 +23,8 @@ gem "rails", "~> 5.1.0"
 gem "resque"
 gem "resque-pool"
 
-gem "checkpoint", github: "mlibrary/checkpoint"
-gem "keycard", "~> 0.3.0", github: "mlibrary/keycard"
+gem "checkpoint", "~> 1.0.3", github: 'mlibrary/checkpoint'
+gem "keycard", "~> 0.3.0", github: 'mlibrary/keycard'
 
 group :development, :test do
   gem "byebug", platforms: [:mri]

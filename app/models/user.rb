@@ -18,7 +18,7 @@ class User < ApplicationRecord
     @api_key ||= if [nil, 'x'].include?(api_key_digest)
       Keycard::ApiKey.new
     else
-      Keycard::ApiKey::Hidden.new
+      Keycard::ApiKey::Hidden.new(api_key_digest)
     end
   end
 

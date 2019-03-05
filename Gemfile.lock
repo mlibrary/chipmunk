@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/mlibrary/checkpoint.git
-  revision: cd60e319a9a2ca72ce7cc9e7d226b24cc67bbb46
+  revision: e62a72910c3b4088944074bd4dab21e307d1be6b
   specs:
-    checkpoint (1.0.0)
+    checkpoint (1.0.3)
       ettin (~> 1.1)
       sequel (~> 5.6)
 
@@ -246,7 +246,7 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   byebug
   canister
-  checkpoint!
+  checkpoint (~> 1.0.3)!
   ettin
   fabrication
   faker
