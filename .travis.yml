@@ -12,6 +12,10 @@ branches:
 
 before_install: gem install bundler
 
+before_script:
+  - bundle exec rake checkpoint:migrate
+  - bundle exec rake keycard:migrate
+
 script:
     - bundle exec rspec
 
