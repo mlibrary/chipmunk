@@ -1,6 +1,7 @@
 GIT
   remote: https://github.com/mlibrary/checkpoint.git
-  revision: e62a72910c3b4088944074bd4dab21e307d1be6b
+  revision: 3af36f33efbf28d3dce44eb39309c473dbaf05c4
+  tag: v1.0.3
   specs:
     checkpoint (1.0.3)
       ettin (~> 1.1)
@@ -8,7 +9,8 @@ GIT
 
 GIT
   remote: https://github.com/mlibrary/keycard.git
-  revision: 7f32572648d86abf6ed88d654d6e04a09ffd7014
+  revision: 36e322505882c2da7ed55f25ca1b5206e962dd2c
+  tag: v0.3.0
   specs:
     keycard (0.3.0)
       sequel

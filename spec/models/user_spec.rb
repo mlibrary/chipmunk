@@ -48,8 +48,8 @@ RSpec.describe User, type: :model do
     end
     it "raises if we try to access a persisted user's key" do
       user = Fabricate(:user)
-      expect { User.find(user.id).api_key.to_s }
-        .to raise_error(Keycard::ApiKey::HiddenKeyError)
+      expect { User.find(user.id).api_key.value }
+        .to raise_error(Keycard::DigestKey::HiddenKeyError)
     end
   end
 end

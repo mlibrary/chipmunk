@@ -4,7 +4,7 @@ class RenameUserApiKey < ActiveRecord::Migration[5.1]
     User.all.each do |user|
       user.update_column(
         :api_key_digest,
-        Keycard::ApiKey.new(user.read_attribute(:api_key)).digest
+        Keycard::DigestKey.new(key: user.read_attribute(:api_key)).digest
       )
     end
     remove_column :users, :api_key
