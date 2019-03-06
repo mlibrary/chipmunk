@@ -45,7 +45,7 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     it "sets user identity" do
-      expect(controller.current_user.identity).to respond_to(:all)
+      expect(controller.current_user.identity).to be_a(Hash)
     end
   end
 
@@ -58,9 +58,11 @@ RSpec.describe ApplicationController, type: :controller do
   end
 
   shared_examples_for "respects Authorization header" do
+    let(:key)   { Keycard::DigestKey.new }
+    let!(:user) { Fabricate(:user, admin: true, api_key_digest: key.digest ) }
+
     context "with valid Authorization header" do
-      let(:user) { Fabricate(:user, admin: true) }
-      let(:auth_header) { { "Authorization" => "Token token=#{user.api_key}" } }
+      let(:auth_header) { user; { "Authorization" => "Token token=#{key.to_s}" } }
 
       it "sets current_user to the user corresponding to the token" do
         expect(controller.current_user).to eq(user)
@@ -116,8 +118,9 @@ RSpec.describe ApplicationController, type: :controller do
   end
 
   context "with a request that will fail even if authenticated" do
-    let(:user) { Fabricate(:user, admin: true) }
-    let(:auth_header) { { "Authorization" => "Token token=#{user.api_key}" } }
+    let(:key)   { Keycard::DigestKey.new }
+    let!(:user) { Fabricate(:user, admin: true, api_key_digest: key.digest) }
+    let(:auth_header) { { "Authorization" => "Token token=#{key.to_s}" } }
 
     before(:each) { get :unauthorized }
 
@@ -125,8 +128,9 @@ RSpec.describe ApplicationController, type: :controller do
   end
 
   context "with a request that raises a FileNotFound error" do
-    let(:user) { Fabricate(:user, admin: true) }
-    let(:auth_header) { { "Authorization" => "Token token=#{user.api_key}" } }
+    let(:key)   { Keycard::DigestKey.new }
+    let!(:user) { Fabricate(:user, admin: true, api_key_digest: key.digest ) }
+    let(:auth_header) { { "Authorization" => "Token token=#{key.to_s}" } }
 
     before(:each) { get :not_found }
 

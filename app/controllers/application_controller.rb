@@ -50,8 +50,9 @@ class ApplicationController < ActionController::API
 
   def authenticate_token
     authenticate_with_http_token do |token, _options|
-      if (@current_user = User.find_by(api_key: token))
-        @current_user.identity = UserAttributes.new(username: @current_user.username)
+      digest = Keycard::DigestKey.new(key: token).digest
+      if (@current_user = User.find_by(api_key_digest: digest))
+        @current_user.identity = UserAttributes.new(username: @current_user.username).all
       else
         render_unauthorized
       end
@@ -60,8 +61,9 @@ class ApplicationController < ActionController::API
 
   def authenticate_keycard
     @current_user = User.new
-    @current_user.identity = Keycard::RequestAttributes.new(request)
-    if @current_user.identity[:username].empty?
+    @current_user.identity = Keycard::Request::AttributesFactory.new.for(request).identity
+    @current_user.identity[:username] = @current_user.identity[:user_pid]
+    unless @current_user.identity[:username]
       if request.get? && !request.xhr?
         session[:return_to] = request.path
         redirect_to("/login")

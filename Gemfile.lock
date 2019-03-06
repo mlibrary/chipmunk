@@ -1,16 +1,18 @@
 GIT
   remote: https://github.com/mlibrary/checkpoint.git
-  revision: cd60e319a9a2ca72ce7cc9e7d226b24cc67bbb46
+  revision: 3af36f33efbf28d3dce44eb39309c473dbaf05c4
+  tag: v1.0.3
   specs:
-    checkpoint (1.0.0)
+    checkpoint (1.0.3)
       ettin (~> 1.1)
       sequel (~> 5.6)
 
 GIT
   remote: https://github.com/mlibrary/keycard.git
-  revision: 80660a8f6c9ef9c4cadc7675463f842603b55e80
+  revision: 36e322505882c2da7ed55f25ca1b5206e962dd2c
+  tag: v0.3.0
   specs:
-    keycard (0.1.1)
+    keycard (0.3.0)
       sequel
 
 GEM
@@ -198,7 +200,7 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.9.0)
     safe_yaml (1.0.4)
-    sequel (5.9.0)
+    sequel (5.18.0)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -246,12 +248,12 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   byebug
   canister
-  checkpoint!
+  checkpoint (~> 1.0.3)!
   ettin
   fabrication
   faker
   jbuilder
-  keycard!
+  keycard (~> 0.3.0)!
   mysql2 (~> 0.4.10)
   pry
   pry-byebug
@@ -271,4 +273,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.16.1
+   1.17.3
