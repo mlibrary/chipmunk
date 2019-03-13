@@ -4,7 +4,7 @@ class FakeUser < OpenStruct
   def initialize(hash = {})
     user_name = Faker::Internet.user_name
     super({ username:   user_name,
-            identity:   UserAttributes.new,
+            identity:   {},
             admin?:     false,
             known?:     true,
             id:         rand(9999),
@@ -13,11 +13,13 @@ class FakeUser < OpenStruct
   end
 
   def self.with_external_identity(username = Faker::Internet.user_name)
-    new(known?: false,
-             user_name: nil,
-             id: nil,
-             agent_id: nil,
-             identity: UserAttributes.new(username: username))
+    new(
+      known?: false,
+      user_name: nil,
+      id: nil,
+      agent_id: nil,
+      identity: {username: username}
+    )
   end
 end
 

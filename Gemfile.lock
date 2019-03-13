@@ -1,20 +1,3 @@
-GIT
-  remote: https://github.com/mlibrary/checkpoint.git
-  revision: 3af36f33efbf28d3dce44eb39309c473dbaf05c4
-  tag: v1.0.3
-  specs:
-    checkpoint (1.0.3)
-      ettin (~> 1.1)
-      sequel (~> 5.6)
-
-GIT
-  remote: https://github.com/mlibrary/keycard.git
-  revision: 36e322505882c2da7ed55f25ca1b5206e962dd2c
-  tag: v0.3.0
-  specs:
-    keycard (0.3.0)
-      sequel
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -66,6 +49,9 @@ GEM
     builder (3.2.3)
     byebug (10.0.2)
     canister (0.9.0)
+    checkpoint (1.1.0)
+      ettin (~> 1.1)
+      sequel (~> 5.6)
     coderay (1.1.2)
     concurrent-ruby (1.1.5)
     crack (0.4.3)
@@ -76,7 +62,7 @@ GEM
     docile (1.3.1)
     docopt (0.5.0)
     erubi (1.8.0)
-    ettin (1.1.5)
+    ettin (1.2.1)
       deep_merge
     fabrication (2.20.1)
     faker (1.8.7)
@@ -92,6 +78,12 @@ GEM
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
     json (2.1.0)
+    kcv (0.4.0)
+      checkpoint (~> 1.1.0)
+      keycard (~> 0.3.0)
+      vizier (~> 0.1.0)
+    keycard (0.3.0)
+      sequel
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -232,6 +224,7 @@ GEM
     validatable (1.6.7)
     vegas (0.1.11)
       rack (>= 1.0.0)
+    vizier (0.1.0)
     webmock (3.4.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
@@ -248,12 +241,13 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   byebug
   canister
-  checkpoint (~> 1.0.3)!
+  checkpoint
   ettin
   fabrication
   faker
   jbuilder
-  keycard (~> 0.3.0)!
+  kcv (~> 0.4.0)
+  keycard (~> 0.3.0)
   mysql2 (~> 0.4.10)
   pry
   pry-byebug

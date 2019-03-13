@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "chipmunk_bag"
+
 if Chipmunk.config.checkpoint&.database&.url
   Checkpoint::DB.config.url = Chipmunk.config.checkpoint.database.url
 end
@@ -13,7 +15,8 @@ if Chipmunk.config.keycard&.access
 end
 
 Services = Canister.new
-
-Services.register(:checkpoint) { Checkpoint::Authority.new(agent_resolver: AgentResolver.new) }
-require "chipmunk_bag"
 Services.register(:storage) { ChipmunkBag }
+Services.register(:checkpoint) do
+  Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new)
+end
+

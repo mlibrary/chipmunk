@@ -40,14 +40,12 @@ RSpec.describe PackagePolicy do
     let(:user) { FakeUser.with_external_identity(username) }
 
     after(:each) do
-      Checkpoint::DB.db[:permits].delete
+      Checkpoint::DB.db[:grants].delete
     end
 
     context "with a grant for that user & resource" do
       before(:each) do
-        new_permit(agent(type: "username", id: username),
-          make_permission(:show),
-          Checkpoint::Resource::AllOfType.new(resource.resource_type)).save
+        Services.checkpoint.grant!(user, :show, resource)
       end
 
       it_allows :show?
@@ -55,10 +53,9 @@ RSpec.describe PackagePolicy do
     end
 
     context "with a grant for a different user" do
+      let(:other_user) { FakeUser.new }
       before(:each) do
-        new_permit(agent(type: "username", id: Faker::Internet.user_name),
-          make_permission(:show),
-          Checkpoint::Resource::AllOfType.new(resource.resource_type)).save
+        Services.checkpoint.grant!(other_user, :show, resource)
       end
 
       it_disallows :show?, :update?, :destroy?
