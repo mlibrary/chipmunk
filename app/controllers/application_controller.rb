@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "policy_errors"
-require "user_attributes"
 require "file_errors"
 
 class ApplicationController < ActionController::API
@@ -52,7 +51,7 @@ class ApplicationController < ActionController::API
     authenticate_with_http_token do |token, _options|
       digest = Keycard::DigestKey.new(key: token).digest
       if (@current_user = User.find_by(api_key_digest: digest))
-        @current_user.identity = UserAttributes.new(username: @current_user.username).all
+        @current_user.identity = {username: @current_user.username}
       else
         render_unauthorized
       end

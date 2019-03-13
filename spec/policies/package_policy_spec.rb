@@ -3,7 +3,6 @@
 require "spec_helper"
 require_relative "policy_helpers"
 require_relative "../support/checkpoint_helpers"
-require "user_attributes"
 require "ostruct"
 
 RSpec.describe PackagePolicy do
