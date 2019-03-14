@@ -4,7 +4,6 @@ require "policy_errors"
 require "file_errors"
 
 class ApplicationController < ActionController::API
-  include ActionController::HttpAuthentication::Token::ControllerMethods
 
   # Add a before_action to authenticate all requests.
   # Move this to subclassed controllers if you only
