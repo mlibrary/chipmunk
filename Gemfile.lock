@@ -82,7 +82,7 @@ GEM
       checkpoint (~> 1.1.0)
       keycard (~> 0.3.0)
       vizier (~> 0.1.0)
-    keycard (0.3.0)
+    keycard (0.3.1)
       sequel
     loofah (2.2.3)
       crass (~> 1.0.2)

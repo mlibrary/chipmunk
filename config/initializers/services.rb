@@ -16,6 +16,7 @@ end
 
 Services = Canister.new
 Services.register(:storage) { ChipmunkBag }
+Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
 Services.register(:checkpoint) do
   Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new)
 end
