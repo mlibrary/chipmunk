@@ -2,10 +2,10 @@
 
 Noah Botimer, Aaron Elkiss, Kat Hagedorn, Sebastien Korner, Jeremy Morse, James Ottaviani, Chris Powell, Lance Stuchell, and John Weise
 
-Introduction {#DigitalPreservationPrinciples-Introduction}
+Introduction 
 ============
 
-Executive Summary {#DigitalPreservationPrinciples-ExecutiveSummary}
+Executive Summary 
 -----------------
 
 This document describes the most important digital preservation
@@ -23,7 +23,7 @@ formulating a strategy for future repository solutions and for engaging
 with preservation partners in the Library, the University, and in the
 broader academic community.
 
-Background and Methodology {#DigitalPreservationPrinciples-BackgroundandMethodology}
+Background and Methodology 
 --------------------------
 
 The Preservation Principles investigation team convened in March 2018 to
@@ -54,7 +54,7 @@ characteristics do not by themselves prescribe a preservation strategy
 or dictate how a specific future system should be built, but they can
 serve as a guide for developing such a strategy.
 
-Catalog of Digital Preservation Characteristics {#DigitalPreservationPrinciples-CatalogofDigitalPreservationCharacteristics}
+Catalog of Digital Preservation Characteristics 
 ===============================================
 
 The characteristics identified are collected in a catalog herein. They
@@ -76,20 +76,19 @@ The characteristics are organized into the following categories:
     content
 -   Sustainability: How the system stays viable over time
 
-\
 
 For each digital preservation characteristic, we give a brief
 description, examples of how it appears in existing systems, and a
 reflection on how it has worked in practice and when or how it might
 apply to future systems.
 
-Storage and Fixity {#DigitalPreservationPrinciples-StorageandFixity}
+Storage and Fixity 
 ------------------
 
 *These characteristics relate to how the system deals with storage and
 file integrity at the lowest levels.*
 
-### Ability to audit storage {#DigitalPreservationPrinciples-Abilitytoauditstorage}
+### Ability to audit storage 
 
 *The system implements technical functions for ensuring repository
 integrity and consistency subsequent to content ingest. This enables
@@ -108,7 +107,6 @@ Does not implement:
 -   DLXS - some checksum files, but they are known to be inaccurate
 -   Pre-DLXS digital collections
 
-\
 
 Storage auditing is a core feature for bit-level preservation. At a
 minimum, it ensures that any changes to preserved files are intentional
@@ -124,7 +122,7 @@ cases where we have not tuned the audits to reduce false alarms, and
 because of this we do not always promptly follow up on problems. Over
 time, this poses a risk to repository integrity.
 
-### Storage Redundancy {#DigitalPreservationPrinciples-StorageRedundancy}
+### Storage Redundancy 
 
 *The system ensures that multiple copies of the content are stored at
 all times, using at least two different storage technologies/systems, so
@@ -155,7 +153,7 @@ HathiTrust and DLXS is preserved via other organizations such as
 (APTrust, DuraCloud Vault, CLOCKSS) as well, but to date organizational
 diversity has not been a key consideration for most content.
 
-### Self-Hosting {#DigitalPreservationPrinciples-Self-Hosting}
+### Self-Hosting 
 
 *The primary preservation functions are carried out on servers and
 storage hosted on campus and managed by Library IT to ensure
@@ -168,7 +166,6 @@ transparency and appropriate configuration.*
 -   Dark Blue -- Servers managed by LIT; primary storage managed by ITS,
     backup storage in AWS.
 
-\
 
 All servers for all preservation repositories are currently located on
 premises and are managed by LIT. The storage is managed by MiStorage now
@@ -189,7 +186,7 @@ digital preservation. This may point to a need to mitigate risk by
 ensuring additional storage copies or additional technological
 diversity.
 
-### Content recoverable from the filesystem {#DigitalPreservationPrinciples-Contentrecoverablefromthefilesystem}
+### Content recoverable from the filesystem 
 
 *The system stores content as regular files on disk in such a way that
 recovery of the content and arrangement into conceptual objects requires
@@ -222,7 +219,7 @@ ObjectClass as well. The lack of implementation for Samvera-based
 systems can be mitigated by extracting content and depositing as Bags,
 as Fulcrum plans to do via APTrust later in 2019.
 
-Formats and Content {#DigitalPreservationPrinciples-FormatsandContent}
+Formats and Content 
 -------------------
 
 *These characteristics relate to how the system deals with preserved
@@ -231,7 +228,7 @@ of content systems accept for preservation, and how migrations are
 managed in the system. Different kinds of content may be preserved and
 managed in different ways within the same system.*
 
-### Advisory content characterization or validation {#DigitalPreservationPrinciples-Advisorycontentcharacterizationorvalidation}
+### Advisory content characterization or validation 
 
 *The system provides some technical ability for characterization or
 validation, but does not enforce normalization or validity either by
@@ -243,7 +240,6 @@ policy or technical control.*
     formats, and content was characterized at ingest time, but
     ultimately any well-formed content is preserved.
 
-\
 
 Several systems (Deep Blue Docs, Deep Blue Data, ImageClass, Fulcrum)
 have recommendations or guidelines for deposit but ultimately accept
@@ -256,7 +252,6 @@ that need to accept arbitrary born-digital material (Dark Blue) may be
 able to provide only bit-level preservation on some material. Material
 is sometimes explicitly tagged with the level of preservation that is
 being provided for specific content (cf. Deep Blue preservation levels),
-but this isn\'t always made visible to the depositor or to end-users.
 Repositories with more tightly controlled kinds of content (e.g.,
 HathiTrust) can afford to require format identification and validation
 for all content, but this comes at the cost of substantially reduced
@@ -266,7 +261,7 @@ content validation, even if it is implicit -- if nothing else, the
 preservation copy needs to be intact enough for the system to create
 access derivatives.
 
-### Enforced content normalization and validation {#DigitalPreservationPrinciples-Enforcedcontentnormalizationandvalidation}
+### Enforced content normalization and validation 
 
 *Policies and/or technical controls ensure consistency of what is
 preserved in the repository, enabling future actions based on migration
@@ -285,7 +280,6 @@ policies at scale.*
     time.
 -   Fulcrum (ebooks) - EPUB content is validated
 
-\
 
 Enforcement of content validation and file naming conventions typically
 occurs at ingest time. In general, we have implemented some kind of
@@ -303,11 +297,11 @@ was an attempt to create one way of doing things. For example, metadata
 mapping is highly configurable, and this feature is available to be
 applied to every collection, in a consistent, documented way.
 
-### Policy-based commitment to migration strategies {#DigitalPreservationPrinciples-Policy-basedcommitmenttomigrationstrategies}
+### Policy-based commitment to migration strategies 
 
 *The repository has documented policies on supported file types and
 preservation commitments, but does not implement support for migrations
-within the scope of the system, so that effort isn\'t spent on
+within the scope of the system, so that effort isn't spent on
 automating tasks that will be done rarely (if ever).*
 
 -   Deep Blue Docs, Deep Blue Data, Fulcrum: Policies describe the level
@@ -317,7 +311,6 @@ automating tasks that will be done rarely (if ever).*
     but large variations exist in how content was managed over the
     years.
 
-\
 
 Some repositories specify a policy around what should be deposited or
 what could be managed without technical controls to enforce those
@@ -337,7 +330,7 @@ of management the repository can provide. Policies around preservable
 content are more flexible than technological implementations but also
 somewhat more risky in that policies might not always be followed.
 
-### Controlled content migrations {#DigitalPreservationPrinciples-Controlledcontentmigrations}
+### Controlled content migrations 
 
 *Policies as well as technical safeguards are in place to prevent
 unexpected changes to content.*
@@ -349,7 +342,6 @@ unexpected changes to content.*
 -   Fulcrum - controlled access to admin features and ingest/update
     tools.
 
-\
 
 Newer repositories tend to have more tightly controlled access. For
 example, in DLXS, all staff have write access to the repository, but are
@@ -368,7 +360,7 @@ restricted, workflows and consistency of practice are still works in
 progress, so currently Fulcrum is prone to the same limitations as DLXS
 has had.
 
-### Guarantee of comparability of access & preservation copies {#DigitalPreservationPrinciples-Guaranteeofcomparabilityofaccess&preservationcopies}
+### Guarantee of comparability of access & preservation copies 
 
 *Policies and technical controls ensure that the access copy reflects
 the preservation copy to maintain parity and detect anomalies with the
@@ -384,7 +376,6 @@ preservation copy or derivative generation.*
     available to re-derive access copy. Other formats: preservation copy
     is delivered directly (no separate access copy.
 
-\
 
 In some cases such as TextClass and HathiTrust this means that the
 access copies are derived on demand, since the preservation format and
@@ -397,72 +388,13 @@ well as occasional verification that the preservation copy is intact.
 For some formats, this might require making an explicit commitment to
 preserve software and workflows necessary to re-generate derivatives.
 
-Metadata {#DigitalPreservationPrinciples-Metadata}
+Metadata 
 --------
 
 *These characteristics relate to how the system deals with metadata
 about the preserved content.*
 
-Overview of descriptive metadata storage scenarios for the systems
-considered:
-
-::: {.table-wrap}
-+---------+---------+---------+---------+---------+---------+---------+
-| \       | **Creat | **Manag | **Prese | **Acces | **Store | **Manag |
-|         | ed      | ed      | rvation | s       | d       | ed/sour |
-|         | by**    | in**    | storage | storage | with    | ced/ori |
-|         |         |         | **      | **      | object  | ginated |
-|         |         |         |         |         | in      | in      |
-|         |         |         |         |         | reposit | reposit |
-|         |         |         |         |         | ory?**  | ory?**  |
-+---------+---------+---------+---------+---------+---------+---------+
-| **Hathi | partner | Zephir  | snapsho | Solr    | no      | no      |
-| Trust** | institu |         | t       |         |         |         |
-|         | tions/p |         | in METS |         |         |         |
-|         | ublishe |         |         |         |         |         |
-|         | rs      |         |         |         |         |         |
-+---------+---------+---------+---------+---------+---------+---------+
-| **Image | collect | MySQL   | MySQL   | MySQL   | no      | no      |
-| Class** | ion     |         |         |         |         |         |
-|         | manager |         |         |         |         |         |
-|         | s/conte |         |         |         |         |         |
-|         | nt      |         |         |         |         |         |
-|         | vendors |         |         |         |         |         |
-|         | /publis |         |         |         |         |         |
-|         | hers    |         |         |         |         |         |
-+---------+---------+---------+---------+---------+---------+---------+
-| **TextC | collect | Catalog | XML     | XPat    | yes     | no      |
-| lass**  | ion     |         |         |         |         |         |
-|         | manager |         |         |         |         |         |
-|         | s/conte |         |         |         |         |         |
-|         | nt      |         |         |         |         |         |
-|         | vendors |         |         |         |         |         |
-|         | /publis |         |         |         |         |         |
-|         | hers    |         |         |         |         |         |
-+---------+---------+---------+---------+---------+---------+---------+
-| **Deep  | deposit | DSpace/ | DSpace/ | Solr    | yes     | sometim |
-| Blue    | or      | postgre | postgre | (??)    |         | es      |
-| Docs**  | or      | s       | s       |         |         |         |
-|         | content |         |         |         |         |         |
-|         | source  |         |         |         |         |         |
-+---------+---------+---------+---------+---------+---------+---------+
-| **Deep  | deposit | Samvera | Fedora  | Solr    | yes     | sometim |
-| Blue    | or      | /       |         |         |         | es      |
-| Data**  | or      | Fedora  |         |         |         |         |
-|         | content |         |         |         |         |         |
-|         | source  |         |         |         |         |         |
-+---------+---------+---------+---------+---------+---------+---------+
-| **Fulcr | publish | Samvera | Fedora  | Solr    | yes     | ?       |
-| um**    | er      | /       |         |         |         |         |
-|         | or      | Fedora  |         |         |         |         |
-|         | content |         |         |         |         |         |
-|         | source  |         |         |         |         |         |
-+---------+---------+---------+---------+---------+---------+---------+
-:::
-
-\
-
-### Descriptive metadata interoperability with other current systems {#DigitalPreservationPrinciples-Descriptivemetadatainteroperabilitywithothercurrentsystems}
+### Descriptive metadata interoperability with other current systems 
 
 *The choice of descriptive metadata elements are driven by needs around
 interoperability with external systems.*
@@ -474,18 +406,17 @@ interoperability with external systems.*
     beneficial for metadata aggregation and facilitates searching across
     collections.
 
-\
 
 Interoperable metadata typically benefits reusability while constraining
 flexibility. HathiTrust benefits from the reusability of MARC metadata
 in a variety of contexts, but is currently struggling with the issue of
-how to store and make use of other kinds of metadata that doesn\'t align
+how to store and make use of other kinds of metadata that doesn't align
 well with MARC. In Samvera-based systems, RDF and Linked Data have the
 potential to allow us to benefit from standard vocabularies while
 allowing substantial flexibility and extensibility, but current use is
 limited and internal-facing only.
 
-### Descriptive metadata managed in external system {#DigitalPreservationPrinciples-Descriptivemetadatamanagedinexternalsystem}
+### Descriptive metadata managed in external system 
 
 *Descriptive metadata is managed separately from preservation storage of
 content, either to avoid implementation of functionality that already
@@ -499,7 +430,6 @@ from content.*
     other systems, typically housed with the source of the content, such
     as any one of the LSA museums.
 
-\
 
 This approach contrasts with storing and managing descriptive metadata
 in the system. Although HathiTrust, Dark Blue, and TextClass do not
@@ -513,7 +443,7 @@ and keep it synchronized with the external source. It also minimizes the
 need to change objects in the repository if the metadata changes much
 more frequently than the content.
 
-### Descriptive metadata managed within system {#DigitalPreservationPrinciples-Descriptivemetadatamanagedwithinsystem}
+### Descriptive metadata managed within system 
 
 *Descriptive metadata is managed in the same system as the content to
 enable greater flexibility and so that metadata is preserved more
@@ -523,7 +453,6 @@ directly alongside the content.*
 -   Deep Blue Data
 -   Deep Blue Docs
 
-\
 
 This choice is often made if the system is self-deposit. Storing
 metadata directly in the system potentially allows creation and editing
@@ -537,7 +466,7 @@ metadata within the system increases the complexity of the repository,
 but has the benefit of keeping everything related to an object in a
 single location.
 
-### Choice of preserved metadata driven by access needs {#DigitalPreservationPrinciples-Choiceofpreservedmetadatadrivenbyaccessneeds}
+### Choice of preserved metadata driven by access needs 
 
 *Technical and descriptive metadata is only explicitly preserved with
 the content if it is needed when accessing the object, which aids in
@@ -559,11 +488,11 @@ accessible. This approach does perhaps point to a need to preserve tools
 that can extract metadata on a long-term basis, or at least to monitor
 their ongoing viability. Given the continual decrease in the cost of
 storage, it may be less important now than in the past. There could
-still be a preservation role for this approach, though \-- a system
+still be a preservation role for this approach, though -- a system
 could extract and store only those technical characteristics deemed
-\"significant\" enough to be worth preserving across format migrations.
+"significant" enough to be worth preserving across format migrations.
 
-### Unified search {#DigitalPreservationPrinciples-Unifiedsearch}
+### Unified search 
 
 *Content is stored in such a way to enable indexing and search of
 content and metadata across the repository as well as metadata across a
@@ -579,7 +508,6 @@ large collection of material.*
 -   Dark Blue - no search, but there is a consistent interface for
     accessing objects should that feature be needed in the future.
 
-\
 
 This is more about whether a system is amenable to standard search and
 indexing techniques without re-engineering the repository than whether
@@ -591,16 +519,16 @@ provide this characteristic, systems should store objects so they are
 individually accessible and can be indexed in a consistent way. Objects
 must also be accessible either via the filesystem or via an API in a way
 that is amenable to batch or offline processing. Unified search
-capability is now so common that it\'s hard to envision building a
+capability is now so common that it's hard to envision building a
 system that could not support this.
 
-Sustainability {#DigitalPreservationPrinciples-Sustainability}
+Sustainability 
 --------------
 
 *The attributes that characterize and behaviors that maintain the
 viability of a system over time.*
 
-### Low cost {#DigitalPreservationPrinciples-Lowcost}
+### Low cost 
 
 *Implementation decisions are made with the explicit purpose of lowering
 the cost per TB of preserved content.*
@@ -608,7 +536,6 @@ the cost per TB of preserved content.*
 -   Dark Blue - single-instance MiStorage with AWS
 -   DLXS, Deep Blue Docs, Deep Blue Data - MiStorage
 
-\
 
 The initial storage systems for our repositories were bespoke and
 relatively expensive. As appropriately redundant storage becomes more
@@ -619,7 +546,7 @@ time to manage storage. Dark Blue is currently serving as a pilot of
 lower-cost backup options, but HathiTrust will be moving in that
 direction as well.
 
-### Scalability {#DigitalPreservationPrinciples-Scalability}
+### Scalability 
 
 *Implementation decisions are made to allow very large amounts of
 content to be handled in the system.*
@@ -634,17 +561,16 @@ content to be handled in the system.*
     allows for batch ingest to be managed by the content provider (on an
     as needed basis).
 
-\
 
 Scaling up was important with DLXS and more so with HathiTrust (one of
 the largest digital libraries in the world.) Scalability is less of a
-concern to more \"boutique\" repositories like Fulcrum, and there is a
+concern to more "boutique" repositories like Fulcrum, and there is a
 question of whether Samvera-based repositories can scale to large
 amounts of content. While Dark Blue is initially more of a boutique
 repository, design decisions such as storage and ingest architecture
 were made to enable future scalability.
 
-### Re-use of platform/infrastructure {#DigitalPreservationPrinciples-Re-useofplatform/infrastructure}
+### Re-use of platform/infrastructure 
 
 -   All of our repositories run on Linux servers and almost all use
     MySQL in some capacity.
@@ -657,14 +583,13 @@ were made to enable future scalability.
 -   Samvera / Fedora - there are large amounts of shared code being
     co-developed with other institutions, even if there is some
     customized to each system.
--   Dark Blue - also uses Ruby and Rails, although it doesn\'t use any
+-   Dark Blue - also uses Ruby and Rails, although it doesn't use any
     Samvera components.
 -   Access layers like the Michigan Daily Digital Archives and Middle
     English Dictionary also use Blacklight (with Ruby and Rails),
     although they do not use Fedora as the backend, as is typical with
     other Samvera-based applications.
 
-\
 
 The original goal of DLXS was moving towards reusability within the
 organization. Linux & MySQL are already standard for our repositories.
@@ -678,7 +603,7 @@ use Rails and Blacklight. We are also paying attention to the emerging
 OCFL standard, which Fedora and likely Dark Blue will adopt, and
 HathiTrust could adopt as well.
 
-### Community Partnership {#DigitalPreservationPrinciples-CommunityPartnership}
+### Community Partnership 
 
 *Development of the service involves working together with other
 institutions to improve the quality of long-term preservation.*
@@ -693,7 +618,6 @@ institutions to improve the quality of long-term preservation.*
     currently for code
 -   DSpace: open source
 
-\
 
 Community engagement is perhaps the most nebulous of these principles in
 that the rest are first-order attributes of the technology or service,
