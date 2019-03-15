@@ -2,13 +2,21 @@
 
 require "chipmunk_bag"
 
-if Chipmunk.config.checkpoint&.database&.url
-  Checkpoint::DB.config.url = Chipmunk.config.checkpoint.database.url
+def assign_db(lhs, rhs)
+  case rhs
+  when String
+    lhs.url = rhs
+  when Hash
+    if rhs["url"]
+      lhs.url = rhs["url"]
+    else
+      lhs.opts = rhs
+    end
+  end
 end
 
-if Chipmunk.config.keycard&.database&.url
-  Keycard::DB.config.url = Chipmunk.config.keycard.database.url
-end
+assign_db(Checkpoint::DB.config, Chipmunk.config.checkpoint.database)
+assign_db(Keycard::DB.config, Chipmunk.config.keycard.database)
 
 if Chipmunk.config.keycard&.access
   Keycard.config.access = Chipmunk.config.keycard.access
