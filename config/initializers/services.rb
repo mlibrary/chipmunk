@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-if Chipmunk.config.checkpoint&.database
-  Checkpoint::DB.config.opts = Chipmunk.config.checkpoint.database
+if Chipmunk.config.checkpoint&.database&.url
+  Checkpoint::DB.config.url = Chipmunk.config.checkpoint.database.url
 end
 
-if Chipmunk.config.keycard&.database
-  Keycard::DB.config.opts = Chipmunk.config.keycard.database
+if Chipmunk.config.keycard&.database&.url
+  Keycard::DB.config.url = Chipmunk.config.keycard.database.url
 end
 
 if Chipmunk.config.keycard&.access
