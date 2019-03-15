@@ -9,12 +9,11 @@ validation:
   bagger_profile:
     digital: "spec/support/fixtures/test-profile.json"
 checkpoint:
-  database: 
+  database:
     adapter: sqlite
     database: db/checkpoint_test.sqlite3
 keycard:
-  database: 
-    adapter: sqlite
-    database: db/keycard_test.sqlite3
+  database:
+    url: "sqlite://db/keycard_test.sqlite3"
   access: proxy
 

@@ -31,6 +31,19 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "#agent_type" do
+    it "is 'user'" do
+      expect(Fabricate.build(:user).agent_type).to eql("user")
+    end
+  end
+
+  describe "#agent_id" do
+    let(:user) { Fabricate.build(:user) }
+    it "matches the username" do
+      expect(user.agent_id).to eql(user.username)
+    end
+  end
+
   describe "#admin" do
     it "defaults to false" do
       expect(minimal_user.admin).to be false

@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 require "policy_errors"
-require "user_attributes"
 require "file_errors"
 
 class ApplicationController < ActionController::API
-  include ActionController::HttpAuthentication::Token::ControllerMethods
 
   # Add a before_action to authenticate all requests.
   # Move this to subclassed controllers if you only
@@ -38,31 +36,35 @@ class ApplicationController < ActionController::API
     request.format = :json
   end
 
-  # Authenticate the user with token based authentication
   def authenticate
+    # If an API key is provided, it must also be valid. We do not fall back
+    # to other forms of authentication.
+    # If it isn't provided, attempt to find the user via the user_eid, or
+    # build out a guest user.
     return if @current_user && Rails.env.test?
-    if request.has_header?("HTTP_AUTHORIZATION")
-      authenticate_token
+    request_attributes = Services.request_attributes.for(request)
+    if request_attributes.auth_token
+      authenticate_token(request_attributes)
     else
-      authenticate_keycard
+      authenticate_nontoken(request_attributes)
     end
   end
 
-  def authenticate_token
-    authenticate_with_http_token do |token, _options|
-      digest = Keycard::DigestKey.new(key: token).digest
-      if (@current_user = User.find_by(api_key_digest: digest))
-        @current_user.identity = UserAttributes.new(username: @current_user.username).all
-      else
-        render_unauthorized
-      end
+  def authenticate_token(request_attributes)
+    digest = Keycard::DigestKey.new(key: request_attributes.auth_token).digest
+    if (@current_user = User.find_by(api_key_digest: digest))
+      @current_user.identity = {username: @current_user.username}
+    else
+      render_unauthorized
     end
   end
 
-  def authenticate_keycard
-    @current_user = User.new
-    @current_user.identity = Keycard::Request::AttributesFactory.new.for(request).identity
-    @current_user.identity[:username] = @current_user.identity[:user_pid]
+  def authenticate_nontoken(request_attributes)
+    @current_user = User.find_by(username: request_attributes.user_eid)
+    @current_user ||= User.new
+    @current_user.username ||= request_attributes.user_eid
+    @current_user.identity = request_attributes.identity
+    @current_user.identity[:username] = @current_user.username
     unless @current_user.identity[:username]
       if request.get? && !request.xhr?
         session[:return_to] = request.path

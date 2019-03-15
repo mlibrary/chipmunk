@@ -1,19 +1,30 @@
 # frozen_string_literal: true
 
-if Chipmunk.config.checkpoint&.database&.url
-  Checkpoint::DB.config.url = Chipmunk.config.checkpoint.database.url
+require "chipmunk_bag"
+
+def assign_db(lhs, rhs)
+  if rhs.is_a? String
+    lhs.url = rhs
+  elsif rhs.respond_to?(:has_key?)
+    if rhs["url"]
+      lhs.url = rhs["url"]
+    else
+      lhs.opts = rhs
+    end
+  end
 end
 
-if Chipmunk.config.keycard&.database&.url
-  Keycard::DB.config.url = Chipmunk.config.keycard.database.url
-end
+assign_db(Checkpoint::DB.config, Chipmunk.config.checkpoint.database)
+assign_db(Keycard::DB.config, Chipmunk.config.keycard.database)
 
 if Chipmunk.config.keycard&.access
   Keycard.config.access = Chipmunk.config.keycard.access
 end
 
 Services = Canister.new
-
-Services.register(:checkpoint) { Checkpoint::Authority.new(agent_resolver: AgentResolver.new) }
-require "chipmunk_bag"
 Services.register(:storage) { ChipmunkBag }
+Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
+Services.register(:checkpoint) do
+  Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new)
+end
+
