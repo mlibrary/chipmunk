@@ -3,10 +3,9 @@
 require "chipmunk_bag"
 
 def assign_db(lhs, rhs)
-  case rhs
-  when String
+  if rhs.is_a? String
     lhs.url = rhs
-  when Hash
+  elsif rhs.respond_to?(:has_key?)
     if rhs["url"]
       lhs.url = rhs["url"]
     else
