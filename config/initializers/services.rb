@@ -1,12 +1,20 @@
 # frozen_string_literal: true
 
-if Chipmunk.config.checkpoint&.database
-  Checkpoint::DB.config.opts = Chipmunk.config.checkpoint.database
+def assign_db(lhs, rhs)
+  case rhs
+  when String
+    lhs.url = rhs
+  when Hash
+    if rhs["url"]
+      lhs.url = rhs["url"]
+    else
+      lhs.opts = rhs
+    end
+  end
 end
 
-if Chipmunk.config.keycard&.database
-  Keycard::DB.config.opts = Chipmunk.config.keycard.database
-end
+assign_db(Checkpoint::DB.config, Chipmunk.config.checkpoint.database)
+assign_db(Keycard::DB.config, Chipmunk.config.keycard.database)
 
 if Chipmunk.config.keycard&.access
   Keycard.config.access = Chipmunk.config.keycard.access
