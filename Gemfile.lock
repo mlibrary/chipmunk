@@ -247,7 +247,7 @@ DEPENDENCIES
   faker
   jbuilder
   kcv (~> 0.4.0)
-  keycard (~> 0.3.0)
+  keycard (~> 0.3.1)
   mysql2 (~> 0.4.10)
   pry
   pry-byebug

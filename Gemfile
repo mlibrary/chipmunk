@@ -25,7 +25,7 @@ gem "resque-pool"
 
 gem "kcv", "~> 0.4.0"
 gem "checkpoint"
-gem "keycard", "~> 0.3.0"
+gem "keycard", "~> 0.3.1"
 
 group :development, :test do
   gem "byebug", platforms: [:mri]
