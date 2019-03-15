@@ -7,7 +7,7 @@ RSpec.describe User, type: :model do
     Fabricate.build(:user)
   end
 
-  [:email, :admin, :api_key_digest, :username].each do |field|
+  [:email, :admin, :username].each do |field|
     it "#{field} is required" do
       expect(Fabricate.build(:user, field => nil)).to_not be_valid
     end
@@ -51,6 +51,16 @@ RSpec.describe User, type: :model do
   end
 
   describe "#api_key" do
+    it "is required" do
+      user = Fabricate.create(:user)
+      user.api_key_digest = nil
+      expect(user.valid?).to be false
+    end
+    it "does not overwrite itself" do
+      user = Fabricate.create(:user)
+      same_user = User.find(user.id)
+      user.api_key_digest == same_user.api_key_digest
+    end
     it "generates an api_key by default" do
       expect(minimal_user.api_key_digest).to_not be_nil
     end

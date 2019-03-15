@@ -10,9 +10,7 @@ class User < ApplicationRecord
   validates :username, presence: true
 
   # Assign an API key
-  before_create do
-    self.api_key_digest = api_key.digest
-  end
+  after_initialize :add_key, on: :create
 
   def api_key
     @api_key ||= if [nil, 'x'].include?(api_key_digest)
@@ -32,6 +30,12 @@ class User < ApplicationRecord
 
   def agent_id
     username
+  end
+
+  private
+
+  def add_key
+    self.api_key_digest = api_key.digest
   end
 
 end
