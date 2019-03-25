@@ -4,10 +4,10 @@ require "request_builder"
 require "package_file_getter"
 
 module V1
-  class PackagesController < ApplicationController
+  class PackagesController < ResourceController
     # GET /packages
     def index
-      policy = PackagesPolicy.new(current_user)
+      policy = collection_policy.new(current_user)
       policy.authorize! :index?
 
       @packages = policy.resolve
@@ -16,17 +16,17 @@ module V1
     # GET /packages/1
     # GET /packages/39015012345678
     def show
-      PackagePolicy.new(current_user, package).authorize! :show?
+      resource_policy.new(current_user, package).authorize! :show?
     end
 
     def sendfile
-      PackagePolicy.new(current_user, package).authorize! :show?
+      resource_policy.new(current_user, package).authorize! :show?
       send_file(*PackageFileGetter.new(package).sendfile(params[:file]))
     end
 
     # POST /v1/requests
     def create
-      PackagesPolicy.new(current_user).authorize! :create?
+      collection_policy.new(current_user).authorize! :create?
       status, @request_record = RequestBuilder.new
         .create(create_params.merge(user: current_user))
       case status
@@ -40,6 +40,14 @@ module V1
     end
 
     private
+
+    def collection_policy
+      @collection_policy ||= PackagesPolicy
+    end
+
+    def resource_policy
+      @resource_policy ||= PackagePolicy
+    end
 
     def package
       @package ||= Package.find_by_bag_id(params[:bag_id])

@@ -17,7 +17,9 @@ RSpec.describe V1::PackagesController, type: :controller do
 
     describe "GET #show" do
       it_behaves_like "a show endpoint" do
-        let(:policy) { PackagePolicy }
+        before do
+          controller.resource_policy = policy_double(show?: true)
+        end
         let(:key) { :bag_id }
         let(:factory) do
           proc {|user| user ? Fabricate(:package, user: user) : Fabricate(:package) }
