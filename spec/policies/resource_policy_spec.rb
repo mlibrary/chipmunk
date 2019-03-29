@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-require_relative "policy_helpers"
-
 RSpec.describe ResourcePolicy do
   let(:resource) { double(:resource) }
   let(:user) { double(:user) }

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-require_relative "policy_helpers"
-
 RSpec.describe EventsPolicy do
   let(:policy) { described_class.new(user, FakeCollection.new) }
 

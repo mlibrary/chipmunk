@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 require "policy_errors"
-require_relative "policy_helpers"
 
 RSpec.describe CollectionPolicy, type: :policy do
   let(:user) { double(:user) }
