@@ -41,7 +41,7 @@ group :test do
   gem "rspec"
   gem "rspec-activejob"
   gem "rspec-rails"
-  gem "simplecov"
+  gem "coveralls"
   gem "timecop"
   gem "turnip"
   gem "webmock"
@@ -49,4 +49,6 @@ end
 
 group :development do
   gem "rubocop"
+  gem "rubocop-rspec"
+  gem "yard"
 end
