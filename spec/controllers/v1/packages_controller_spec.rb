@@ -4,22 +4,22 @@ require "rails_helper"
 
 RSpec.describe V1::PackagesController, type: :controller do
   describe "/v1" do
-    describe "GET #index" do
-      it_behaves_like "an index endpoint" do
-        let(:policy) { PackagesPolicy }
-        let(:key) { :bag_id }
-        let(:factory) do
-          proc {|user| user ? Fabricate(:package, user: user) : Fabricate(:package) }
-        end
-        let(:assignee) { :packages }
-      end
+    it "uses PackagesPolicy as its collection_policy" do
+      policy = controller.send(:collection_policy)
+      expect(policy).to eq PackagesPolicy
     end
+
+    it "uses PackagePolicy as its resource_policy" do
+      policy = controller.send(:resource_policy)
+      expect(policy).to eq PackagePolicy
+    end
+
+    it_behaves_like "an index endpoint", "PackagesPolicy"
 
     describe "GET #show" do
       it_behaves_like "a show endpoint" do
-        before do
-          controller.resource_policy = policy_double(show?: true)
-        end
+        before { controller.resource_policy = policy_double("PackagePolicy", show?: true) }
+
         let(:key) { :bag_id }
         let(:factory) do
           proc {|user| user ? Fabricate(:package, user: user) : Fabricate(:package) }

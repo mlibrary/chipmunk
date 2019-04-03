@@ -5,6 +5,9 @@ require "package_file_getter"
 
 module V1
   class PackagesController < ResourceController
+    collection_policy PackagesPolicy
+    resource_policy PackagePolicy
+
     # GET /packages
     def index
       policy = collection_policy.new(current_user)
@@ -40,14 +43,6 @@ module V1
     end
 
     private
-
-    def collection_policy
-      @collection_policy ||= PackagesPolicy
-    end
-
-    def resource_policy
-      @resource_policy ||= PackagePolicy
-    end
 
     def package
       @package ||= Package.find_by_bag_id(params[:bag_id])

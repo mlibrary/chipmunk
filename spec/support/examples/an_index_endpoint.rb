@@ -1,49 +1,30 @@
 # frozen_string_literal: true
 
-# @param factory [Proc] Proc that optionally takes a user, returns a saved record.
-RSpec.shared_examples "an index endpoint" do
-  let(:template) do
-    described_class.to_s.gsub("Controller", "").underscore + "/index"
-  end
+# @param collection_policy [Policy] The controller's collection policy class name; 
+#        used to make verifying instance_doubles
+RSpec.shared_examples "an index endpoint" do |collection_policy|
+  describe "GET #index" do
+    let(:resource) { double(:resource) }
+    let(:policy)   { collection_policy_double(collection_policy, [resource], index?: true) }
 
-  let!(:other) { factory.call }
-  let!(:mine) { factory.call(user) }
-
-  context "as underprivileged user" do
-    include_context "as underprivileged user"
+    before(:each) do
+      controller.fake_user(Fabricate(:user))
+      controller.collection_policy = policy
+    end
 
     it "returns 200" do
       get :index
       expect(response).to have_http_status(200)
     end
 
-    it "renders only the user's records" do
+    it "renders only the records from the policy" do
       get :index
-      expect(assigns(assignee)).to contain_exactly(mine)
+      expect(assigns(controller.controller_name)).to contain_exactly(resource)
     end
 
     it "renders the correct template" do
       get :index
-      expect(response).to render_template(template)
-    end
-
-    it "checks the policy" do
-      expect_collection_policy_check(policy: policy, user: user, action: :index?)
-      get :index
-    end
-  end
-
-  context "as admin" do
-    include_context "as admin user"
-
-    it "renders all records" do
-      get :index
-      expect(assigns(assignee)).to contain_exactly(mine, other)
-    end
-
-    it "checks the policy" do
-      expect_collection_policy_check(policy: policy, user: user, action: :index?)
-      get :index
+      expect(response).to render_template(:index)
     end
   end
 end

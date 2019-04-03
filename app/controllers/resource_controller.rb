@@ -9,12 +9,13 @@
 #
 # The policy_double helper gives a very convient syntax for creating policy
 # objects that answer true or false for given predicate and expect that
-# authorize! is called at least once.
+# authorize! is called properly.
 #
 # Usage:
 #
-#   1. Implement collection_policy and resource_policy with a caching
-#      assignment of the normal policy.
+#   1. Extend ResourceController and call collection_policy and resource_policy
+#      in the class defintion to set the defaults (equivalent to defining
+#      instance methods of the same name with caching assignments).
 #   2. Call these readers anywhere you need one of the policies within the
 #      rest of the controller.
 #   3. Set a mock policy in a before block to test the controller.
@@ -22,18 +23,13 @@
 # Example:
 #
 # class ThingsController < ResourceController
-#   def collection_policy
-#     @collection_policy ||= ThingsPolicy
-#   end
-#
-#   def resource_policy
-#     @resource_policy ||= ThingPolicy
-#   end
+#   collection_policy ThingsPolicy
+#   resource_policy ThingPolicy
 # end
 #
 # RSpec.describe ThingsController do
 #   before do
-#     controller.resource_policy = policy_double(show?: false)
+#     controller.resource_policy = policy_double('ThingPolicy', show?: false)
 #   end
 #
 #   describe 'GET #show' do
@@ -45,19 +41,29 @@
 #   end
 # end
 class ResourceController < ApplicationController
-  # The policy class for collections managed by this controller.
-  attr_writer :collection_policy
+  # Setters for the policy classes for resources managed by this
+  # controller; primarily for injection in tests.
+  attr_writer :collection_policy, :resource_policy
 
-  # The policy class for resources managed by this controller.
-  attr_writer :resource_policy
-
-  private
-
-  def collection_policy
-    RejectAll
+  # Declare the collection policy class for instances.
+  # 
+  # This is intended for use at definition time of subclasses, to declare the
+  # default policy by defining an overriding instance method on the subclass.
+  # The actual policy to use for an instance can be set with the attr_writer.
+  def self.collection_policy(policy)
+    define_method(:collection_policy) { @collection_policy ||= policy }
   end
 
-  def resource_policy
-    RejectAll
+  # Declare the resource policy class for instances.
+  # 
+  # This is intended for use at definition time of subclasses, to declare the
+  # default policy by defining an overriding instance method on the subclass.
+  # The actual policy to use for an instance can be set with the attr_writer.
+  def self.resource_policy(policy)
+    define_method(:resource_policy) { @resource_policy ||= policy }
   end
+
+  # Declare abstract/base class policies as RejectAll
+  collection_policy RejectAll
+  resource_policy RejectAll
 end

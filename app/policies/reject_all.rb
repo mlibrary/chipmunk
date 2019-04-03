@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # A dummy policy that accepts any constructor arguments, answers any predicate
-# method with false, and always raises and error on authorize!
+# method with false, and always raises an error on authorize!
 class RejectAll
   # Accept anything, discard everything
   def initialize(*_args)

@@ -4,32 +4,47 @@
 # responses and expectations.
 #
 # See {policy_double} for the typical, convenient usage.
-class FakePolicy
+class PolicyDouble
   include RSpec::Mocks::ExampleMethods
 
-  attr_reader :name, :actions, :block
+  attr_reader :name, :actions, :scope, :block
 
-  def initialize(name, actions, &block)
+  def initialize(name, actions, scope = nil, &block)
     @name = name
     @actions = actions
+    @scope = scope
     @block = block
   end
 
   def new(*new_policy_args)
-    policy = double(name)
+    instance_double(name).tap do |policy|
+      setup_actions(policy)
+      setup_scope(policy, scope)
+      setup_block(policy, *new_policy_args)
+    end
+  end
+
+  private
+
+  def setup_actions(policy)
     actions.each do |name, value|
       allow(policy).to receive(name.to_sym).and_return(value)
+      expect(policy).to receive(:authorize!).with(name)
     end
+  end
 
+  def setup_scope(policy, scope)
+    allow(policy).to receive(:resolve).and_return(scope) if scope
+  end
+
+  def setup_block(policy, *new_policy_args)
     if block
       block.call(policy, *new_policy_args)
     else
-      expect(policy).to receive(:authorize!) do |action|
+      allow(policy).to receive(:authorize!) do |action|
         raise NotAuthorizedError unless policy.send(action)
       end
     end
-
-    policy
   end
 end
 
@@ -64,8 +79,12 @@ end
 # pattern. It is equivalent to the shorter form. An example of where this
 # mechanism may be more useful is a case where multiple permissions must be
 # authorized for a given controller action.
-def policy_double(name = "Policy", actions = {}, &block)
-  FakePolicy.new(name, actions, &block)
+def policy_double(name, actions = {}, &block)
+  PolicyDouble.new(name, actions, &block)
+end
+
+def collection_policy_double(name, scope, actions = {}, &block)
+  PolicyDouble.new(name, actions, scope, &block)
 end
 
 def new_permit(agent, credential, resource, zone: Checkpoint::DB::Permit.default_zone)

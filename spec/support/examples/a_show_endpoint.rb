@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 # @param key [Symbol] The key serving as the id, rails default is :id
 # @param factory [Proc] Proc that optionally takes a user, returns a saved record.
 # @param assignee [Symbol] The variable the models are assigned to.

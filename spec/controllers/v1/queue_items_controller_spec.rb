@@ -4,6 +4,16 @@ require "rails_helper"
 
 RSpec.describe V1::QueueItemsController, type: :controller do
   describe "/v1" do
+    it "uses QueueItemsPolicy as its collection policy" do
+      policy = controller.send(:collection_policy)
+      expect(policy).to eq QueueItemsPolicy
+    end
+
+    it "uses QueueItemPolicy as its resource policy" do
+      policy = controller.send(:resource_policy)
+      expect(policy).to eq QueueItemPolicy
+    end
+
     build_proc = proc do |user|
       uuid = SecureRandom.uuid
       if user
@@ -13,14 +23,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       end
     end
 
-    describe "GET #index" do
-      it_behaves_like "an index endpoint" do
-        let(:key) { :id }
-        let(:factory) { build_proc }
-        let(:assignee) { :queue_items }
-        let(:policy) { QueueItemsPolicy }
-      end
-    end
+    it_behaves_like "an index endpoint", 'QueueItemsPolicy'
 
     describe "GET #show" do
       it_behaves_like "a show endpoint" do

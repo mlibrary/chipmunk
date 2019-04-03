@@ -4,24 +4,14 @@ require "rails_helper"
 
 RSpec.describe V1::EventsController, type: :controller do
   describe "/v1" do
-    describe "GET #index" do
-      it_behaves_like "an index endpoint" do
-        let(:policy) { EventsPolicy }
-        let(:key) { :event_id }
-        # for underprivileged users, should only render events where the package
-        # belongs to the user
-        let(:factory) do
-          proc do |user|
-            if user
-              Fabricate(:event, package: Fabricate(:package, user: user))
-            else
-              Fabricate(:event)
-            end
-          end
-        end
-        let(:assignee) { :events }
-      end
+    it "uses EventsPolicy as its collection policy" do
+      policy = controller.send(:collection_policy)
+      expect(policy).to eq EventsPolicy
+    end
 
+    it_behaves_like "an index endpoint", 'EventsPolicy'
+
+    describe "GET #index" do
       context "with events for two packages" do
         include_context "as admin user"
 

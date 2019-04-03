@@ -3,10 +3,13 @@
 require "queue_item_builder"
 
 module V1
-  class QueueItemsController < ApplicationController
+  class QueueItemsController < ResourceController
+    collection_policy QueueItemsPolicy
+    resource_policy QueueItemPolicy
+
     # GET /v1/queue
     def index
-      policy = QueueItemsPolicy.new(current_user)
+      policy = collection_policy.new(current_user)
       policy.authorize! :index?
 
       @queue_items = policy.resolve
@@ -15,7 +18,7 @@ module V1
     # GET /v1/queue/:id
     def show
       @queue_item = QueueItem.find(params[:id])
-      QueueItemPolicy.new(current_user, @queue_item).authorize! :show?
+      resource_policy.new(current_user, @queue_item).authorize! :show?
       render template: "v1/queue_items/show", status: 200
     end
 
@@ -39,7 +42,7 @@ module V1
     private
 
     def authorize_create!(request)
-      policy = QueueItemsPolicy.new(current_user)
+      policy = collection_policy.new(current_user)
       unless policy.create?(request)
         raise NotAuthorizedError, "not allowed to create? this QueueItem for #{params[:bag_id]}"
       end
