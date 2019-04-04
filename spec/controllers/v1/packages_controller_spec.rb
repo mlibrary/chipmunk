@@ -15,7 +15,6 @@ RSpec.describe V1::PackagesController, type: :controller do
     end
 
     it_behaves_like "an index endpoint", "PackagesPolicy"
-    # it_behaves_like "a show endpoint", "PackagePolicy", :package, ->(package) { { bag_id: package.bag_id } }
 
     describe "GET #show" do
       context "when the resource belongs to the user" do
@@ -52,18 +51,6 @@ RSpec.describe V1::PackagesController, type: :controller do
         end
       end
     end
-
-    # describe "GET #show" do
-    #   it_behaves_like "a show endpoint" do
-    #     before { controller.resource_policy = policy_double("PackagePolicy", show?: true) }
-
-    #     let(:key) { :bag_id }
-    #     let(:factory) do
-    #       proc {|user| user ? Fabricate(:package, user: user) : Fabricate(:package) }
-    #     end
-    #     let(:assignee) { :package }
-    #   end
-    # end
 
     describe "GET #sendfile" do
       include_context "as underprivileged user"

@@ -14,23 +14,43 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       expect(policy).to eq QueueItemPolicy
     end
 
-    build_proc = proc do |user|
-      uuid = SecureRandom.uuid
-      if user
-        Fabricate(:queue_item, package: Fabricate(:package, bag_id: uuid, user: user))
-      else
-        Fabricate(:queue_item, package: Fabricate(:package, bag_id: uuid))
-      end
-    end
-
     it_behaves_like "an index endpoint", 'QueueItemsPolicy'
 
     describe "GET #show" do
-      it_behaves_like "a show endpoint" do
-        let(:key) { :id }
-        let(:factory) { build_proc }
-        let(:assignee) { :queue_item }
-        let(:policy) { QueueItemPolicy }
+      context "when the resource belongs to the user" do
+        let(:uuid)       { SecureRandom.uuid }
+        let(:user)       { Fabricate(:user) }
+        let(:package)    { Fabricate(:package, user: user) }
+        let(:queue_item) { Fabricate(:queue_item, package: package) }
+
+        before do
+          controller.fake_user user
+          get :show, params: { id: queue_item.id }
+        end
+
+        it "returns 200" do
+          expect(response).to have_http_status(200)
+        end
+
+        it "renders the queue_item" do
+          expect(assigns(:queue_item)).to eq queue_item
+        end
+
+        it "renders the show template" do
+          expect(response).to render_template(:show)
+        end
+      end
+
+      context "when the record does not exist" do
+        before do
+          controller.fake_user Fabricate(:user)
+        end
+
+        it "raises an ActiveRecord::RecordNotFound" do
+          expect do
+            get :show, params: { id: '(missing)' }
+          end.to raise_exception ActiveRecord::RecordNotFound
+        end
       end
     end
 
