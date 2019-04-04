@@ -20,8 +20,8 @@ repositories.
 Digital Preservation Characteristics
 ------------------------------------
 
-For further description of these terms, see
-`this document <https://tools.lib.umich.edu/confluence/display/LIT/Digital+Preservation+Principles>`_.
+For further description of these terms, see the
+:doc:`Digital Preservation Principles <principles>`.
 
 - Enforced validation of content
 - Storage auditing:
@@ -54,6 +54,7 @@ More Information
     :maxdepth: 2
     :caption: Contents:
 
+    principles
     contributing
     endpoints
     workflows
