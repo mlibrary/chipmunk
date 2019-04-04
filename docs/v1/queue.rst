@@ -9,7 +9,8 @@ v1/queue
     status ``FAILED``, and an array of errors.
 
     :reqheader Authorization: Bearer token
-    :parameter id: Queue item's id. This id is not the same as the bag's id.
+
+    :query package: Include only the results for the given package_id.
 
     :resheader Content-Type: application/json
     :resjsonarr id: Queue entry's id
