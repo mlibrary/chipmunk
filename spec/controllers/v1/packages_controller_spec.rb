@@ -15,18 +15,55 @@ RSpec.describe V1::PackagesController, type: :controller do
     end
 
     it_behaves_like "an index endpoint", "PackagesPolicy"
+    # it_behaves_like "a show endpoint", "PackagePolicy", :package, ->(package) { { bag_id: package.bag_id } }
 
     describe "GET #show" do
-      it_behaves_like "a show endpoint" do
-        before { controller.resource_policy = policy_double("PackagePolicy", show?: true) }
+      context "when the resource belongs to the user" do
+        let(:user)    { Fabricate(:user) }
+        let(:package) { Fabricate(:package, user: user) }
 
-        let(:key) { :bag_id }
-        let(:factory) do
-          proc {|user| user ? Fabricate(:package, user: user) : Fabricate(:package) }
+        before do
+          controller.fake_user user
+          get :show, params: { bag_id: package.bag_id }
         end
-        let(:assignee) { :package }
+
+        it "returns 200" do
+          expect(response).to have_http_status(200)
+        end
+
+        it "renders the package" do
+          expect(assigns(:package)).to eq package
+        end
+
+        it "renders the show template" do
+          expect(response).to render_template(:show)
+        end
+      end
+
+      context "when the record does not exist" do
+        before do
+          controller.fake_user Fabricate(:user)
+        end
+
+        it "raises an ActiveRecord::RecordNotFound" do
+          expect do
+            get :show, params: { bag_id: '(missing)' }
+          end.to raise_exception ActiveRecord::RecordNotFound
+        end
       end
     end
+
+    # describe "GET #show" do
+    #   it_behaves_like "a show endpoint" do
+    #     before { controller.resource_policy = policy_double("PackagePolicy", show?: true) }
+
+    #     let(:key) { :bag_id }
+    #     let(:factory) do
+    #       proc {|user| user ? Fabricate(:package, user: user) : Fabricate(:package) }
+    #     end
+    #     let(:assignee) { :package }
+    #   end
+    # end
 
     describe "GET #sendfile" do
       include_context "as underprivileged user"
