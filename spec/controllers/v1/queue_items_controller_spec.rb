@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe V1::QueueItemsController, type: :controller do
+  include Checkpoint::Spec::Controller
+
   describe "/v1" do
     it "uses QueueItemsPolicy as its collection policy" do
       policy = controller.send(:collection_policy)
@@ -17,35 +19,33 @@ RSpec.describe V1::QueueItemsController, type: :controller do
     it_behaves_like "an index endpoint", 'QueueItemsPolicy'
 
     describe "GET #show" do
+      include_context "as underprivileged user"
+
+      before { resource_policy 'QueueItemPolicy', show?: true }
+
       context "when the resource belongs to the user" do
         let(:uuid)       { SecureRandom.uuid }
         let(:user)       { Fabricate(:user) }
         let(:package)    { Fabricate(:package, user: user) }
         let(:queue_item) { Fabricate(:queue_item, package: package) }
 
-        before do
-          controller.fake_user user
-          get :show, params: { id: queue_item.id }
-        end
-
         it "returns 200" do
+          get :show, params: { id: queue_item.id }
           expect(response).to have_http_status(200)
         end
 
         it "renders the queue_item" do
+          get :show, params: { id: queue_item.id }
           expect(assigns(:queue_item)).to eq queue_item
         end
 
         it "renders the show template" do
+          get :show, params: { id: queue_item.id }
           expect(response).to render_template(:show)
         end
       end
 
       context "when the record does not exist" do
-        before do
-          controller.fake_user Fabricate(:user)
-        end
-
         it "raises an ActiveRecord::RecordNotFound" do
           expect do
             get :show, params: { id: '(missing)' }
@@ -55,6 +55,9 @@ RSpec.describe V1::QueueItemsController, type: :controller do
     end
 
     describe "POST #create" do
+      include_context "as underprivileged user"
+
+      let!(:package) { Fabricate(:package, user: user) }
       let(:result_queue_item) { Fabricate(:queue_item, package_id: package.bag_id) }
       let(:result_status) { status }
       let(:builder) { double(:builder) }
@@ -63,17 +66,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       before(:each) do
         allow(QueueItemBuilder).to receive(:new).and_return(builder)
         allow(builder).to receive(:create).and_return([result_status, result_queue_item])
-      end
-
-      include_context "as underprivileged user"
-      let!(:package) { Fabricate(:package, user: user) }
-
-      it "checks the policy with the package" do
-        policy = double(:policy)
-        allow(QueueItemsPolicy).to receive(:new).with(user).and_return(policy)
-        expect(policy).to receive(:create?).with(package)
-
-        post :create, params: { bag_id: package.bag_id }
+        resource_policy 'QueueItemPolicy', create?: true
       end
 
       context "QueueItemBuilder returns status==:duplicate" do
@@ -121,6 +114,12 @@ RSpec.describe V1::QueueItemsController, type: :controller do
           post :create, params: { bag_id: package.bag_id }
           expect(response).to render_template(nil)
         end
+      end
+
+      it "rejects unauthorized users" do
+        resource_policy 'QueueItemPolicy', create?: false
+        post :create, params: { bag_id: package.bag_id }
+        expect(response).to have_http_status(403)
       end
     end
   end

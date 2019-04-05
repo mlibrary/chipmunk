@@ -3,11 +3,24 @@
 require "rails_helper"
 
 RSpec.describe V1::AuditsController, type: :controller do
+  include Checkpoint::Spec::Controller
+
   describe "/v1" do
+    it "uses AuditsPolicy as its collection_policy" do
+      policy = controller.send(:collection_policy)
+      expect(policy).to eq AuditsPolicy
+    end
+
+    it "uses AuditPolicy as its resource_policy" do
+      policy = controller.send(:resource_policy)
+      expect(policy).to eq AuditPolicy
+    end
 
     describe "GET #show" do
       let!(:audit) { Fabricate(:audit) }
       include_context "as admin user"
+
+      before { resource_policy 'AuditPolicy', show?: true }
 
       it "assigns an audit presenter" do
         get :show, params: { id: audit.id }
@@ -23,17 +36,13 @@ RSpec.describe V1::AuditsController, type: :controller do
         get :show, params: { id: audit.id, expand: true }
         expect(assigns(:audit).expand?).to be true
       end
-      
-      it "checks the policy" do
-        expect_resource_policy_check(policy: AuditPolicy, user: user, resource: audit, action: :show?)
-
-        get :show, params: { id: audit.id }
-      end
     end
 
     describe "GET #index" do
       let!(:audit) { Fabricate(:audit) }
       include_context "as admin user"
+
+      before { collection_policy 'AuditsPolicy', [audit], index?: true }
 
       it "assigns an array of audit presenters" do
         get :index
@@ -43,12 +52,6 @@ RSpec.describe V1::AuditsController, type: :controller do
       it "does not expand the audits" do
         get :index
         expect(assigns(:audits).first.expand?).to be false
-      end
-
-      it "checks the policy" do
-        expect_collection_policy_check(policy: AuditsPolicy, user: user, action: :index?)
-
-        get :index
       end
     end
 
@@ -62,6 +65,7 @@ RSpec.describe V1::AuditsController, type: :controller do
       before(:each) do
         # should not appear in audit since it has no storage to audit
         allow(AuditFixityCheckJob).to receive(:perform_later)
+        collection_policy 'AuditsPolicy', [double('Audit')], create?: true
       end
 
       it "starts a AuditFixityCheckJob for each stored package" do
@@ -74,29 +78,25 @@ RSpec.describe V1::AuditsController, type: :controller do
 
       it "creates an Audit object" do
         post :create
-
         expect(Audit.count).to eql(1)
       end
 
       it "creates an Audit object whose owners is the current user" do
         post :create
-
         expect(Audit.first.user).to eq(user)
       end
 
       it "creates an Audit object whose count is the number of packages" do
         post :create
-
         expect(Audit.first.packages).to eql(2)
       end
 
       it "does not start a AuditFixityCheckJob for unstored packages (requests)" do
         post :create
-
         expect(AuditFixityCheckJob).not_to have_received(:perform_later).with(package: unstored_package, user: user, audit: anything)
       end
 
-      it "returns 201" do
+      it "returns 201 Created" do
         post :create
         expect(response).to have_http_status(201)
       end
@@ -109,12 +109,6 @@ RSpec.describe V1::AuditsController, type: :controller do
       it "renders nothing" do
         post :create
         expect(response).to render_template(nil)
-      end
-
-      it "checks the policy" do
-        expect_collection_policy_check(policy: AuditsPolicy, user: user, action: :create?)
-
-        post :create
       end
     end
   end

@@ -2,14 +2,15 @@
 
 # @param collection_policy [Policy] The controller's collection policy class name; 
 #        used to make verifying instance_doubles
-RSpec.shared_examples "an index endpoint" do |collection_policy|
+RSpec.shared_examples "an index endpoint" do |coll_policy|
+  include Checkpoint::Spec::Controller
+
   describe "GET #index" do
     let(:resource) { double(:resource) }
-    let(:policy)   { collection_policy_double(collection_policy, [resource], index?: true) }
 
     before(:each) do
       controller.fake_user(Fabricate(:user))
-      controller.collection_policy = policy
+      collection_policy coll_policy, [resource], index?: true
     end
 
     it "returns 200" do

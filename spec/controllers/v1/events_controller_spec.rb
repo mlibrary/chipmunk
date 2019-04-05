@@ -3,6 +3,7 @@
 require "rails_helper"
 
 RSpec.describe V1::EventsController, type: :controller do
+  include Checkpoint::Spec::Controller
   describe "/v1" do
     it "uses EventsPolicy as its collection policy" do
       policy = controller.send(:collection_policy)
@@ -21,6 +22,7 @@ RSpec.describe V1::EventsController, type: :controller do
         before(:each) do
           # create an extra event that shouldn't be in the output
           Fabricate(:event)
+          collection_policy 'EventsPolicy', events, index?: true
         end
 
         it "can show only events for an object identified by bag_id" do

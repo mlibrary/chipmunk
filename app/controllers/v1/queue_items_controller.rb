@@ -25,7 +25,9 @@ module V1
     # POST /v1/requests/:bag_id/complete
     def create
       request = Package.find_by_bag_id!(params[:bag_id])
-      authorize_create!(request)
+      policy = resource_policy.new(current_user, request)
+      policy.authorize! :create?, "not allowed to create? this QueueItem for #{params[:bag_id]}"
+
       status, @queue_item = QueueItemBuilder.new.create(request)
       case status
       when :duplicate
@@ -35,19 +37,8 @@ module V1
       when :invalid
         render json: @queue_item.errors, status: :unprocessable_entity
       else
-        raise [status, @queue_item]
+        raise "Unexpected status: #{status.inspect} for queue item #{@queue_item.id}"
       end
     end
-
-    private
-
-    def authorize_create!(request)
-      policy = collection_policy.new(current_user)
-      unless policy.create?(request)
-        raise NotAuthorizedError, "not allowed to create? this QueueItem for #{params[:bag_id]}"
-      end
-    end
-
   end
-
 end

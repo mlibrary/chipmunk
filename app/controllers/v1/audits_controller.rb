@@ -1,19 +1,22 @@
 # frozen_string_literal: true
 
 module V1
-  class AuditsController < ApplicationController
+  class AuditsController < ResourceController
+    collection_policy AuditsPolicy
+    resource_policy AuditPolicy
+
     def index
-      policy = AuditsPolicy.new(current_user)
+      policy = collection_policy.new(current_user)
       policy.authorize! :index?
       @audits = policy.resolve.map {|audit| AuditPresenter.new(audit, expand: expand?) }
     end
 
     def show
-      @audit = AuditPresenter.new(Audit.find(params[:id]).tap {|a| AuditPolicy.new(current_user, a).authorize! :show? }, expand: expand?)
+      @audit = AuditPresenter.new(Audit.find(params[:id]).tap {|a| resource_policy.new(current_user, a).authorize! :show? }, expand: expand?)
     end
 
     def create
-      AuditsPolicy.new(current_user).authorize! :create?
+      collection_policy.new(current_user).authorize! :create?
 
       packages = Package.stored
       audit = Audit.create!(user: current_user, packages: packages.count)

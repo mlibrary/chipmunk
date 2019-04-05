@@ -22,7 +22,7 @@ class CollectionPolicy
     false
   end
 
-  def create?
+  def new?
     false
   end
 

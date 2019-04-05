@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe V1::PackagesController, type: :controller do
+  include Checkpoint::Spec::Controller
+
   describe "/v1" do
     it "uses PackagesPolicy as its collection_policy" do
       policy = controller.send(:collection_policy)
@@ -18,31 +20,31 @@ RSpec.describe V1::PackagesController, type: :controller do
 
     describe "GET #show" do
       context "when the resource belongs to the user" do
-        let(:user)    { Fabricate(:user) }
+        include_context "as underprivileged user"
         let(:package) { Fabricate(:package, user: user) }
 
         before do
-          controller.fake_user user
-          get :show, params: { bag_id: package.bag_id }
+          resource_policy 'PackagePolicy', show?: true
         end
 
         it "returns 200" do
+          get :show, params: { bag_id: package.bag_id }
           expect(response).to have_http_status(200)
         end
 
         it "renders the package" do
+          get :show, params: { bag_id: package.bag_id }
           expect(assigns(:package)).to eq package
         end
 
         it "renders the show template" do
+          get :show, params: { bag_id: package.bag_id }
           expect(response).to render_template(:show)
         end
       end
 
       context "when the record does not exist" do
-        before do
-          controller.fake_user Fabricate(:user)
-        end
+        include_context "as underprivileged user"
 
         it "raises an ActiveRecord::RecordNotFound" do
           expect do
@@ -50,11 +52,44 @@ RSpec.describe V1::PackagesController, type: :controller do
           end.to raise_exception ActiveRecord::RecordNotFound
         end
       end
+
+      context "as an unauthorized user" do
+        include_context "as underprivileged user"
+        let(:package) { Fabricate(:package) }
+
+        before { resource_policy 'PackagePolicy', show?: false }
+
+        it "rejects requests" do
+          get :show, params: { bag_id: package.bag_id }
+          expect(response).to be_forbidden
+        end
+      end
+
+      context "with the external_id" do
+        include_context "as underprivileged user"
+        let(:package) { Fabricate(:package, user: user) }
+
+        it "can fetch a package by external id" do
+          resource_policy 'PackagePolicy', show?: true
+          get :show, params: { bag_id: package.external_id }
+
+          expect(assigns(:package)).to eql(package)
+        end
+
+        it "rejects unauthorized users" do
+          resource_policy 'PackagePolicy', show?: false
+          get :show, params: { bag_id: package.external_id }
+
+          expect(response).to be_forbidden
+        end
+      end
     end
 
     describe "GET #sendfile" do
       include_context "as underprivileged user"
 
+      # TODO: Unbind controller from PackageFileGetter through a registered
+      #       factory, so send_file params can be mocked directly.
       context "with mocked storage" do
         let(:package) { Fabricate(:package, user: user, storage_location: "/foo") }
         let(:bag) { double(:bag, data_dir: "/foo/data", bag_files: ["/foo/data/samplefile.jpg"]) }
@@ -63,46 +98,25 @@ RSpec.describe V1::PackagesController, type: :controller do
         before(:each) do
           @old_storage = Services.storage
           Services.register(:storage) { storage }
+          resource_policy 'PackagePolicy', show?: true
         end
 
         after(:each) do
           Services.register(:storage) { @old_storage }
         end
 
-        let(:service) { described_class.new(package, storage: storage) }
-
-        # needs the full rack stack to test X-Sendfile; see requests/v1/packages_file_spec.rb
-        # it "can retrieve a file from the package"
-
         it "returns a 404 if the file isn't present in the bag" do
           get :sendfile, params: { bag_id: package.bag_id, file: "nonexistent" }
 
-          expect(response).to have_http_status(404)
+          expect(response).to be_not_found
         end
 
-        it "checks PackagePolicy with the show? action" do
+        it "returns 204 No Content on success" do
           allow(controller).to receive(:send_file).and_return(nil)
-          expect_resource_policy_check(policy: PackagePolicy, resource: package, user: user, action: :show?)
-
           get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
+
+          expect(response).to be_no_content
         end
-      end
-    end
-
-    describe "GET #show/:external_id" do
-      include_context "as underprivileged user"
-      let(:package) { Fabricate(:package, user: user) }
-
-      it "can fetch a package by external id" do
-        get :show, params: { bag_id: package.external_id }
-
-        expect(assigns(:package)).to eql(package)
-      end
-
-      it "checks PackagePolicy with the show? action" do
-        expect_resource_policy_check(policy: PackagePolicy, resource: package, user: user, action: :show?)
-
-        get :show, params: { bag_id: package.external_id }
       end
     end
 
@@ -131,25 +145,22 @@ RSpec.describe V1::PackagesController, type: :controller do
         end
       end
 
-      context "as authenticated user" do
+      context "as an authorized user" do
         include_context "as underprivileged user"
+        before { collection_policy 'PackagesPolicy', create?: true }
+
         context "new record" do
           context "RequestBuilder returns a valid record" do
             include_context "mocked RequestBuilder", :created
-
-            it "checks PackagesPolicy with the create? action" do
-              expect_collection_policy_check(policy: PackagesPolicy, user: user, action: :create?)
-              post :create, params: attributes
-            end
 
             it "passes the parameters to a RequestBuilder" do
               post :create, params: attributes
               expect(RequestBuilder).to have_received(:new)
               expect(builder).to have_received(:create).with(attributes.merge(user: user))
             end
-            it "returns 201" do
+            it "returns 201 Created" do
               post :create, params: attributes
-              expect(response).to have_http_status(201)
+              expect(response).to be_created
             end
             it "correctly sets the location header" do
               post :create, params: attributes
@@ -160,6 +171,7 @@ RSpec.describe V1::PackagesController, type: :controller do
               expect(response).to render_template(nil)
             end
           end
+
           context "RequestBuilder returns an invalid record" do
             include_context "mocked RequestBuilder", :invalid
             it "returns 422" do
@@ -172,13 +184,9 @@ RSpec.describe V1::PackagesController, type: :controller do
             end
           end
         end
+
         context "as duplicate record" do
           include_context "mocked RequestBuilder", :duplicate
-
-          it "checks PackagesPolicy with the create? action" do
-            expect_collection_policy_check(policy: PackagesPolicy, user: user, action: :create?)
-            post :create, params: attributes
-          end
 
           it "does not create an additional record" do
             post :create, params: attributes
@@ -196,6 +204,16 @@ RSpec.describe V1::PackagesController, type: :controller do
             post :create, params: attributes
             expect(response).to render_template(nil)
           end
+        end
+      end
+
+      context "as an unauthorized user" do
+        include_context "as underprivileged user"
+        before { collection_policy create?: false }
+
+        it "rejects requests" do
+          post :create, params: attributes
+          expect(response).to be_forbidden
         end
       end
     end
