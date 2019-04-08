@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 module V1
-  class EventsController < ApplicationController
+  class EventsController < ResourceController
+    collection_policy EventsPolicy
+
     def index
-      policy = EventsPolicy.new(current_user, Event.package(params[:bag_id]))
+      policy = collection_policy.new(current_user, Event.package(params[:bag_id]))
       policy.authorize! :index?
       @events = policy.resolve
     end

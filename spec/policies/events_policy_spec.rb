@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-require_relative "policy_helpers"
-
 RSpec.describe EventsPolicy do
   let(:policy) { described_class.new(user, FakeCollection.new) }
 
@@ -10,7 +7,7 @@ RSpec.describe EventsPolicy do
     let(:user) { FakeUser.new(admin?: true) }
 
     it_allows :index?
-    it_disallows :create?
+    it_disallows :new?
 
     it_resolves :all
   end
@@ -19,7 +16,7 @@ RSpec.describe EventsPolicy do
     let(:user) { FakeUser.new(admin?: false) }
 
     it_allows :index?
-    it_disallows :create?
+    it_disallows :new?
 
     it_resolves_owned
   end
@@ -27,7 +24,7 @@ RSpec.describe EventsPolicy do
   context "as an externally-identified user" do
     let(:user) { FakeUser.with_external_identity }
 
-    it_disallows :index?, :create?
+    it_disallows :index?, :new?
     it_resolves :none
   end
 

@@ -3,27 +3,18 @@
 require "rails_helper"
 
 RSpec.describe V1::EventsController, type: :controller do
+  include Checkpoint::Spec::Controller
   describe "/v1" do
-    describe "GET #index" do
-      it_behaves_like "an index endpoint" do
-        let(:policy) { EventsPolicy }
-        let(:key) { :event_id }
-        # for underprivileged users, should only render events where the package
-        # belongs to the user
-        let(:factory) do
-          proc do |user|
-            if user
-              Fabricate(:event, package: Fabricate(:package, user: user))
-            else
-              Fabricate(:event)
-            end
-          end
-        end
-        let(:assignee) { :events }
-      end
+    it "uses EventsPolicy as its collection policy" do
+      policy = controller.send(:collection_policy)
+      expect(policy).to eq EventsPolicy
+    end
 
+    it_behaves_like "an index endpoint", 'EventsPolicy'
+
+    describe "GET #index" do
       context "with events for two packages" do
-        include_context "as admin user"
+        include_context "with someone logged in"
 
         let!(:package) { Fabricate(:package) }
         let!(:events) { [Fabricate(:event, package: package), Fabricate(:event, package: package)] }
@@ -31,6 +22,7 @@ RSpec.describe V1::EventsController, type: :controller do
         before(:each) do
           # create an extra event that shouldn't be in the output
           Fabricate(:event)
+          collection_policy 'EventsPolicy', events, index?: true
         end
 
         it "can show only events for an object identified by bag_id" do

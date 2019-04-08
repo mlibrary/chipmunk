@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 require "policy_errors"
-require_relative "policy_helpers"
 
 RSpec.describe CollectionPolicy, type: :policy do
   let(:user) { double(:user) }
@@ -20,10 +18,10 @@ RSpec.describe CollectionPolicy, type: :policy do
     end
   end
 
-  it_disallows :index?, :create?
+  it_disallows :index?, :new?
 
   describe "authorize!" do
-    [:index?, :create?].each do |action|
+    [:index?, :new?].each do |action|
       it "raises an exception for #{action}" do
         expect { described_class.new(user).authorize!(action) }.to raise_error(NotAuthorizedError)
       end

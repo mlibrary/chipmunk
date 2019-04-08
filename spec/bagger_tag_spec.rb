@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 require "bagger_tag"
 
 describe BaggerTag do

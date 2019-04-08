@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-require_relative "policy_helpers"
-require_relative "../support/checkpoint_helpers"
 require "ostruct"
 
 RSpec.describe PackagePolicy do

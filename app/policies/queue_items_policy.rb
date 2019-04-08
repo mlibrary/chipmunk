@@ -10,8 +10,8 @@ class QueueItemsPolicy < CollectionPolicy
     user.known?
   end
 
-  def create?(request)
-    user&.admin? || request&.user == user
+  def new?
+    user.known?
   end
 
   def resolve
