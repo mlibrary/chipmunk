@@ -18,7 +18,7 @@ RSpec.describe V1::AuditsController, type: :controller do
 
     describe "GET #show" do
       let!(:audit) { Fabricate(:audit) }
-      include_context "as admin user"
+      include_context "with someone logged in"
 
       before { resource_policy 'AuditPolicy', show?: true }
 
@@ -40,7 +40,7 @@ RSpec.describe V1::AuditsController, type: :controller do
 
     describe "GET #index" do
       let!(:audit) { Fabricate(:audit) }
-      include_context "as admin user"
+      include_context "with someone logged in"
 
       before { collection_policy 'AuditsPolicy', [audit], index?: true }
 
@@ -57,7 +57,7 @@ RSpec.describe V1::AuditsController, type: :controller do
 
     describe "POST #create" do
       # create two packages
-      include_context "as admin user"
+      include_context "with someone logged in"
 
       let!(:packages) { Array.new(2) { Fabricate(:package) } }
       let!(:unstored_package) { Fabricate(:package, storage_location: nil) }

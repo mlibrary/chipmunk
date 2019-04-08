@@ -14,7 +14,7 @@ RSpec.describe V1::EventsController, type: :controller do
 
     describe "GET #index" do
       context "with events for two packages" do
-        include_context "as admin user"
+        include_context "with someone logged in"
 
         let!(:package) { Fabricate(:package) }
         let!(:events) { [Fabricate(:event, package: package), Fabricate(:event, package: package)] }

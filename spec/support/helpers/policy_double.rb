@@ -3,7 +3,7 @@
 # A fake policy class that generates doubles for instances with configured
 # responses and expectations.
 #
-# See {policy_double} for the typical, convenient usage.
+# See {policy_double} for typical, convenient usage.
 class PolicyDouble
   include RSpec::Mocks::ExampleMethods
 
@@ -60,33 +60,33 @@ end
 #
 # The simplest construct is to supply only a hash of predicates and whether
 # they should return true or false. The double returned will expect that
-# authorize! is called and will raise unless the predicate is truthy.
+# authorize! is called with all supplied predicates and will raise unless the
+# predicate value is truthy.
 #
 # Example:
 #
 # let(:policy) { policy_double(show?: true) }
 #
-# It does not expect that the specific predicate is authorized, but the
-# expectation will fail if at least one present-and-truthy predicate is
-# authorized.
-#
 # If more detailed control is needed, a block can be supplied. If this happens,
-# the authorize! expectation is not set automatically and the block is called
-# each time a new policy instance is created. The first parameter is the double
-# itself and the rest are what is passed to the policy constructor. You can
-# set more detailed responses and expectations on the policy instance here.
+# the the block is called each time a new policy instance is created. The first
+# parameter is the double itself and the rest are what is passed to the policy
+# constructor. You can set more detailed responses and expectations on the
+# policy instance here.
 #
 # Example:
 #
-# controller.resource_policy = policy_double do |policy|
+# resource_policy = policy_double do |policy, *new_args|
+#   (user, resource) = new_args
+#   expect(resource.owner).to eq user
 #   allow(policy).to receive(:show?).and_return(true)
 #   expect(policy).to receive(:authorize!).with(:show?)
 # end
 #
 # Note that this example is illustrating the mechanism more than a suggested
-# pattern. It is equivalent to the shorter form. An example of where this
-# mechanism may be more useful is a case where multiple permissions must be
-# authorized for a given controller action.
+# pattern. It is roughly equivalent to the shorter form. An example of where
+# this mechanism may be more useful is a case where variable permissions must
+# be authorized for a given controller action, or there is a desire to mock
+# variations depending on richer fixture data.
 def policy_double(name = nil, **actions, &block)
   PolicyDouble.new(name, actions, &block)
 end
@@ -95,6 +95,13 @@ def collection_policy_double(name = nil, scope = [], **actions, &block)
   PolicyDouble.new(name, scope, **actions, &block)
 end
 
+# Convenience module for settings policies on controller instances in specs.
+#
+# Include the module at the top level RSpec.describe, and then call
+# collection_policy and/or resource_policy, typically in a before block, to
+# mock the policies. These have the same behavior as policy_double and
+# collection_policy_double except that they are also attached to the controller
+# instance already defined within the spec.
 module Checkpoint::Spec
   module Controller
     def collection_policy(*name_and_scope, **actions, &block)

@@ -19,15 +19,11 @@ RSpec.describe V1::QueueItemsController, type: :controller do
     it_behaves_like "an index endpoint", 'QueueItemsPolicy'
 
     describe "GET #show" do
-      include_context "as underprivileged user"
+      context "when the policy allows the user access" do
+        include_context "with someone logged in"
+        let(:queue_item) { Fabricate(:queue_item) }
 
-      before { resource_policy 'QueueItemPolicy', show?: true }
-
-      context "when the resource belongs to the user" do
-        let(:uuid)       { SecureRandom.uuid }
-        let(:user)       { Fabricate(:user) }
-        let(:package)    { Fabricate(:package, user: user) }
-        let(:queue_item) { Fabricate(:queue_item, package: package) }
+        before { resource_policy 'QueueItemPolicy', show?: true }
 
         it "returns 200" do
           get :show, params: { id: queue_item.id }
@@ -46,6 +42,8 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       end
 
       context "when the record does not exist" do
+        include_context "with someone logged in"
+
         it "raises an ActiveRecord::RecordNotFound" do
           expect do
             get :show, params: { id: '(missing)' }
@@ -55,7 +53,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
     end
 
     describe "POST #create" do
-      include_context "as underprivileged user"
+      include_context "with someone logged in"
 
       let!(:package) { Fabricate(:package, user: user) }
       let(:result_queue_item) { Fabricate(:queue_item, package_id: package.bag_id) }
@@ -116,10 +114,12 @@ RSpec.describe V1::QueueItemsController, type: :controller do
         end
       end
 
-      it "rejects unauthorized users" do
-        resource_policy 'QueueItemPolicy', create?: false
-        post :create, params: { bag_id: package.bag_id }
-        expect(response).to have_http_status(403)
+      context "when the policy denies the user access" do
+        before { resource_policy 'QueueItemPolicy', create?: false }
+        it "responds with 403 Forbidden" do
+          post :create, params: { bag_id: package.bag_id }
+          expect(response).to have_http_status(:forbidden)
+        end
       end
     end
   end

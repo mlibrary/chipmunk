@@ -33,8 +33,8 @@
 #   end
 #
 #   describe 'GET #show' do
-#     context 'with an unauthorized user' do
-#       it 'rejects' do
+#     context 'when the policy denies access' do
+#       it 'responds with 403 Forbidden' do
 #         ...
 #       end
 #     end

@@ -19,13 +19,11 @@ RSpec.describe V1::PackagesController, type: :controller do
     it_behaves_like "an index endpoint", "PackagesPolicy"
 
     describe "GET #show" do
-      context "when the resource belongs to the user" do
-        include_context "as underprivileged user"
-        let(:package) { Fabricate(:package, user: user) }
+      context "when the policy allows the user access" do
+        include_context "with someone logged in"
+        let(:package) { Fabricate(:package) }
 
-        before do
-          resource_policy 'PackagePolicy', show?: true
-        end
+        before { resource_policy 'PackagePolicy', show?: true }
 
         it "returns 200" do
           get :show, params: { bag_id: package.bag_id }
@@ -44,7 +42,7 @@ RSpec.describe V1::PackagesController, type: :controller do
       end
 
       context "when the record does not exist" do
-        include_context "as underprivileged user"
+        include_context "with someone logged in"
 
         it "raises an ActiveRecord::RecordNotFound" do
           expect do
@@ -53,40 +51,34 @@ RSpec.describe V1::PackagesController, type: :controller do
         end
       end
 
-      context "as an unauthorized user" do
-        include_context "as underprivileged user"
+      context "when the policy denies the user access" do
+        include_context "with someone logged in"
         let(:package) { Fabricate(:package) }
 
         before { resource_policy 'PackagePolicy', show?: false }
 
-        it "rejects requests" do
+        it "responds with 403 Forbidden" do
           get :show, params: { bag_id: package.bag_id }
-          expect(response).to be_forbidden
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
-      context "with the external_id" do
-        include_context "as underprivileged user"
+      context "with the external_id supplied" do
+        include_context "with someone logged in"
         let(:package) { Fabricate(:package, user: user) }
 
-        it "can fetch a package by external id" do
-          resource_policy 'PackagePolicy', show?: true
+        before { resource_policy 'PackagePolicy', show?: true }
+
+        it "fetches the package" do
           get :show, params: { bag_id: package.external_id }
 
           expect(assigns(:package)).to eql(package)
-        end
-
-        it "rejects unauthorized users" do
-          resource_policy 'PackagePolicy', show?: false
-          get :show, params: { bag_id: package.external_id }
-
-          expect(response).to be_forbidden
         end
       end
     end
 
     describe "GET #sendfile" do
-      include_context "as underprivileged user"
+      include_context "with someone logged in"
 
       # TODO: Unbind controller from PackageFileGetter through a registered
       #       factory, so send_file params can be mocked directly.
@@ -108,14 +100,14 @@ RSpec.describe V1::PackagesController, type: :controller do
         it "returns a 404 if the file isn't present in the bag" do
           get :sendfile, params: { bag_id: package.bag_id, file: "nonexistent" }
 
-          expect(response).to be_not_found
+          expect(response).to have_http_status(:not_found)
         end
 
         it "returns 204 No Content on success" do
           allow(controller).to receive(:send_file).and_return(nil)
           get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
 
-          expect(response).to be_no_content
+          expect(response).to have_http_status(:no_content)
         end
       end
     end
@@ -146,7 +138,7 @@ RSpec.describe V1::PackagesController, type: :controller do
       end
 
       context "as an authorized user" do
-        include_context "as underprivileged user"
+        include_context "with someone logged in"
         before { collection_policy 'PackagesPolicy', create?: true }
 
         context "new record" do
@@ -160,7 +152,7 @@ RSpec.describe V1::PackagesController, type: :controller do
             end
             it "returns 201 Created" do
               post :create, params: attributes
-              expect(response).to be_created
+              expect(response).to have_http_status(:created)
             end
             it "correctly sets the location header" do
               post :create, params: attributes
@@ -207,13 +199,13 @@ RSpec.describe V1::PackagesController, type: :controller do
         end
       end
 
-      context "as an unauthorized user" do
-        include_context "as underprivileged user"
+      context "when the policy denies the user access" do
+        include_context "with someone logged in"
         before { collection_policy create?: false }
 
-        it "rejects requests" do
+        it "responds with 403 Forbidden" do
           post :create, params: attributes
-          expect(response).to be_forbidden
+          expect(response).to have_http_status(:forbidden)
         end
       end
     end
