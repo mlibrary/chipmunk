@@ -12,7 +12,7 @@ module V1
       policy = collection_policy.new(current_user)
       policy.authorize! :index?
 
-      @queue_items = policy.resolve
+      @queue_items = policy.resolve.for_package(params[:package])
     end
 
     # GET /v1/queue/:id

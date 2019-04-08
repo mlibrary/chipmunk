@@ -16,7 +16,35 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       expect(policy).to eq QueueItemPolicy
     end
 
-    it_behaves_like "an index endpoint", 'QueueItemsPolicy'
+    describe "GET #index" do
+      include_context "with someone logged in"
+      let!(:package) { Fabricate(:package, user: user) }
+      let!(:intersection) { Fabricate.times(2, :queue_item, package: package) }
+      let!(:disjoint) { Fabricate.times(2, :queue_item, package: Fabricate(:package, user: user)) }
+
+      before(:each) { collection_policy 'QueueItemsPolicy', QueueItem.all, index?: true }
+
+      it "returns 200" do
+        get :index
+        expect(response).to have_http_status(200)
+      end
+
+      it "renders only the records from the policy" do
+        get :index
+        expect(assigns(controller.controller_name))
+          .to contain_exactly(*(disjoint + intersection))
+      end
+
+      it "renders the correct template" do
+        get :index
+        expect(response).to render_template(:index)
+      end
+
+      it "returns only matching packages" do
+        get :index, params: { package: package.id }
+        expect(assigns(:queue_items)).to contain_exactly(*intersection)
+      end
+    end
 
     describe "GET #show" do
       context "when the policy allows the user access" do

@@ -19,4 +19,6 @@ class QueueItem < ApplicationRecord
     package.user
   end
 
+  scope :for_package, ->(package_id) { where(package_id: package_id) unless package_id.blank? }
+
 end
