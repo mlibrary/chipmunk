@@ -9,6 +9,10 @@ module Chipmunk
       klass.new(path)
     end
 
+    def for_package(package)
+      klass.new(package.storage_location)
+    end
+
     private
 
     attr_reader :klass

@@ -11,4 +11,8 @@ class ChipmunkBag < BagIt::Bag
     return {} unless File.exist?(chipmunk_info_txt_file)
     read_info_file chipmunk_info_txt_file
   end
+
+  def relative_data_files
+    bag_files.map {|f| Pathname.new(f).relative_path_from(data_dir) }
+  end
 end
