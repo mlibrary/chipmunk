@@ -46,7 +46,7 @@ RSpec.shared_examples_for "a package view" do |assignee, wrapper, expand|
 
     assign(assignee, wrapper.call(package))
     @storage = Services.storage
-    Services.register(:storage) { double(:storage, new: bag) }
+    Services.register(:storage) { double(:storage, create: bag) }
   end
 
   after(:each) do

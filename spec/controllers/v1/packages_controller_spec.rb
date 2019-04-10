@@ -85,7 +85,7 @@ RSpec.describe V1::PackagesController, type: :controller do
       context "with mocked storage" do
         let(:package) { Fabricate(:package, user: user, storage_location: "/foo") }
         let(:bag) { double(:bag, data_dir: "/foo/data", bag_files: ["/foo/data/samplefile.jpg"]) }
-        let(:storage) { double(:storage, new: bag) }
+        let(:storage) { double(:storage, create: bag) }
 
         before(:each) do
           @old_storage = Services.storage

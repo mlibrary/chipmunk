@@ -5,7 +5,7 @@ require "file_errors"
 class PackageFileGetter
   def initialize(package, storage: Services.storage)
     raise "package must be stored" unless package.stored?
-    @bag = storage.new(package.storage_location)
+    @bag = storage.create(package.storage_location)
   end
 
   def files

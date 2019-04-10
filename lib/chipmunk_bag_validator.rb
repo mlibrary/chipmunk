@@ -8,7 +8,7 @@ class ChipmunkBagValidator
   def initialize(package, errors = [], storage = Services.storage)
     @package = package
     @src_path = package.src_path
-    @bag = storage.new(src_path) if File.exist?(src_path)
+    @bag = storage.create(src_path) if File.exist?(src_path)
     @errors = errors
   end
 
