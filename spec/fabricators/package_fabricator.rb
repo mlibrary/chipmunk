@@ -7,3 +7,7 @@ Fabricator(:package, aliases: [:request]) do
   storage_location { File.join Faker::Lorem.word, Faker::Lorem.word, Faker::Lorem.word }
   content_type { ["digital", "audio"].sample }
 end
+
+Fabricator(:stored_package, from: :package) do
+  storage_location { Rails.root/"spec"/"support"/"fixtures"/"test_bag" }
+end

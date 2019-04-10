@@ -93,41 +93,62 @@ RSpec.describe V1::PackagesController, type: :controller do
     describe "GET #sendfile" do
       include_context "with someone logged in"
 
-      context "with mocked storage" do
-        let(:package) { Fabricate(:package, user: user, storage_location: "/foo") }
-        let(:storage) { double(:storage, for: bag) }
+      let(:package) { Fabricate(:stored_package, user: user) }
+
+      before(:each) { resource_policy "PackagePolicy", show?: true }
+
+      context "the file is not present in the bag" do
+        it "returns a 404 if the file isn't present in the bag" do
+          get :sendfile, params: { bag_id: package.bag_id, file: "nonexistent" }
+
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+
+      context "the file exists in the bag" do
+        it "returns 204 No Content on success" do
+          get :sendfile, params: { bag_id: package.bag_id, file: "samplefile" }
+
+          expect(response).to have_http_status(:no_content)
+        end
+      end
+    end
+
+    describe "GET #send_package" do
+      include_context "with someone logged in"
+
+      before(:each) { resource_policy "PackagePolicy", show?: true }
+
+      context "the package is not stored" do
+        let(:package) { Fabricate(:package, user: user, storage_location: nil) }
+
+        it "returns a 404" do
+          get :send_package, params: { bag_id: package.bag_id }
+
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+
+      context "the package is stored" do
+        let(:package) { Fabricate(:stored_package, user: user) }
+        let(:zip) { double(:zip) }
 
         before(:each) do
-          resource_policy "PackagePolicy", show?: true
+          allow(controller).to receive(:zip_tricks_stream).and_yield(zip)
+          allow(zip).to receive(:write_deflated_file).and_yield(double(:sink))
+          allow(IO).to receive(:copy_stream)
         end
 
-        around(:each) do |example|
-          old_storage = Services.storage
-          Services.register(:storage) { storage }
-          example.run
-          Services.register(:storage) { old_storage }
-        end
-
-        context "the file is not present in the bag" do
-          let(:bag) { double(:bag, include?: false) }
-
-          it "returns a 404 if the file isn't present in the bag" do
-            get :sendfile, params: { bag_id: package.bag_id, file: "nonexistent" }
-
-            expect(response).to have_http_status(:not_found)
+        it "zips each file in the stored package" do
+          Services.storage.for(package).relative_files.each do |file|
+            expect(zip).to receive(:write_deflated_file).with(file.to_s)
           end
+          get :send_package, params: { bag_id: package.bag_id }
         end
+        it "returns 204 No Content on success" do
+          get :send_package, params: { bag_id: package.bag_id }
 
-        context "the file exists in the bag" do
-          let(:bag) { double(:bag, include?: true, data_file: data_file) }
-          let(:data_file) { double(:data_file, path: 1, type: 2) }
-
-          it "returns 204 No Content on success" do
-            allow(controller).to receive(:send_file).and_return(nil)
-            get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
-
-            expect(response).to have_http_status(:no_content)
-          end
+          expect(response).to have_http_status(204)
         end
       end
     end

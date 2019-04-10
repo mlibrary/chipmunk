@@ -78,8 +78,23 @@ v1/packages
 
     :resheader X-Sendfile:
 
-    :statuscode 200: Success
+    :statuscode 204: No Content (success)
     :statuscode 401: Unauthenticated
     :statuscode 403: User does not own the resource, and is not an admin.
-    :statuscode 404: Not found
+    :statuscode 404: Not found, or the packge has not yet been stored.
+
+.. http:get:: /v1/packages/(uuid:bag_id)/download
+
+    Download an entire package, including all metadata files stored alongside
+    the data. The downloaded file will be a zip file.
+
+    :reqheader Authorization: Bearer token
+    :parameter uuid bag_id: package's id
+
+    :resheader X-Sendfile:
+
+    :statuscode 204: No Content (success)
+    :statuscode 401: Unauthenticated
+    :statuscode 403: User does not own the resource, and is not an admin.
+    :statuscode 404: Not found, or the packge has not yet been stored.
 
