@@ -5,11 +5,21 @@ require "chipmunk_bag_validator"
 
 class BagMoveJob < ApplicationJob
 
-  def perform(queue_item, errors: [], validator: ChipmunkBagValidator.new(queue_item.package, errors))
+  def perform( queue_item, errors: [], validator: nil)
     @queue_item = queue_item
     @src_path = queue_item.package.src_path
     @dest_path = queue_item.package.dest_path
     @errors = errors
+
+    # TODO: Pull this up and out
+    # TODO: Use Services.storage.create
+    if validator.nil? && File.exist?(src_path)
+      validator = ChipmunkBagValidator.new(
+        queue_item.package,
+        errors,
+        ChipmunkBag.new(src_path)
+      )
+    end
 
     begin
       # TODO

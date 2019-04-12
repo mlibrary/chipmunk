@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require "package_file_getter"
 
 json.bag_id package.bag_id
 json.user package.user.username
@@ -13,5 +12,5 @@ json.stored package.stored?
 json.created_at package.created_at.to_formatted_s(:default)
 json.updated_at package.updated_at.to_formatted_s(:default)
 if expand && package.stored?
-  json.files PackageFileGetter.new(package).files
+  json.files @bag.relative_data_files
 end

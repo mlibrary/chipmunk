@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "chipmunk_bag"
+require "bag_repository"
 
 def assign_db(lhs, rhs)
   if rhs.is_a? String
@@ -22,7 +23,7 @@ if Chipmunk.config.keycard&.access
 end
 
 Services = Canister.new
-Services.register(:storage) { ChipmunkBag }
+Services.register(:storage) { BagRepository.new(ChipmunkBag) }
 Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
 Services.register(:checkpoint) do
   Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new)

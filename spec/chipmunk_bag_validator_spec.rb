@@ -48,11 +48,10 @@ RSpec.describe ChipmunkBagValidator do
   end
 
   describe "#valid?" do
-    subject { described_class.new(package, errors).valid? }
+    subject { described_class.new(package, errors, fakebag).valid? }
 
     before(:each) do
       allow(File).to receive(:'exist?').with(src_path).and_return true
-      allow(ChipmunkBag).to receive(:new).with(src_path).and_return(fakebag)
       allow(fakebag).to receive(:chipmunk_info).and_return(chipmunk_info)
       allow(fakebag).to receive(:tag_files).and_return(tag_files)
       allow(fakebag).to receive(:bag_info).and_return(bag_info)
