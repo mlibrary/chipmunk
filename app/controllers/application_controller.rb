@@ -18,6 +18,7 @@ class ApplicationController < ActionController::API
 
   def fake_user(user)
     raise "only for testing" unless Rails.env.test?
+
     @current_user = user
     @current_user.identity ||= {}
   end
@@ -42,6 +43,7 @@ class ApplicationController < ActionController::API
     # If it isn't provided, attempt to find the user via the user_eid, or
     # build out a guest user.
     return if @current_user && Rails.env.test?
+
     request_attributes = Services.request_attributes.for(request)
     if request_attributes.auth_token
       authenticate_token(request_attributes)
@@ -53,7 +55,7 @@ class ApplicationController < ActionController::API
   def authenticate_token(request_attributes)
     digest = Keycard::DigestKey.new(key: request_attributes.auth_token).digest
     if (@current_user = User.find_by(api_key_digest: digest))
-      @current_user.identity = {username: @current_user.username}
+      @current_user.identity = { username: @current_user.username }
     else
       render_unauthorized
     end

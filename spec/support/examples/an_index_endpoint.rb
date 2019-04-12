@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# @param collection_policy [Policy] The controller's collection policy class name; 
+# @param collection_policy [Policy] The controller's collection policy class name;
 #        used to make verifying instance_doubles
 RSpec.shared_examples "an index endpoint" do |coll_policy|
   include Checkpoint::Spec::Controller

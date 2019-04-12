@@ -5,7 +5,7 @@ require "chipmunk_bag_validator"
 
 class BagMoveJob < ApplicationJob
 
-  def perform( queue_item, errors: [], validator: nil)
+  def perform(queue_item, errors: [], validator: nil)
     @queue_item = queue_item
     @src_path = queue_item.package.src_path
     @dest_path = queue_item.package.dest_path

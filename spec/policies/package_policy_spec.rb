@@ -12,6 +12,7 @@ RSpec.describe PackagePolicy do
 
   context "as an admin" do
     let(:user) { FakeUser.new(admin?: true) }
+
     it_allows :show?
     it_disallows :update?, :destroy?
   end
@@ -50,6 +51,7 @@ RSpec.describe PackagePolicy do
 
     context "with a grant for a different user" do
       let(:other_user) { FakeUser.new }
+
       before(:each) do
         Services.checkpoint.grant!(other_user, :show, resource)
       end

@@ -24,6 +24,7 @@ class ChipmunkBag < BagIt::Bag
 
   def chipmunk_info
     return {} unless File.exist?(chipmunk_info_txt_file)
+
     read_info_file chipmunk_info_txt_file
   end
 

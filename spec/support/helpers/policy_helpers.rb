@@ -18,7 +18,7 @@ class FakeUser < OpenStruct
       user_name: nil,
       id: nil,
       agent_id: nil,
-      identity: {username: username}
+      identity: { username: username }
     )
   end
 end
@@ -87,4 +87,3 @@ def it_has_base_scope(scope)
     end
   end
 end
-

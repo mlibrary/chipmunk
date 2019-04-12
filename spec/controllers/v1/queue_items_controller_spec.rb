@@ -22,7 +22,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       let!(:intersection) { Fabricate.times(2, :queue_item, package: package) }
       let!(:disjoint) { Fabricate.times(2, :queue_item, package: Fabricate(:package, user: user)) }
 
-      before(:each) { collection_policy 'QueueItemsPolicy', QueueItem.all, index?: true }
+      before(:each) { collection_policy "QueueItemsPolicy", QueueItem.all, index?: true }
 
       it "returns 200" do
         get :index
@@ -51,7 +51,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
         include_context "with someone logged in"
         let(:queue_item) { Fabricate(:queue_item) }
 
-        before { resource_policy 'QueueItemPolicy', show?: true }
+        before(:each) { resource_policy "QueueItemPolicy", show?: true }
 
         it "returns 200" do
           get :show, params: { id: queue_item.id }
@@ -74,7 +74,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
 
         it "raises an ActiveRecord::RecordNotFound" do
           expect do
-            get :show, params: { id: '(missing)' }
+            get :show, params: { id: "(missing)" }
           end.to raise_exception ActiveRecord::RecordNotFound
         end
       end
@@ -92,7 +92,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       before(:each) do
         allow(QueueItemBuilder).to receive(:new).and_return(builder)
         allow(builder).to receive(:create).and_return([result_status, result_queue_item])
-        resource_policy 'QueueItemPolicy', create?: true
+        resource_policy "QueueItemPolicy", create?: true
       end
 
       context "QueueItemBuilder returns status==:duplicate" do
@@ -143,7 +143,8 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       end
 
       context "when the policy denies the user access" do
-        before { resource_policy 'QueueItemPolicy', create?: false }
+        before(:each) { resource_policy "QueueItemPolicy", create?: false }
+
         it "responds with 403 Forbidden" do
           post :create, params: { bag_id: package.bag_id }
           expect(response).to have_http_status(:forbidden)

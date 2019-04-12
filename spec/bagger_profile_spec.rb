@@ -3,25 +3,25 @@
 require "bagger_profile"
 
 describe BaggerProfile do
-  subject do
-    BaggerProfile.new("file://" + Rails.root.join("spec", "support", "fixtures", "test-profile.json").to_s)
+  let(:bagger_profile) do
+    described_class.new("file://" + Rails.root.join("spec", "support", "fixtures", "test-profile.json").to_s)
   end
 
   let(:errors) { [] }
 
   it "parses a profile" do
-    expect(subject).not_to be(nil)
+    expect(bagger_profile).not_to be(nil)
   end
 
   context "with bag info appropriate for the profile" do
     let(:bag_info) { { "Foo" => "bar", "Baz" => "quux" } }
 
     it "is true" do
-      expect(subject.valid?(bag_info)).to be true
+      expect(bagger_profile.valid?(bag_info)).to be true
     end
 
     it "reports no errors" do
-      subject.valid?(bag_info, errors: errors)
+      bagger_profile.valid?(bag_info, errors: errors)
       expect(errors).to be_empty
     end
   end
@@ -30,11 +30,11 @@ describe BaggerProfile do
     let(:bag_info) { { "Baz" => "quux" } }
 
     it "is false" do
-      expect(subject.valid?(bag_info)).to be false
+      expect(bagger_profile.valid?(bag_info)).to be false
     end
 
     it "reports an error" do
-      subject.valid?(bag_info, errors: errors)
+      bagger_profile.valid?(bag_info, errors: errors)
       expect(errors).to include a_string_matching(/Foo.*required/)
     end
   end
@@ -43,11 +43,11 @@ describe BaggerProfile do
     let(:bag_info) { { "Foo" => "bar", "Baz" => "disallowed" } }
 
     it "is false" do
-      expect(subject.valid?(bag_info)).to be false
+      expect(bagger_profile.valid?(bag_info)).to be false
     end
 
     it "reports an error" do
-      subject.valid?(bag_info, errors: errors)
+      bagger_profile.valid?(bag_info, errors: errors)
       expect(errors).to include a_string_matching(/allowed/)
     end
   end
@@ -56,11 +56,11 @@ describe BaggerProfile do
     let(:bag_info) { { "Foo" => "bar" } }
 
     it "is true" do
-      expect(subject.valid?(bag_info)).to be true
+      expect(bagger_profile.valid?(bag_info)).to be true
     end
 
     it "reports no errors" do
-      subject.valid?(bag_info, errors: errors)
+      bagger_profile.valid?(bag_info, errors: errors)
       expect(errors).to be_empty
     end
   end

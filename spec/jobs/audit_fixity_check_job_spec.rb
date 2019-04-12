@@ -8,6 +8,7 @@ RSpec.describe AuditFixityCheckJob do
   let(:email) { double(:email, deliver_now: nil) }
   let(:mailer)  { double(:mailer, failure: email) }
   let(:audit) { Fabricate(:audit) }
+
   subject(:event) { package.events.last }
 
   def run_job
@@ -73,6 +74,7 @@ RSpec.describe AuditFixityCheckJob do
 
   context "when the fixity check raises an exception" do
     let(:bag) { double(:bag) }
+
     before(:each) { allow(bag).to receive(:valid?).and_raise(RuntimeError) }
 
     it_behaves_like "a fixity check job", "failure"

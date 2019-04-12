@@ -1,21 +1,51 @@
+require:
+  - rubocop-rspec
+  - rubocop-performance
 inherit_from: .rubocop_todo.yml
 
 AllCops:
   DisplayCopNames: true
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.5
+  Exclude:
+    - 'bin/bundle'
+    - 'bin/console'
+    - 'bin/rspec'
+    - 'bin/rubocop'
+    - 'bin/yard'
+    - '.bundle/**/*'
+    - 'vendor/bundle/**/*'
+    - '*.gemspec'
+    - 'spec/support/fixtures/**/*'
+    - 'db/schema.rb'
 
 Naming/FileName:
   ExpectMatchingDefinition: true
   Exclude:
+    - 'bin/**/*'
+    - 'lib/core_extensions/**/*'
     - 'spec/**/*'
     - 'lib/*/version.rb'
-    - 'bin/console'
+    - 'db/**/*'
+    - 'config.ru'
+
+Style/Documentation:
+  Exclude:
+    - 'spec/**/*'
+    - 'db/**/*'
+
+# We disable this cop because we want to use Pathname#/
+# and this cop is not configurable at all.
+Layout/SpaceAroundOperators:
+  Enabled: false
+
+Security/YAMLLoad:
+  Exclude:
+    - 'spec/**/*'
 
 Style/Alias:
   EnforcedStyle: prefer_alias_method
 
 Metrics/LineLength:
-  #  Max: 100
   AllowHeredoc: true
   AllowURI: true
   URISchemes:
@@ -24,8 +54,8 @@ Metrics/LineLength:
 
 Metrics/BlockLength:
   Exclude:
+    - 'spec/support/**/*.rb'
     - 'spec/**/*_spec.rb'
-    - 'spec/support/examples/*.rb'
 
 Layout/ElseAlignment:
   Enabled: false
@@ -44,6 +74,10 @@ Layout/ClosingParenthesisIndentation:
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: nested
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
 
 Style/CommentAnnotation:
   Enabled: false
@@ -113,7 +147,7 @@ Style/SymbolArray:
   EnforcedStyle: brackets
 
 Layout/BlockAlignment:
-  EnforcedStyleAlignWith: start_of_line
+  EnforcedStyleAlignWith: start_of_block
 
 Layout/EndAlignment:
   EnforcedStyleAlignWith: start_of_line
@@ -126,3 +160,56 @@ Performance/RedundantMerge:
 
 Style/WordArray:
   EnforcedStyle: brackets
+
+# This cop just adds extra work when you want to write an integration test,
+# or test something like a jbuilder view.
+RSpec/DescribeClass:
+  Enabled: false
+
+# Using let! is fine, and can be easier to manage than a before block.
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/BeEql:
+  Enabled: false
+
+RSpec/ExampleWithoutDescription:
+  EnforcedStyle: single_line_only
+
+RSpec/HookArgument:
+  EnforcedStyle: each
+
+RSpec/ImplicitSubject:
+  EnforcedStyle: disallow
+
+RSpec/LeadingSubject:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: true
+  Max: 3
+
+# Lower is better. We'd prefer to get to 3
+RSpec/NestedGroups:
+  Max: 6
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 10
+
+RSpec/MessageSpies:
+  EnforcedStyle: receive
+
+RSpec/EmptyExampleGroup:
+  CustomIncludeMethods:
+    - it_allows
+    - it_disallows
+
+RSpec/ContextWording:
+  Prefixes:
+    - as
+    - when
+    - with
+    - without

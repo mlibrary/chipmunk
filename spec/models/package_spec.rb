@@ -10,7 +10,7 @@ RSpec.describe Package, type: :model do
 
   [:bag_id, :user_id, :external_id, :storage_location, :content_type].each do |field|
     it "#{field} is required" do
-      expect(Fabricate.build(:package, field => nil)).to_not be_valid
+      expect(Fabricate.build(:package, field => nil)).not_to be_valid
     end
   end
 
@@ -28,7 +28,7 @@ RSpec.describe Package, type: :model do
 
   it "is not valid with a bag id shorter than 6 characters" do
     package = Fabricate.build(:package, user: Fabricate(:user), bag_id: "short")
-    expect(package).to_not be_valid
+    expect(package).not_to be_valid
   end
 
   it "has an source path based on the user and the bag id" do

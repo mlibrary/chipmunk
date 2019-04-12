@@ -9,7 +9,7 @@ RSpec.describe User, type: :model do
 
   [:email, :admin, :username].each do |field|
     it "#{field} is required" do
-      expect(Fabricate.build(:user, field => nil)).to_not be_valid
+      expect(Fabricate.build(:user, field => nil)).not_to be_valid
     end
   end
 
@@ -39,6 +39,7 @@ RSpec.describe User, type: :model do
 
   describe "#agent_id" do
     let(:user) { Fabricate.build(:user) }
+
     it "matches the username" do
       expect(user.agent_id).to eql(user.username)
     end
@@ -62,7 +63,7 @@ RSpec.describe User, type: :model do
       user.api_key_digest == same_user.api_key_digest
     end
     it "generates an api_key by default" do
-      expect(minimal_user.api_key_digest).to_not be_nil
+      expect(minimal_user.api_key_digest).not_to be_nil
     end
     it "a user can be found by api_key" do
       user = Fabricate.create(:user)

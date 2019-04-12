@@ -18,9 +18,10 @@ RSpec.describe V1::AuditsController, type: :controller do
 
     describe "GET #show" do
       let!(:audit) { Fabricate(:audit) }
+
       include_context "with someone logged in"
 
-      before { resource_policy 'AuditPolicy', show?: true }
+      before(:each) { resource_policy "AuditPolicy", show?: true }
 
       it "assigns an audit presenter" do
         get :show, params: { id: audit.id }
@@ -40,9 +41,10 @@ RSpec.describe V1::AuditsController, type: :controller do
 
     describe "GET #index" do
       let!(:audit) { Fabricate(:audit) }
+
       include_context "with someone logged in"
 
-      before { collection_policy 'AuditsPolicy', [audit], index?: true }
+      before(:each) { collection_policy "AuditsPolicy", [audit], index?: true }
 
       it "assigns an array of audit presenters" do
         get :index
@@ -65,7 +67,7 @@ RSpec.describe V1::AuditsController, type: :controller do
       before(:each) do
         # should not appear in audit since it has no storage to audit
         allow(AuditFixityCheckJob).to receive(:perform_later)
-        collection_policy 'AuditsPolicy', [double('Audit')], create?: true
+        collection_policy "AuditsPolicy", [double("Audit")], create?: true
       end
 
       it "starts a AuditFixityCheckJob for each stored package" do

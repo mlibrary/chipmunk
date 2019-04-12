@@ -24,38 +24,38 @@ class ChipmunkBagValidator
   { "External-Identifier"   => :external_id,
     "Bag-ID"                => :bag_id,
     "Chipmunk-Content-Type" => :content_type }.each_pair do |file_key, db_key|
-    validates "#{file_key} in bag on disk matches bag in database",
-      precondition: -> { [bag.chipmunk_info[file_key], package.public_send(db_key)] },
-      condition:  ->(file_val, db_val) { file_val == db_val },
-      error: lambda {|file_val, db_val|
-               "uploaded #{file_key} '#{file_val}'" \
-                     " does not match expected value '#{db_val}'"
-             }
-  end
+      validates "#{file_key} in bag on disk matches bag in database",
+        precondition: -> { [bag.chipmunk_info[file_key], package.public_send(db_key)] },
+        condition:  ->(file_val, db_val) { file_val == db_val },
+        error: lambda {|file_val, db_val|
+          "uploaded #{file_key} '#{file_val}'" \
+                " does not match expected value '#{db_val}'"
+        }
+    end
 
   validates "Bag ID in bag on disk matches bag in database",
     condition:  -> { bag.chipmunk_info["Bag-ID"] == package.bag_id },
     error: lambda {
-             "uploaded Bag-ID '#{bag.chipmunk_info["Bag-ID"]}'" \
-                 " does not match intended ID '#{package.bag_id}'"
-           }
+      "uploaded Bag-ID '#{bag.chipmunk_info["Bag-ID"]}'" \
+          " does not match intended ID '#{package.bag_id}'"
+    }
 
   metadata_tags = ["Metadata-URL", "Metadata-Type", "Metadata-Tagfile"]
 
   validates "chipmunk-info.txt has metadata tags",
     error: -> { "Some (but not all) metadata tags #{metadata_tags} missing in chipmunk-info.txt" },
     condition: lambda {
-                 metadata_tags.all? {|tag| bag.chipmunk_info.key?(tag) } ||
-                   metadata_tags.none? {|tag| bag.chipmunk_info.key?(tag) }
-               }
+      metadata_tags.all? {|tag| bag.chipmunk_info.key?(tag) } ||
+        metadata_tags.none? {|tag| bag.chipmunk_info.key?(tag) }
+    }
 
   validates "bag on disk has referenced metadata files",
     only_if: -> { bag.chipmunk_info["Metadata-Tagfile"] },
     error: -> { "Missing referenced metadata #{bag.chipmunk_info["Metadata-Tagfile"]}" },
     condition: lambda {
-                 bag.tag_files.map {|f| File.basename(f) }
-                   .include?(bag.chipmunk_info["Metadata-Tagfile"])
-               }
+      bag.tag_files.map {|f| File.basename(f) }
+        .include?(bag.chipmunk_info["Metadata-Tagfile"])
+    }
 
   validates "bag on disk passes external validation",
     only_if: -> { package.external_validation_cmd },

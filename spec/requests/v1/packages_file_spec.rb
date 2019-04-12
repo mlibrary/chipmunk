@@ -10,7 +10,7 @@ RSpec.describe "GET /v1/packages/:bag_id/:file", type: :request do
 
   let(:headers) do
     { "X-SendFile-Type" => "X-Sendfile",
-      "Authorization"   => "Token token=#{key.to_s}" }
+      "Authorization"   => "Token token=#{key}" }
   end
 
   it "can retrieve a file from the package with X-Sendfile" do

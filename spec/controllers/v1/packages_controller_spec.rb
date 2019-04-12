@@ -21,12 +21,13 @@ RSpec.describe V1::PackagesController, type: :controller do
     describe "GET #show" do
       let(:package) { Fabricate(:package) }
       let(:bag) { double(:bag) }
+
       before(:each) { allow(Services.storage).to receive(:for).with(package).and_return(bag) }
 
       context "when the policy allows the user access" do
         include_context "with someone logged in"
 
-        before { resource_policy 'PackagePolicy', show?: true }
+        before(:each) { resource_policy "PackagePolicy", show?: true }
 
         it "returns 200" do
           get :show, params: { bag_id: package.bag_id }
@@ -54,7 +55,7 @@ RSpec.describe V1::PackagesController, type: :controller do
 
         it "raises an ActiveRecord::RecordNotFound" do
           expect do
-            get :show, params: { bag_id: '(missing)' }
+            get :show, params: { bag_id: "(missing)" }
           end.to raise_exception ActiveRecord::RecordNotFound
         end
       end
@@ -62,7 +63,7 @@ RSpec.describe V1::PackagesController, type: :controller do
       context "when the policy denies the user access" do
         include_context "with someone logged in"
 
-        before { resource_policy 'PackagePolicy', show?: false }
+        before(:each) { resource_policy "PackagePolicy", show?: false }
 
         it "responds with 403 Forbidden" do
           get :show, params: { bag_id: package.bag_id }
@@ -74,7 +75,7 @@ RSpec.describe V1::PackagesController, type: :controller do
         include_context "with someone logged in"
         let(:package) { Fabricate(:package, user: user) }
 
-        before { resource_policy 'PackagePolicy', show?: true }
+        before(:each) { resource_policy "PackagePolicy", show?: true }
 
         it "fetches the package" do
           get :show, params: { bag_id: package.external_id }
@@ -86,7 +87,6 @@ RSpec.describe V1::PackagesController, type: :controller do
           get :show, params: { bag_id: package.bag_id }
           expect(assigns(:bag)).to eq bag
         end
-
       end
     end
 
@@ -98,10 +98,10 @@ RSpec.describe V1::PackagesController, type: :controller do
         let(:storage) { double(:storage, for: bag) }
 
         before(:each) do
-          resource_policy 'PackagePolicy', show?: true
+          resource_policy "PackagePolicy", show?: true
         end
 
-        around(:example) do |example|
+        around(:each) do |example|
           old_storage = Services.storage
           Services.register(:storage) { storage }
           example.run
@@ -110,6 +110,7 @@ RSpec.describe V1::PackagesController, type: :controller do
 
         context "the file is not present in the bag" do
           let(:bag) { double(:bag, include?: false) }
+
           it "returns a 404 if the file isn't present in the bag" do
             get :sendfile, params: { bag_id: package.bag_id, file: "nonexistent" }
 
@@ -120,6 +121,7 @@ RSpec.describe V1::PackagesController, type: :controller do
         context "the file exists in the bag" do
           let(:bag) { double(:bag, include?: true, data_file: data_file) }
           let(:data_file) { double(:data_file, path: 1, type: 2) }
+
           it "returns 204 No Content on success" do
             allow(controller).to receive(:send_file).and_return(nil)
             get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
@@ -157,7 +159,7 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       context "as an authorized user" do
         include_context "with someone logged in"
-        before { collection_policy 'PackagesPolicy', create?: true }
+        before(:each) { collection_policy "PackagesPolicy", create?: true }
 
         context "new record" do
           context "RequestBuilder returns a valid record" do
@@ -219,7 +221,7 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       context "when the policy denies the user access" do
         include_context "with someone logged in"
-        before { collection_policy create?: false }
+        before(:each) { collection_policy create?: false }
 
         it "responds with 403 Forbidden" do
           post :create, params: attributes

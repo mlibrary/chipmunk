@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "coveralls"
-Coveralls.wear!('rails')
+Coveralls.wear!("rails")
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
@@ -35,7 +35,7 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
   config.filter_run_excluding integration: true unless ENV["RUN_INTEGRATION"]
-  config.example_status_persistence_file_path = 'spec/examples.txt'
+  config.example_status_persistence_file_path = "spec/examples.txt"
 end
 
 support_dir = File.expand_path(File.join(File.dirname(__FILE__), "support"))

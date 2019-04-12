@@ -47,27 +47,27 @@ describe BaggerTag do
   describe "#value_valid?" do
     let(:errors) { [] }
 
-    shared_context "true with no errors with value" do |value|
+    shared_examples "true with no errors with value" do |value|
       it "is true" do
-        expect(subject.value_valid?(value)).to be true
+        expect(bagger_tag.value_valid?(value)).to be true
       end
 
       it "reports no errors" do
-        subject.value_valid?(value, errors: errors)
+        bagger_tag.value_valid?(value, errors: errors)
         expect(errors).to be_empty
       end
     end
 
     def expect_error_with_value(value, error_pattern)
-      subject.value_valid?(value, errors: errors)
+      bagger_tag.value_valid?(value, errors: errors)
       expect(errors).to include a_string_matching error_pattern
     end
 
     context "with a required tag with no value list" do
-      subject { BaggerTag.new(name: "SomeField", required: true) }
+      subject(:bagger_tag) { described_class.new(name: "SomeField", required: true) }
 
       it "is false when not given a value" do
-        expect(subject.value_valid?(nil)).to be false
+        expect(bagger_tag.value_valid?(nil)).to be false
       end
 
       it "reports an error when not given a value" do
@@ -79,14 +79,14 @@ describe BaggerTag do
     end
 
     context "with a required tag with a value list" do
-      let(:subject) do
-        BaggerTag.new(name: "SomeField",
+      subject(:bagger_tag) do
+        described_class.new(name: "SomeField",
                       required: true,
                       allowed_values: ["allowed_value", "another_allowed_value"])
       end
 
       it "is false when not given a value" do
-        expect(subject.value_valid?(nil)).to be false
+        expect(bagger_tag.value_valid?(nil)).to be false
       end
 
       it "reports an error when not given a value" do
@@ -96,7 +96,7 @@ describe BaggerTag do
       it_behaves_like "true with no errors with value", "allowed_value"
 
       it "is false when given a value not on the list" do
-        expect(subject.value_valid?("some_other_value")).to be false
+        expect(bagger_tag.value_valid?("some_other_value")).to be false
       end
 
       it "reports an error when given a value not on the list" do
@@ -105,7 +105,7 @@ describe BaggerTag do
     end
 
     context "with an optional tag without a value list" do
-      let(:subject) { BaggerTag.new(name: "SomeField", required: false) }
+      subject(:bagger_tag) { described_class.new(name: "SomeField", required: false) }
 
       it_behaves_like "true with no errors with value", nil
       it_behaves_like "true with no errors with value", "allowed_value"
@@ -113,8 +113,8 @@ describe BaggerTag do
     end
 
     context "with an optional tag with a value list" do
-      let(:subject) do
-        BaggerTag.new(name: "SomeField",
+      subject(:bagger_tag) do
+        described_class.new(name: "SomeField",
                       required: false,
                       allowed_values: ["allowed_value", "another_allowed_value"])
       end
@@ -123,7 +123,7 @@ describe BaggerTag do
       it_behaves_like "true with no errors with value", "allowed_value"
 
       it "is false when given a value not on the list" do
-        expect(subject.value_valid?("some_other_value")).to be false
+        expect(bagger_tag.value_valid?("some_other_value")).to be false
       end
 
       it "reports an error when given a value not on the list" do
