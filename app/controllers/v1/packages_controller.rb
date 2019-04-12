@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "request_builder"
-require "package_file_getter"
 
 module V1
   class PackagesController < ResourceController
@@ -20,11 +19,23 @@ module V1
     # GET /packages/39015012345678
     def show
       resource_policy.new(current_user, package).authorize! :show?
+
+      # Expose the bag if this is a request for a logical package.
+      # Avoid exposing it if this is a request for a logical request.
+      if package.stored?
+        @bag = Services.storage.for(package)
+      end
     end
 
     def sendfile
       resource_policy.new(current_user, package).authorize! :show?
-      send_file(*PackageFileGetter.new(package).sendfile(params[:file]))
+      bag = Services.storage.for(package)
+      if bag.include?(params[:file])
+        file = bag.data_file(params[:file])
+        send_file(file.path, type: file.type)
+      else
+        file_not_found
+      end
     end
 
     # POST /v1/requests

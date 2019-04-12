@@ -19,9 +19,12 @@ RSpec.describe V1::PackagesController, type: :controller do
     it_behaves_like "an index endpoint", "PackagesPolicy"
 
     describe "GET #show" do
+      let(:package) { Fabricate(:package) }
+      let(:bag) { double(:bag) }
+      before(:each) { allow(Services.storage).to receive(:for).with(package).and_return(bag) }
+
       context "when the policy allows the user access" do
         include_context "with someone logged in"
-        let(:package) { Fabricate(:package) }
 
         before { resource_policy 'PackagePolicy', show?: true }
 
@@ -33,6 +36,11 @@ RSpec.describe V1::PackagesController, type: :controller do
         it "renders the package" do
           get :show, params: { bag_id: package.bag_id }
           expect(assigns(:package)).to eq package
+        end
+
+        it "renders the bag" do
+          get :show, params: { bag_id: package.bag_id }
+          expect(assigns(:bag)).to eq bag
         end
 
         it "renders the show template" do
@@ -53,7 +61,6 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       context "when the policy denies the user access" do
         include_context "with someone logged in"
-        let(:package) { Fabricate(:package) }
 
         before { resource_policy 'PackagePolicy', show?: false }
 
@@ -74,40 +81,51 @@ RSpec.describe V1::PackagesController, type: :controller do
 
           expect(assigns(:package)).to eql(package)
         end
+
+        it "renders the bag" do
+          get :show, params: { bag_id: package.bag_id }
+          expect(assigns(:bag)).to eq bag
+        end
+
       end
     end
 
     describe "GET #sendfile" do
       include_context "with someone logged in"
 
-      # TODO: Unbind controller from PackageFileGetter through a registered
-      #       factory, so send_file params can be mocked directly.
       context "with mocked storage" do
         let(:package) { Fabricate(:package, user: user, storage_location: "/foo") }
-        let(:bag) { double(:bag, data_dir: "/foo/data", bag_files: ["/foo/data/samplefile.jpg"]) }
-        let(:storage) { double(:storage, create: bag) }
+        let(:storage) { double(:storage, for: bag) }
 
         before(:each) do
-          @old_storage = Services.storage
-          Services.register(:storage) { storage }
           resource_policy 'PackagePolicy', show?: true
         end
 
-        after(:each) do
-          Services.register(:storage) { @old_storage }
+        around(:example) do |example|
+          old_storage = Services.storage
+          Services.register(:storage) { storage }
+          example.run
+          Services.register(:storage) { old_storage }
         end
 
-        it "returns a 404 if the file isn't present in the bag" do
-          get :sendfile, params: { bag_id: package.bag_id, file: "nonexistent" }
+        context "the file is not present in the bag" do
+          let(:bag) { double(:bag, include?: false) }
+          it "returns a 404 if the file isn't present in the bag" do
+            get :sendfile, params: { bag_id: package.bag_id, file: "nonexistent" }
 
-          expect(response).to have_http_status(:not_found)
+            expect(response).to have_http_status(:not_found)
+          end
         end
 
-        it "returns 204 No Content on success" do
-          allow(controller).to receive(:send_file).and_return(nil)
-          get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
+        context "the file exists in the bag" do
+          let(:bag) { double(:bag, include?: true, data_file: data_file) }
+          let(:data_file) { double(:data_file, path: 1, type: 2) }
+          it "returns 204 No Content on success" do
+            allow(controller).to receive(:send_file).and_return(nil)
+            get :sendfile, params: { bag_id: package.bag_id, file: "samplefile.jpg" }
 
-          expect(response).to have_http_status(:no_content)
+            expect(response).to have_http_status(:no_content)
+          end
         end
       end
     end

@@ -13,7 +13,8 @@ class AuditFixityCheckJob < ApplicationJob
     save_event(*validate_bag(**kwargs))
   end
 
-  def validate_bag(storage: Services.storage, bag: storage.new(package.storage_location), mailer: AuditMailer)
+  # TODO: This should just receive a bag.
+  def validate_bag(storage: Services.storage, bag: storage.for(package), mailer: AuditMailer)
     begin
       if bag.valid?
         outcome = "success"

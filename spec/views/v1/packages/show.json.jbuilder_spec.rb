@@ -4,14 +4,13 @@ require "rails_helper"
 
 describe "/v1/packages/show.json.jbuilder" do
   let(:package) { Fabricate.create(:package) }
-  let(:files) { 3.times {Faker::Lorem.word} }
   let(:bag) { double(:bag, relative_data_files: files) }
+  let(:files) { 3.times {Faker::Lorem.word} }
 
   before(:each) do
     assign(:current_user, user)
     assign(:package, package)
-    # TODO: We should not have to mock this in this way.
-    allow(package).to receive(:bag).and_return(bag)
+    assign(:bag, bag)
     render
   end
 

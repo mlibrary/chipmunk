@@ -23,7 +23,7 @@ if Chipmunk.config.keycard&.access
 end
 
 Services = Canister.new
-Services.register(:storage) { Chipmunk::BagRepository.new(ChipmunkBag) }
+Services.register(:storage) { BagRepository.new(ChipmunkBag) }
 Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
 Services.register(:checkpoint) do
   Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new)

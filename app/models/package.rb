@@ -54,8 +54,4 @@ class Package < ApplicationRecord
     content_type
   end
 
-  def bag
-    Services.storage.create(storage_location)
-  end
-
 end

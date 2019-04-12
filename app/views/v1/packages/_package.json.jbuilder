@@ -12,6 +12,5 @@ json.stored package.stored?
 json.created_at package.created_at.to_formatted_s(:default)
 json.updated_at package.updated_at.to_formatted_s(:default)
 if expand && package.stored?
-  # TODO: Resolve demeter violation
-  json.files package.bag.relative_data_files
+  json.files @bag.relative_data_files
 end

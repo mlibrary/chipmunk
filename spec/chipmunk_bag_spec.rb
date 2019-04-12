@@ -1,30 +1,54 @@
 # frozen_string_literal: true
 
 require "chipmunk_bag"
-
-def make_bag
-  @bag = ChipmunkBag.new bag_path
-end
+require "file_errors"
 
 RSpec.describe ChipmunkBag do
   # set up data in safe area
   around(:each) do |example|
     Dir.mktmpdir do |tmp_dir|
-      @tmp_dir = tmp_dir
-      @bag_path = File.join(tmp_dir, "testbag")
+      @empty_path = Pathname.new(tmp_dir)/"emptybag"
+      FileUtils.mkdir_p @empty_path
+      @stored_path = Pathname.new(tmp_dir)/"test_bag"
+      FileUtils.cp_r(Rails.root/"spec"/"support"/"fixtures"/"test_bag", @stored_path)
       example.run
     end
   end
 
-  let(:bag_data) { File.join(@bag_path, "data") }
-  let(:chipmunk_info) { File.join(@bag_path, "chipmunk-info.txt") }
+  let(:empty_path) { @empty_path }
+  let(:stored_path) { @stored_path }
+  let(:empty_bag) { described_class.new(@empty_path) }
+  let(:stored_bag) { described_class.new(@stored_path) }
 
-  subject { ChipmunkBag.new(@bag_path) }
+
+  describe "#data_file" do
+    it "returns the full path for a given file in the data directory" do
+      expect(stored_bag.data_file("samplefile").path).to eql(stored_path/"data"/"samplefile")
+    end
+
+    it "returns the appropriate mime type" do
+      expect(stored_bag.data_file("samplefile").type).to eql("application/octet-stream")
+    end
+
+    it "raises a FileNotFound exception if a file is requested that isn't in the data directory" do
+      expect { stored_bag.data_file("nonexistent") }.to raise_error(FileNotFoundError)
+    end
+
+    it "raises a FileNotFound exception for traversal attempts" do
+      expect { stored_bag.data_file("../data/samplefile") }.to raise_error(FileNotFoundError)
+    end
+  end
+
+  describe "#relative_data_files" do
+    it "returns the list of files in the package's data directory" do
+      expect(stored_bag.relative_data_files).to contain_exactly(Pathname.new("samplefile"))
+    end
+  end
 
   describe "#chipmunk_info" do
     context "with no chipmunk-info.txt" do
       it "returns an empty hash" do
-        expect(subject.chipmunk_info).to eq({})
+        expect(empty_bag.chipmunk_info).to eq({})
       end
     end
 
@@ -44,13 +68,10 @@ RSpec.describe ChipmunkBag do
         TXT
       end
 
-      before(:each) do
-        FileUtils.mkdir_p(@bag_path)
-        File.write(chipmunk_info, info_txt)
-      end
+      before(:each) { File.write(empty_path/"chipmunk-info.txt", info_txt) }
 
       it "returns a hash of its contents" do
-        expect(subject.chipmunk_info).to eq(info_hash)
+        expect(empty_bag.chipmunk_info).to eq(info_hash)
       end
     end
   end

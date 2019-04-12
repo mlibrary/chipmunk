@@ -10,8 +10,6 @@ describe "/v1/packages/index.json.jbuilder" do
   before(:each) do
     assign(:current_user, user)
     assign(:packages, [package])
-    # TODO: We should not have to mock this in this way.
-    allow(package).to receive(:bag).and_return(bag)
     render
   end
 

@@ -5,10 +5,11 @@ class ChipmunkBagValidator
 
   attr_reader :errors
 
-  def initialize(package, errors = [], storage = Services.storage)
+  # @param bag [ChipmunkBag] If nil, the bag does not yet exist.
+  def initialize(package, errors = [], bag = nil)
     @package = package
     @src_path = package.src_path
-    @bag = storage.create(src_path) if File.exist?(src_path)
+    @bag = bag
     @errors = errors
   end
 

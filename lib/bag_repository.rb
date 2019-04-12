@@ -1,20 +1,20 @@
-module Chipmunk
-  class BagRepository
+class BagRepository
 
-    def initialize(klass)
-      @klass = klass
-    end
-
-    def create(path)
-      klass.new(path)
-    end
-
-    def for_package(package)
-      klass.new(package.storage_location)
-    end
-
-    private
-
-    attr_reader :klass
+  def initialize(klass)
+    @klass = klass
   end
+
+  def for(object)
+    for_package(object)
+  end
+
+  private
+
+  attr_reader :klass
+
+  def for_package(package)
+    raise "package must be stored" unless package.stored?
+    klass.new(package.storage_location)
+  end
+
 end
