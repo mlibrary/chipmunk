@@ -4,6 +4,7 @@ class QueueItemPolicy < ResourcePolicy
 
   def create?
     return false unless QueueItemsPolicy.new(user).new?
+
     user&.admin? || resource&.user == user
   end
 

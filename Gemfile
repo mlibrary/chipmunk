@@ -23,8 +23,8 @@ gem "rails", "~> 5.1.0"
 gem "resque"
 gem "resque-pool"
 
-gem "kcv", "~> 0.4.0"
 gem "checkpoint"
+gem "kcv", "~> 0.4.0"
 gem "keycard", "~> 0.3.1"
 
 group :development, :test do
@@ -38,10 +38,10 @@ group :development, :test do
 end
 
 group :test do
+  gem "coveralls"
   gem "rspec"
   gem "rspec-activejob"
   gem "rspec-rails"
-  gem "coveralls"
   gem "timecop"
   gem "turnip"
   gem "webmock"
@@ -49,6 +49,7 @@ end
 
 group :development do
   gem "rubocop"
+  gem "rubocop-performance"
   gem "rubocop-rspec"
   gem "yard"
 end

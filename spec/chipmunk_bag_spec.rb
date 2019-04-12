@@ -20,7 +20,6 @@ RSpec.describe ChipmunkBag do
   let(:empty_bag) { described_class.new(@empty_path) }
   let(:stored_bag) { described_class.new(@stored_path) }
 
-
   describe "#data_file" do
     it "returns the full path for a given file in the data directory" do
       expect(stored_bag.data_file("samplefile").path).to eql(stored_path/"data"/"samplefile")

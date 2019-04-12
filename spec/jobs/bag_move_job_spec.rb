@@ -35,15 +35,16 @@ RSpec.describe BagMoveJob do
 
     context "when the package is valid" do
       let(:validator) { double(:validator, valid?: true) }
-      subject { described_class.perform_now(queue_item, validator: validator) }
+
+      subject(:run_job) { described_class.perform_now(queue_item, validator: validator) }
 
       it "moves the bag" do
         expect(File).to receive(:rename).with(src_path, dest_path)
-        subject
+        run_job
       end
 
       it "updates the queue_item to status :done" do
-        subject
+        run_job
         expect(queue_item.status).to eql("done")
       end
 
@@ -53,12 +54,12 @@ RSpec.describe BagMoveJob do
         end
 
         it "re-raises the exception" do
-          expect { subject }.to raise_exception(InjectedError)
+          expect { run_job }.to raise_exception(InjectedError)
         end
 
         it "updates the queue_item to status 'failed'" do
           begin
-            subject
+            run_job
           rescue InjectedError
           end
 
@@ -67,7 +68,7 @@ RSpec.describe BagMoveJob do
 
         it "records the error in the queue_item" do
           begin
-            subject
+            run_job
           rescue InjectedError
           end
 
@@ -78,44 +79,46 @@ RSpec.describe BagMoveJob do
 
     context "when the package is invalid" do
       let(:validator) { double(:validator, valid?: false) }
-      subject { described_class.perform_now(queue_item, errors: ["my error"], validator: validator) }
+
+      subject(:run_job) { described_class.perform_now(queue_item, errors: ["my error"], validator: validator) }
 
       it "does not move the bag" do
         expect(File).not_to receive(:rename).with(src_path, dest_path)
-        subject
+        run_job
       end
 
       it "updates the queue_item to status 'failed'" do
-        subject
+        run_job
         expect(queue_item.status).to eql("failed")
       end
 
       it "records the validation error" do
-        subject
+        run_job
         expect(queue_item.error).to match(/my error/)
       end
 
       it "does not move the bag" do
         expect(File).not_to receive(:rename).with(src_path, dest_path)
-        subject
+        run_job
       end
     end
 
     context "when validation raises an exception" do
       let(:validator) { double(:validator) }
-      subject { described_class.perform_now(queue_item, validator: validator) }
+
+      subject(:run_job) { described_class.perform_now(queue_item, validator: validator) }
 
       before(:each) do
         allow(validator).to receive(:valid?).and_raise InjectedError, "injected error"
       end
 
       it "re-raises the exception" do
-        expect { subject }.to raise_exception(InjectedError)
+        expect { run_job }.to raise_exception(InjectedError)
       end
 
       it "records the exception" do
         begin
-          subject
+          run_job
         rescue InjectedError
         end
 
@@ -124,7 +127,7 @@ RSpec.describe BagMoveJob do
 
       it "records the stack trace" do
         begin
-          subject
+          run_job
         rescue InjectedError
         end
 

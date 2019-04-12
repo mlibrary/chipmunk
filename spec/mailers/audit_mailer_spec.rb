@@ -15,47 +15,47 @@ RSpec.describe AuditMailer, type: :mailer do
   let(:addressee) { "somebody@example.com" }
   let(:error) { Faker::Lorem.sentence }
 
-  let(:subject) do
-    mailer.failure(emails: [addressee], package: package, error: error).deliver_now
-  end
-
   describe "#failure" do
+    let(:mail_failure) do
+      mailer.failure(emails: [addressee], package: package, error: error).deliver_now
+    end
+
     it "sends an email" do
-      expect { subject }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      expect { mail_failure }.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
     it "sends the email to the users" do
-      subject
+      mail_failure
       expect(email.to).to include(addressee)
     end
 
     it "sends the email to the package owner" do
-      subject
+      mail_failure
       expect(email.to).to include(package_user.email)
     end
 
     it "sends the email with the subject Audit Failure" do
-      subject
+      mail_failure
       expect(email.subject).to match(/Audit Failure/)
     end
 
     it "sends the email with the error detail in the body" do
-      subject
+      mail_failure
       expect(email.body.encoded).to match(error)
     end
 
     it "lists the package external id in the subject" do
-      subject
+      mail_failure
       expect(email.subject).to match(package.external_id)
     end
 
     it "lists the package content type in the subject" do
-      subject
+      mail_failure
       expect(email.subject).to match(package.content_type)
     end
 
     it "sends the email to the configured from address" do
-      subject
+      mail_failure
       expect(email.from).to contain_exactly(Chipmunk.config.default_from)
     end
   end

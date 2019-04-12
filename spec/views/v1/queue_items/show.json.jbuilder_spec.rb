@@ -14,6 +14,7 @@ describe "/v1/queue_items/show.json.jbuilder" do
         updated_at: queue_item.updated_at.to_formatted_s(:default)
       }
     end
+
     it "renders the correct json" do
       assign(:queue_item, queue_item)
       render
@@ -33,6 +34,7 @@ describe "/v1/queue_items/show.json.jbuilder" do
         updated_at: queue_item.updated_at.to_formatted_s(:default)
       }
     end
+
     it "renders the correct json" do
       assign(:queue_item, queue_item)
       render
@@ -53,6 +55,7 @@ describe "/v1/queue_items/show.json.jbuilder" do
         updated_at: queue_item.updated_at.to_formatted_s(:default)
       }
     end
+
     it "renders the correct json" do
       assign(:queue_item, queue_item)
       render

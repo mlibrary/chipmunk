@@ -13,7 +13,7 @@ class User < ApplicationRecord
   after_initialize :add_key, on: :create
 
   def api_key
-    @api_key ||= if [nil, 'x'].include?(api_key_digest)
+    @api_key ||= if [nil, "x"].include?(api_key_digest)
       Keycard::DigestKey.new
     else
       Keycard::DigestKey.new(api_key_digest)

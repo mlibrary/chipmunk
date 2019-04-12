@@ -5,4 +5,4 @@ require_relative "../config/application"
 
 Rails.application.load_tasks
 
-Rake::Task['resque:pool'].invoke
+Rake::Task["resque:pool"].invoke

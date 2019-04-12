@@ -5,7 +5,7 @@ require "rails_helper"
 describe "/v1/packages/show.json.jbuilder" do
   let(:package) { Fabricate.create(:package) }
   let(:bag) { double(:bag, relative_data_files: files) }
-  let(:files) { 3.times {Faker::Lorem.word} }
+  let(:files) { 3.times { Faker::Lorem.word } }
 
   before(:each) do
     assign(:current_user, user)
@@ -19,7 +19,7 @@ describe "/v1/packages/show.json.jbuilder" do
 
     it "renders correct json w/o storage_location" do
       expect(JSON.parse(rendered, symbolize_names: true))
-        .to eql({
+        .to eql(
           bag_id:       package.bag_id,
           user:         package.user.username,
           content_type: package.content_type,
@@ -28,8 +28,8 @@ describe "/v1/packages/show.json.jbuilder" do
           stored:       package.stored?,
           files:        files,
           created_at:   package.created_at.to_formatted_s(:default),
-          updated_at:   package.updated_at.to_formatted_s(:default),
-        })
+          updated_at:   package.updated_at.to_formatted_s(:default)
+        )
     end
   end
 
@@ -38,7 +38,7 @@ describe "/v1/packages/show.json.jbuilder" do
 
     it "renders correct json w/ storage_location" do
       expect(JSON.parse(rendered, symbolize_names: true))
-        .to eql({
+        .to eql(
           bag_id:       package.bag_id,
           user:         package.user.username,
           content_type: package.content_type,
@@ -48,9 +48,8 @@ describe "/v1/packages/show.json.jbuilder" do
           stored:       package.stored?,
           files:        files,
           created_at:   package.created_at.to_formatted_s(:default),
-          updated_at:   package.updated_at.to_formatted_s(:default),
-        })
+          updated_at:   package.updated_at.to_formatted_s(:default)
+        )
     end
   end
-
 end

@@ -46,7 +46,7 @@ class ResourceController < ApplicationController
   attr_writer :collection_policy, :resource_policy
 
   # Declare the collection policy class for instances.
-  # 
+  #
   # This is intended for use at definition time of subclasses, to declare the
   # default policy by defining an overriding instance method on the subclass.
   # The actual policy to use for an instance can be set with the attr_writer.
@@ -55,7 +55,7 @@ class ResourceController < ApplicationController
   end
 
   # Declare the resource policy class for instances.
-  # 
+  #
   # This is intended for use at definition time of subclasses, to declare the
   # default policy by defining an overriding instance method on the subclass.
   # The actual policy to use for an instance can be set with the attr_writer.

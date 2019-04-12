@@ -29,6 +29,7 @@ class Package < ApplicationRecord
   def dest_path
     prefixes = bag_id.match(/^(..)(..)(..).*/)
     raise "bag_id too short" unless prefixes
+
     File.join(Rails.application.config.upload["storage_path"], *prefixes[1..3], bag_id)
   end
 
@@ -43,6 +44,7 @@ class Package < ApplicationRecord
   def external_validation_cmd
     ext_cmd = Rails.application.config.validation["external"][content_type.to_s]
     return unless ext_cmd
+
     [ext_cmd, external_id, src_path].join(" ")
   end
 

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class RenameUserApiKey < ActiveRecord::Migration[5.1]
   def up
-    add_column :users, :api_key_digest, :string, default: 'x', null: false
+    add_column :users, :api_key_digest, :string, default: "x", null: false
     User.all.each do |user|
       user.update_column(
         :api_key_digest,

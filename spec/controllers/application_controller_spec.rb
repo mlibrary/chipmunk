@@ -34,11 +34,9 @@ RSpec.describe ApplicationController, type: :controller do
     request.headers.merge! remote_user_header
   end
 
-  subject { response }
-
   shared_examples_for "an allowed request" do
-    it { is_expected.to have_http_status(200) }
-    it { is_expected.to render_template(AN_EXISTING_TEMPLATE) }
+    it { expect(response).to have_http_status(200) }
+    it { expect(response).to render_template(AN_EXISTING_TEMPLATE) }
 
     it "executes the controller action" do
       expect(assigns(:something)).to eq("success")
@@ -50,7 +48,7 @@ RSpec.describe ApplicationController, type: :controller do
   end
 
   shared_examples_for "a disallowed request" do
-    it { is_expected.to render_template(nil) }
+    it { expect(response).to render_template(nil) }
 
     it "does not execute the controller action" do
       expect(assigns(:something)).to be(nil)
@@ -59,10 +57,10 @@ RSpec.describe ApplicationController, type: :controller do
 
   shared_examples_for "respects Authorization header" do
     let(:key)   { Keycard::DigestKey.new }
-    let!(:user) { Fabricate(:user, admin: true, api_key_digest: key.digest ) }
+    let!(:user) { Fabricate(:user, admin: true, api_key_digest: key.digest) }
 
     context "with valid Authorization header" do
-      let(:auth_header) { user; { "Authorization" => "Token token=#{key.to_s}" } }
+      let(:auth_header) { user; { "Authorization" => "Token token=#{key}" } }
 
       it "sets current_user to the user corresponding to the token" do
         expect(controller.current_user).to eq(user)
@@ -77,7 +75,8 @@ RSpec.describe ApplicationController, type: :controller do
 
     context "with invalid Authorization" do
       let(:auth_header) { { "Authorization" => "Token token=bad_token" } }
-      it { is_expected.to have_http_status(401) }
+
+      it { expect(response).to have_http_status(401) }
       it_behaves_like "a disallowed request"
     end
   end
@@ -87,7 +86,7 @@ RSpec.describe ApplicationController, type: :controller do
 
     context "without X-Remote-User" do
       context "without Authorization" do
-        it { is_expected.to redirect_to("/login") }
+        it { expect(response).to redirect_to("/login") }
         it_behaves_like "a disallowed request"
 
         it "stores the requested return path in the session" do
@@ -120,20 +119,20 @@ RSpec.describe ApplicationController, type: :controller do
   context "with a request that will fail even if authenticated" do
     let(:key)   { Keycard::DigestKey.new }
     let!(:user) { Fabricate(:user, admin: true, api_key_digest: key.digest) }
-    let(:auth_header) { { "Authorization" => "Token token=#{key.to_s}" } }
+    let(:auth_header) { { "Authorization" => "Token token=#{key}" } }
 
     before(:each) { get :unauthorized }
 
-    it { is_expected.to have_http_status(403) }
+    it { expect(response).to have_http_status(403) }
   end
 
   context "with a request that raises a FileNotFound error" do
     let(:key)   { Keycard::DigestKey.new }
-    let!(:user) { Fabricate(:user, admin: true, api_key_digest: key.digest ) }
-    let(:auth_header) { { "Authorization" => "Token token=#{key.to_s}" } }
+    let!(:user) { Fabricate(:user, admin: true, api_key_digest: key.digest) }
+    let(:auth_header) { { "Authorization" => "Token token=#{key}" } }
 
     before(:each) { get :not_found }
 
-    it { is_expected.to have_http_status(404) }
+    it { expect(response).to have_http_status(404) }
   end
 end

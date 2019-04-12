@@ -59,6 +59,7 @@ RSpec.shared_examples "a validation integration" do
 
   context "with an invalid bag" do
     let(:package) { package_with_id("badbag") }
+
     it "reports the error and does not move the bag to storage" do
       expect(File).not_to receive(:rename).with(package.src_path, package.dest_path)
       subject
@@ -69,7 +70,9 @@ RSpec.shared_examples "a validation integration" do
 
   context "with a nonexistent bag" do
     let(:package) { package_with_id("deleteme") }
+
     before(:each) { FileUtils.rmtree package.src_path }
+
     it "does not create a bag" do
       subject
       expect(File.exist?(package.src_path)).to be(false)

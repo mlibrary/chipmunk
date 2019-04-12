@@ -30,7 +30,7 @@ class PolicyDouble
     if name
       instance_double(name)
     else
-      double('Policy')
+      double("Policy")
     end
   end
 
@@ -113,4 +113,3 @@ module Checkpoint::Spec
     end
   end
 end
-

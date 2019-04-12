@@ -19,3 +19,8 @@ before_script:
 script:
     - bundle exec rspec
 
+matrix:
+  include:
+    - rvm: ruby-head
+      script: bin/rubocop
+

@@ -4,7 +4,7 @@ require "rails_helper"
 
 describe "/v1/packages/index.json.jbuilder" do
   let(:package) { Fabricate.create(:package) }
-  let(:files) { 3.times {Faker::Lorem.word} }
+  let(:files) { 3.times { Faker::Lorem.word } }
   let(:bag) { double(:bag, relative_data_files: files) }
 
   before(:each) do
@@ -26,7 +26,7 @@ describe "/v1/packages/index.json.jbuilder" do
           upload_link:  package.upload_link,
           stored:       package.stored?,
           created_at:   package.created_at.to_formatted_s(:default),
-          updated_at:   package.updated_at.to_formatted_s(:default),
+          updated_at:   package.updated_at.to_formatted_s(:default)
         }])
     end
   end
@@ -37,17 +37,16 @@ describe "/v1/packages/index.json.jbuilder" do
     it "renders correct json w/ storage_location" do
       expect(JSON.parse(rendered, symbolize_names: true))
         .to eql([{
-          bag_id:       package.bag_id,
-          user:         package.user.username,
-          content_type: package.content_type,
-          external_id:  package.external_id,
-          upload_link:  package.upload_link,
+          bag_id:           package.bag_id,
+          user:             package.user.username,
+          content_type:     package.content_type,
+          external_id:      package.external_id,
+          upload_link:      package.upload_link,
           storage_location: package.storage_location,
-          stored:       package.stored?,
-          created_at:   package.created_at.to_formatted_s(:default),
-          updated_at:   package.updated_at.to_formatted_s(:default),
+          stored:           package.stored?,
+          created_at:       package.created_at.to_formatted_s(:default),
+          updated_at:       package.updated_at.to_formatted_s(:default)
         }])
     end
   end
-
 end

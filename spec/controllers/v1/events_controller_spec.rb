@@ -10,7 +10,7 @@ RSpec.describe V1::EventsController, type: :controller do
       expect(policy).to eq EventsPolicy
     end
 
-    it_behaves_like "an index endpoint", 'EventsPolicy'
+    it_behaves_like "an index endpoint", "EventsPolicy"
 
     describe "GET #index" do
       context "with events for two packages" do
@@ -22,7 +22,7 @@ RSpec.describe V1::EventsController, type: :controller do
         before(:each) do
           # create an extra event that shouldn't be in the output
           Fabricate(:event)
-          collection_policy 'EventsPolicy', events, index?: true
+          collection_policy "EventsPolicy", events, index?: true
         end
 
         it "can show only events for an object identified by bag_id" do

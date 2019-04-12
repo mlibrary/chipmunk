@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require 'open3'
+require "open3"
 
 RSpec.describe ChipmunkBagValidator do
   def exitstatus(status)
@@ -48,7 +48,7 @@ RSpec.describe ChipmunkBagValidator do
   end
 
   describe "#valid?" do
-    subject { described_class.new(package, errors, fakebag).valid? }
+    let(:validator) { described_class.new(package, errors, fakebag) }
 
     before(:each) do
       allow(File).to receive(:'exist?').with(src_path).and_return true
@@ -60,34 +60,37 @@ RSpec.describe ChipmunkBagValidator do
 
     shared_examples_for "an invalid item" do |error_pattern|
       it "records the validation error" do
-        subject
+        validator.valid?
         expect(errors).to include a_string_matching error_pattern
       end
 
       it "returns false" do
-        expect(subject).to be false
+        expect(validator.valid?).to be false
       end
     end
 
     context "when the bag is valid" do
       context "and its metadata matches the queue item" do
         it "returns true" do
-          expect(subject).to be true
+          expect(validator.valid?).to be true
         end
       end
 
       context "but its external ID does not match the queue item" do
         let(:chipmunk_info) { chipmunk_info_with_metadata.merge("External-Identifier" => "something-different") }
+
         it_behaves_like "an invalid item", /External-Identifier/
       end
 
       context "but its bag ID does not match the queue item" do
         let(:chipmunk_info) { chipmunk_info_with_metadata.merge("Bag-ID" => "something-different") }
+
         it_behaves_like "an invalid item", /Bag-ID/
       end
 
       context "but its package type does not match the queue item" do
         let(:chipmunk_info) { chipmunk_info_with_metadata.merge("Chipmunk-Content-Type" => "something-different") }
+
         it_behaves_like "an invalid item", /Chipmunk-Content-Type/
       end
 
@@ -102,7 +105,7 @@ RSpec.describe ChipmunkBagValidator do
         let(:tag_files) { [] }
 
         it "returns true" do
-          expect(subject).to be true
+          expect(validator.valid?).to be true
         end
       end
 
@@ -111,7 +114,7 @@ RSpec.describe ChipmunkBagValidator do
           chipmunk_info_db.merge(
             "Metadata-URL"          => "http://what.ever",
             "Metadata-Tagfile"      => "marc.xml"
-)
+          )
         end
 
         it_behaves_like "an invalid item", /Metadata-Type/
@@ -141,7 +144,7 @@ RSpec.describe ChipmunkBagValidator do
 
         it "does not try to run external validation" do
           expect(Open3).not_to receive(:capture3)
-          subject
+          validator.valid?
         end
       end
     end
@@ -154,7 +157,7 @@ RSpec.describe ChipmunkBagValidator do
 
       it "does not try to run external validation" do
         expect(Open3).not_to receive(:capture3)
-        subject
+        validator.valid?
       end
     end
 
