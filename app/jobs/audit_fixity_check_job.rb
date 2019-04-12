@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "chipmunk_bag_validator"
-
 class AuditFixityCheckJob < ApplicationJob
   queue_as :default
 
