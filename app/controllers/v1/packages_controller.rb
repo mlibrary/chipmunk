@@ -36,7 +36,7 @@ module V1
       bag = Services.storage.for(package)
       if bag.includes_data?(params[:file])
         file = bag.data_file!(params[:file])
-        send_file(file, type: file.type, status: 204)
+        send_file(file.to_s, type: file.type, status: 200)
       else
         file_not_found
       end

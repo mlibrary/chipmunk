@@ -106,10 +106,10 @@ RSpec.describe V1::PackagesController, type: :controller do
       end
 
       context "the file exists in the bag" do
-        it "returns 204 No Content on success" do
+        it "returns 200 on success" do
           get :sendfile, params: { bag_id: package.bag_id, file: "samplefile" }
 
-          expect(response).to have_http_status(:no_content)
+          expect(response).to have_http_status(200)
         end
       end
     end
