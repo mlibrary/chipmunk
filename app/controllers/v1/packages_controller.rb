@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
 require "request_builder"
+require "zip_tricks"
 
 module V1
   class PackagesController < ResourceController
+    include ActionController::Live
+    include ZipTricks::RailsStreaming
+
     collection_policy PackagesPolicy
     resource_policy PackagePolicy
 
@@ -30,11 +34,30 @@ module V1
     def sendfile
       resource_policy.new(current_user, package).authorize! :show?
       bag = Services.storage.for(package)
-      if bag.include?(params[:file])
-        file = bag.data_file(params[:file])
-        send_file(file.path, type: file.type)
+      if bag.includes_data?(params[:file])
+        file = bag.data_file!(params[:file])
+        send_file(file.to_s, type: file.type, status: 200)
       else
         file_not_found
+      end
+    end
+
+    def send_package
+      resource_policy.new(current_user, package).authorize! :show?
+
+      unless package.stored?
+        head 404
+        return
+      end
+
+      # Zip Tricks can take only non-directory paths as strings.
+      bag = Services.storage.for(package)
+      zip_tricks_stream do |zip|
+        bag.relative_files.each do |file|
+          zip.write_deflated_file(file.to_s) do |sink|
+            IO.copy_stream((bag.bag_dir/file).to_s, sink)
+          end
+        end
       end
     end
 

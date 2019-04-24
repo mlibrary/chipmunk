@@ -20,27 +20,64 @@ RSpec.describe ChipmunkBag do
   let(:empty_bag) { described_class.new(@empty_path) }
   let(:stored_bag) { described_class.new(@stored_path) }
 
-  describe "#data_file" do
-    it "returns the full path for a given file in the data directory" do
-      expect(stored_bag.data_file("samplefile").path).to eql(stored_path/"data"/"samplefile")
-    end
+  let(:stored_files) do
+    Dir.glob(stored_path/"**"/"*")
+      .map {|f| Pathname.new(f) }
+      .reject(&:directory?)
+  end
 
-    it "returns the appropriate mime type" do
-      expect(stored_bag.data_file("samplefile").type).to eql("application/octet-stream")
+  describe "#bag_dir" do
+    it "returns the bag dir path" do
+      expect(stored_bag.bag_dir).to eql(stored_path)
     end
+  end
 
-    it "raises a FileNotFound exception if a file is requested that isn't in the data directory" do
-      expect { stored_bag.data_file("nonexistent") }.to raise_error(FileNotFoundError)
+  describe "#data_dir" do
+    it "returns the data dir path" do
+      expect(stored_bag.data_dir).to eql(stored_path/"data")
     end
+  end
 
-    it "raises a FileNotFound exception for traversal attempts" do
-      expect { stored_bag.data_file("../data/samplefile") }.to raise_error(FileNotFoundError)
+  describe "#files" do
+    it "returns all the files" do
+      expect(stored_bag.files).to contain_exactly(*stored_files)
+    end
+  end
+
+  describe "#relative_files" do
+    it "returns the files relative to the root of the bag" do
+      relative_files = stored_files.map {|f| f.relative_path_from(stored_path) }
+      expect(stored_bag.relative_files).to contain_exactly(*relative_files)
+    end
+  end
+
+  describe "#data_files" do
+    it "returns the files in the data directory" do
+      expect(stored_bag.data_files).to contain_exactly(stored_path/"data"/"samplefile")
     end
   end
 
   describe "#relative_data_files" do
-    it "returns the list of files in the package's data directory" do
+    it "returns the data files relative to the data directory" do
       expect(stored_bag.relative_data_files).to contain_exactly(Pathname.new("samplefile"))
+    end
+  end
+
+  describe "#data_file!" do
+    it "returns the full path for a given file in the data directory" do
+      expect(stored_bag.data_file!("samplefile")).to eql(stored_path/"data"/"samplefile")
+    end
+
+    it "returns the appropriate mime type" do
+      expect(stored_bag.data_file!("samplefile").type).to eql("application/octet-stream")
+    end
+
+    it "raises a FileNotFound exception if a file is requested that isn't in the data directory" do
+      expect { stored_bag.data_file!("nonexistent") }.to raise_error(FileNotFoundError)
+    end
+
+    it "raises a FileNotFound exception for traversal attempts" do
+      expect { stored_bag.data_file!("../data/samplefile") }.to raise_error(FileNotFoundError)
     end
   end
 

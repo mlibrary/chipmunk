@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     post "/requests/:bag_id/complete", controller: :queue_items, action: :create
 
     resources :packages, only: [:index, :show], param: :bag_id
+    get "/packages/:bag_id/download", controller: :packages, action: :send_package
     get "/packages/:bag_id/events", controller: :events, action: :index
     get "/packages/:bag_id/:file", controller: :packages, action: :sendfile, file: /.*/
 

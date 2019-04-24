@@ -22,6 +22,7 @@ gem "rack-cors"
 gem "rails", "~> 5.1.0"
 gem "resque"
 gem "resque-pool"
+gem "zip_tricks"
 
 gem "checkpoint"
 gem "kcv", "~> 0.4.0"
