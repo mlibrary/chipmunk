@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
-class ChipmunkBagValidator
-  include ChipmunkValidatable
+class Chipmunk::Bag
+class Validator
+  include Chipmunk::Validatable
 
   attr_reader :errors
 
-  # @param bag [ChipmunkBag] If nil, the bag does not yet exist.
+  # TODO: Decide exactly what this should take... Package, Bag, or what?
+  # @param package [Package]
+  # @param bag [Chipmunk::Package] If nil, the bag does not yet exist.
   def initialize(package, errors = [], bag = nil)
     @package = package
     @src_path = package.src_path
@@ -17,7 +20,7 @@ class ChipmunkBagValidator
     condition: -> { File.exist?(src_path) },
     error: -> { "Bag does not exist at upload location #{src_path}" }
 
-  validates "bag on disk must be ChipmunkBag#valid?",
+  validates "bag on disk must be valid",
     condition: -> { bag.valid? },
     error: -> { "Error validating bag:\n" + indent_array(bag.errors.full_messages) }
 
@@ -75,5 +78,5 @@ class ChipmunkBagValidator
   end
 
   attr_reader :src_path, :package, :bag
-
+end
 end

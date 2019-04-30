@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "open3"
-require "chipmunk_bag_validator"
 
 class BagMoveJob < ApplicationJob
 
@@ -14,7 +13,7 @@ class BagMoveJob < ApplicationJob
     # TODO: Pull this up and out
     # TODO: Use Services.storage.create
     if validator.nil? && File.exist?(src_path)
-      validator = ChipmunkBagValidator.new(
+      validator = Chipmunk::Bag::Validator.new(
         queue_item.package,
         errors,
         Chipmunk::Bag.new(src_path)

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-module ChipmunkValidatable
+module Chipmunk
+module Validatable
 
   def self.included(base)
     base.extend(ClassMethods)
@@ -33,4 +34,5 @@ module ChipmunkValidatable
     end
   end
 
+end
 end
