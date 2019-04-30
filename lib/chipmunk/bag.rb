@@ -96,3 +96,7 @@ module Chipmunk
     attr_reader :bag
   end
 end
+
+require_relative "bag/profile"
+require_relative "bag/tag"
+require_relative "bag/validator"

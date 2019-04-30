@@ -68,7 +68,7 @@ class Chipmunk::Bag
 
     validates "bag on disk meets bagger profile",
       only_if: -> { package.bagger_profile },
-      condition: -> { BaggerProfile.new(package.bagger_profile).valid?(bag.bag_info, errors: errors) },
+      condition: -> { Profile.new(package.bagger_profile).valid?(bag.bag_info, errors: errors) },
       error: -> { "Not valid according to bagger profile" }
 
     private

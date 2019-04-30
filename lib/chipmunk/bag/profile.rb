@@ -3,9 +3,9 @@
 require "json"
 require "open-uri"
 require "uri"
-require "bagger_tag"
 
-class BaggerProfile
+class Chipmunk::Bag
+class Profile
 
   def initialize(uri)
     uri = URI.parse(uri)
@@ -15,7 +15,7 @@ class BaggerProfile
       uri.read
     end
 
-    @tags = JSON.parse(profile)["ordered"].map {|t| BaggerTag.from_hash(t) }
+    @tags = JSON.parse(profile)["ordered"].map {|t| Tag.from_hash(t) }
   end
 
   def valid?(bag_info, errors: [])
@@ -25,4 +25,5 @@ class BaggerProfile
   private
 
   attr_reader :tags
+end
 end

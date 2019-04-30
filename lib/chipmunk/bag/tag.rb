@@ -1,9 +1,7 @@
-#!ruby
 # frozen_string_literal: true
 
-require "set"
-
-class BaggerTag
+class Chipmunk::Bag
+class Tag
   def self.from_hash(hash)
     raise ArgumentError, "exactly one key expected" unless hash.size == 1
 
@@ -46,4 +44,5 @@ class BaggerTag
     errors << "#{name}: \"#{value}\" is not an allowed value" unless result
     result
   end
+end
 end
