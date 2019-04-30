@@ -17,7 +17,7 @@ class BagMoveJob < ApplicationJob
       validator = ChipmunkBagValidator.new(
         queue_item.package,
         errors,
-        ChipmunkBag.new(src_path)
+        Chipmunk::Bag.new(src_path)
       )
     end
 

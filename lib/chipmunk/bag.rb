@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
 require "bagit"
-require "file_errors"
 
-class ChipmunkBag < BagIt::Bag
+module Chipmunk
+class Bag
+  include SemanticLogger::Loggable
+
+  def initialize(path, info = {}, _create = false)
+    @bag = BagIt::Bag.new(path, info, _create)
+  end
 
   def bag_dir
     Pathname.new(super)
@@ -20,7 +25,8 @@ class ChipmunkBag < BagIt::Bag
   def chipmunk_info
     return {} unless File.exist?(chipmunk_info_txt_file)
 
-    read_info_file chipmunk_info_txt_file
+    logger.debug "Delegating method 'read_info_file' to bag, caller: #{caller(1..1).first}"
+    bag.send(:read_info_file, chipmunk_info_txt_file)
   end
 
   # Get the absolute paths of all files
@@ -38,7 +44,7 @@ class ChipmunkBag < BagIt::Bag
 
   # Get the absolute paths of the files under the data directory
   def data_files
-    bag_files.map {|f| Pathname.new(f) }
+    bag.bag_files.map {|f| Pathname.new(f) }
   end
 
   # Get the paths of the data files relative to the data directory
@@ -71,4 +77,22 @@ class ChipmunkBag < BagIt::Bag
       raise FileNotFoundError, "No such file #{path} in bag"
     end
   end
+
+  def method_missing(name, *args, &block)
+    if @bag.respond_to?(name)
+      logger.debug "Delegating method '#{name}' to bag, caller: #{caller(1..1).first}"
+      @bag.send(name, *args, &block)
+    else
+      super
+    end
+  end
+
+  def respond_to_missing?(name, include_private = false)
+    bag.respond_to?(name) || super
+  end
+
+  private
+
+  attr_reader :bag
+end
 end

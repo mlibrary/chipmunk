@@ -17,7 +17,7 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     def not_found
-      raise FileNotFoundError
+      raise Chipmunk::FileNotFoundError
     end
   end
 

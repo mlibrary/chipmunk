@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require "chipmunk_bag"
-require "file_errors"
-
-RSpec.describe ChipmunkBag do
+RSpec.describe Chipmunk::Bag do
   # set up data in safe area
   around(:each) do |example|
     Dir.mktmpdir do |tmp_dir|
@@ -73,11 +70,11 @@ RSpec.describe ChipmunkBag do
     end
 
     it "raises a FileNotFound exception if a file is requested that isn't in the data directory" do
-      expect { stored_bag.data_file!("nonexistent") }.to raise_error(FileNotFoundError)
+      expect { stored_bag.data_file!("nonexistent") }.to raise_error(Chipmunk::FileNotFoundError)
     end
 
     it "raises a FileNotFound exception for traversal attempts" do
-      expect { stored_bag.data_file!("../data/samplefile") }.to raise_error(FileNotFoundError)
+      expect { stored_bag.data_file!("../data/samplefile") }.to raise_error(Chipmunk::FileNotFoundError)
     end
   end
 

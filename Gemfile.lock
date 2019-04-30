@@ -214,6 +214,8 @@ GEM
       rubocop (>= 0.60.0)
     ruby-progressbar (1.10.0)
     safe_yaml (1.0.4)
+    semantic_logger (4.5.0)
+      concurrent-ruby (~> 1.0)
     sequel (5.18.0)
     simplecov (0.16.1)
       docile (~> 1.1)
@@ -293,6 +295,7 @@ DEPENDENCIES
   rubocop
   rubocop-performance
   rubocop-rspec
+  semantic_logger
   sqlite3
   timecop
   turnip
