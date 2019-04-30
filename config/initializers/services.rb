@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "bag_repository"
+require "chipmunk"
 
 def assign_db(lhs, rhs)
   if rhs.is_a? String
