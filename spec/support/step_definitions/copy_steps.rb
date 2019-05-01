@@ -9,7 +9,6 @@ module CopyBagSteps
       .expand_path
       .dirname
       .parent + "fixtures" + "test_bag"
-    puts "copying #{bag_dir} to #{location}"
     @copy_result = system("cp", "-rp", bag_dir.to_s, location)
   end
 

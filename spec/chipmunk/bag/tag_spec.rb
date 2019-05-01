@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "bagger_tag"
+require "chipmunk/bag/tag"
 
-describe BaggerTag do
+RSpec.describe Chipmunk::Bag::Tag do
   describe "::from_hash" do
     let(:json_tag) do
       JSON.parse(<<~JSON)

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "policy_errors"
-require "file_errors"
 
 class ApplicationController < ActionController::API
 
@@ -12,7 +11,7 @@ class ApplicationController < ActionController::API
   before_action :set_format_to_json
 
   rescue_from NotAuthorizedError, with: :user_not_authorized
-  rescue_from FileNotFoundError, with: :file_not_found
+  rescue_from Chipmunk::FileNotFoundError, with: :file_not_found
 
   attr_reader :current_user
 

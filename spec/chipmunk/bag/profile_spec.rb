@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "bagger_profile"
+require "chipmunk/bag/profile"
 
-describe BaggerProfile do
+RSpec.describe Chipmunk::Bag::Profile do
   let(:bagger_profile) do
     described_class.new("file://" + Rails.root.join("spec", "support", "fixtures", "test-profile.json").to_s)
   end

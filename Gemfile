@@ -22,6 +22,7 @@ gem "rack-cors"
 gem "rails", "~> 5.1.0"
 gem "resque"
 gem "resque-pool"
+gem "semantic_logger"
 gem "zip_tricks"
 
 gem "checkpoint"

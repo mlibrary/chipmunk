@@ -50,8 +50,6 @@ module Chipmunk
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = false
 
-    config.autoload_paths << Rails.root.join("lib")
-
     upload_path = Pathname.new(Rails.root) / "config" / "upload.yml"
     config.upload = YAML.safe_load(ERB.new(upload_path.read).result)
 

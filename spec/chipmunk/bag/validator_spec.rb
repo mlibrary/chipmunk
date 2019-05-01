@@ -3,7 +3,7 @@
 require "rails_helper"
 require "open3"
 
-RSpec.describe ChipmunkBagValidator do
+RSpec.describe Chipmunk::Bag::Validator do
   def exitstatus(status)
     double(:exitstatus, exitstatus: status)
   end
