@@ -23,6 +23,12 @@ end
 
 Services = Canister.new
 Services.register(:storage) { BagRepository.new(Chipmunk::Bag) }
+Services.register(:bag_storage) do
+  Chipmunk::Bag::DiskStorage.new(Chipmunk.config.upload.storage_path)
+end
+Services.register(:packages) do
+  Chipmunk::Package::Repository.new(adapters: { bag: bag_storage })
+end
 Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
 Services.register(:checkpoint) do
   Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new)

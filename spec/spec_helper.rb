@@ -52,3 +52,7 @@ require "webmock/rspec"
 def fixture(*path)
   File.join(Rails.application.root, "spec", "support", "fixtures", File.join(*path))
 end
+
+require "pathname"
+
+RSPEC_ROOT = Pathname.new(__dir__)

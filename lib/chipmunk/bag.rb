@@ -6,8 +6,30 @@ module Chipmunk
   class Bag
     include SemanticLogger::Loggable
 
-    def initialize(path, info = {}, _create = false)
-      @bag = BagIt::Bag.new(path, info, _create)
+    # The package ID
+    attr_reader :id
+
+    # @param storage: [Storage] a storage adapter for IO operations on the Bag
+    # TODO: Decide how much a Chipmunk::Bag needs to access the storage/disk itself or
+    #       if the BagIt::Bag bound to somewhere under the storage root is enough.
+    # TODO: Reconcile the notions of Bags _inside_ the repository and _outside_ of it.
+    #       Notably, the storage and repository are separate. We could potentially
+    #       use read-only storage for items located by the repository and expose
+    #       explicit or transactional operations for updates. We could also use
+    #       less strict storage for in-flight packages. These are all draft thoughts
+    #       seeking to clarify the role of Chipmunk::Bag -- does it have unmetered
+    #       access to disk? There are parallel questions on the Package model.
+    # TODO: Decide what the actual parameters should be here; who makes the
+    #       BagIt::Bag? Does this inherit from Package or just implement all of
+    #       that interface as it emerges?
+    def initialize(path = :REMOVE, id: :REMOVE, storage: Package::NullStorage.new)
+      if id == :REMOVE
+        @id = path
+        @bag = BagIt::Bag.new(path)
+      else
+        @id = id
+        @bag = BagIt::Bag.new(storage.root_path/id)
+      end
     end
 
     def bag_dir
@@ -99,4 +121,5 @@ end
 
 require_relative "bag/profile"
 require_relative "bag/tag"
+require_relative "bag/disk_storage"
 require_relative "bag/validator"
