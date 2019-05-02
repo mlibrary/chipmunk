@@ -23,34 +23,10 @@ RSpec.describe Chipmunk::Bag do
       .reject(&:directory?)
   end
 
-  describe "#bag_dir" do
-    it "returns the bag dir path" do
-      expect(stored_bag.bag_dir).to eql(stored_path)
-    end
-  end
-
-  describe "#data_dir" do
-    it "returns the data dir path" do
-      expect(stored_bag.data_dir).to eql(stored_path/"data")
-    end
-  end
-
-  describe "#files" do
-    it "returns all the files" do
-      expect(stored_bag.files).to contain_exactly(*stored_files)
-    end
-  end
-
   describe "#relative_files" do
     it "returns the files relative to the root of the bag" do
       relative_files = stored_files.map {|f| f.relative_path_from(stored_path) }
       expect(stored_bag.relative_files).to contain_exactly(*relative_files)
-    end
-  end
-
-  describe "#data_files" do
-    it "returns the files in the data directory" do
-      expect(stored_bag.data_files).to contain_exactly(stored_path/"data"/"samplefile")
     end
   end
 

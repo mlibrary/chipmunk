@@ -44,41 +44,29 @@ module Chipmunk
       new(package.storage_location)
     end
 
-    def bag_dir
-      Pathname.new(super)
+    # Copy the file at {path} within the Bag to {dst}, using IO::copy_stream.
+    #
+    # @param path [Pathname|String] the relative path to the file to copy from
+    # @param destination [String|IO] the filename or IO object for writing to
+    def copy_stream(path, destination)
+      raise FileNotFoundError, "File not found in bag: #{path}" unless includes?(path)
+      IO.copy_stream((bag_dir/path).to_s, destination)
     end
 
-    def data_dir
-      Pathname.new(super)
-    end
-
-    def chipmunk_info_txt_file
-      bag_dir/"chipmunk-info.txt"
+    def valid?
+      bag.valid?
     end
 
     def chipmunk_info
       return {} unless File.exist?(chipmunk_info_txt_file)
 
-      logger.debug "Delegating method 'read_info_file' to bag, caller: #{caller(1..1).first}"
       bag.send(:read_info_file, chipmunk_info_txt_file)
-    end
-
-    # Get the absolute paths of all files
-    def files
-      Dir.glob(bag_dir/"**"/"*")
-        .map {|f| Pathname.new(f) }
-        .reject(&:directory?)
     end
 
     # Get the paths of all files relative to the root of the bag
     # @see {#bag_dir}
     def relative_files
       files.map {|f| f.relative_path_from(bag_dir) }
-    end
-
-    # Get the absolute paths of the files under the data directory
-    def data_files
-      bag.bag_files.map {|f| Pathname.new(f) }
     end
 
     # Get the paths of the data files relative to the data directory
@@ -101,6 +89,10 @@ module Chipmunk
       relative_files.include?(Pathname.new(path))
     end
 
+    def tag_files
+      bag.tag_files.map {|f| Pathname(f).relative_path_from(bag_dir) }
+    end
+
     # Get a reference to a data file in the bag
     # @param path [Pathname] Relative path to the file
     def data_file!(path)
@@ -112,20 +104,31 @@ module Chipmunk
       end
     end
 
-    def method_missing(name, *args, &block)
-      if @bag.respond_to?(name)
-        logger.debug "Delegating method '#{name}' to bag, caller: #{caller(1..1).first}"
-        @bag.send(name, *args, &block)
-      else
-        super
-      end
-    end
-
-    def respond_to_missing?(name, include_private = false)
-      bag.respond_to?(name) || super
-    end
-
     private
+
+    def bag_dir
+      Pathname.new(bag.bag_dir)
+    end
+
+    def data_dir
+      Pathname.new(bag.data_dir)
+    end
+
+    # Get the absolute paths of all files
+    def files
+      Dir.glob(bag_dir/"**"/"*")
+        .map {|f| Pathname.new(f) }
+        .reject(&:directory?)
+    end
+
+    # Get the absolute paths of the files under the data directory
+    def data_files
+      bag.bag_files.map {|f| Pathname.new(f) }
+    end
+
+    def chipmunk_info_txt_file
+      bag_dir/"chipmunk-info.txt"
+    end
 
     attr_reader :bag
   end

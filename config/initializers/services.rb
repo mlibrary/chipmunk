@@ -21,6 +21,9 @@ if Chipmunk.config.keycard&.access
   Keycard.config.access = Chipmunk.config.keycard.access
 end
 
+SemanticLogger.default_level = (ENV["LOG_LEVEL"] || :info).to_sym
+SemanticLogger.add_appender(file_name: 'log/chipmunk.log', formatter: :color)
+
 Services = Canister.new
 Services.register(:bag_storage) do
   Chipmunk::Bag::DiskStorage.new(Chipmunk.config.upload.storage_path)

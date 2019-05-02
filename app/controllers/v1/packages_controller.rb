@@ -61,7 +61,7 @@ module V1
       zip_tricks_stream do |zip|
         bag.relative_files.each do |file|
           zip.write_deflated_file(file.to_s) do |sink|
-            IO.copy_stream((bag.bag_dir/file).to_s, sink)
+            bag.copy_stream(file, sink)
           end
         end
       end
