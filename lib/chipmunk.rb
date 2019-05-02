@@ -10,4 +10,3 @@ require_relative "chipmunk/validatable"
 
 require_relative "chipmunk/package"
 require_relative "chipmunk/bag"
-require_relative "bag_repository"

@@ -12,7 +12,7 @@ class AuditFixityCheckJob < ApplicationJob
   end
 
   # TODO: This should just receive a bag.
-  def validate_bag(storage: Services.storage, bag: storage.for(package), mailer: AuditMailer)
+  def validate_bag(bag: Chipmunk::Bag.__from_package__(package), mailer: AuditMailer)
     begin
       if bag.valid?
         outcome = "success"

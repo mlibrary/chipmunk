@@ -32,6 +32,18 @@ module Chipmunk
       end
     end
 
+    # @deprecated This is a transitional method to move away from BagRepository
+    #   while determining the appropriate interface for Repository#find and
+    #   Storage#get. We should not have any dependencies on Rails models here,
+    #   relying strictly on value objects. This also disregards the configured
+    #   bag_storage entirely because packages currently hold their own
+    #   stored_location in absolute form.
+    def self.__from_package__(package)
+      logger.debug "[DEPRECATION] Bag::__from_package__ called from #{caller(1..1).first}"
+      raise Chipmunk::BagNotFoundError unless package.stored?
+      new(package.storage_location)
+    end
+
     def bag_dir
       Pathname.new(super)
     end

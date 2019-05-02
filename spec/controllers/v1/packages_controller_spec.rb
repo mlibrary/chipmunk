@@ -22,7 +22,7 @@ RSpec.describe V1::PackagesController, type: :controller do
       let(:package) { Fabricate(:package) }
       let(:bag) { double(:bag) }
 
-      before(:each) { allow(Services.storage).to receive(:for).with(package).and_return(bag) }
+      before(:each) { allow(Chipmunk::Bag).to receive(:__from_package__).with(package).and_return(bag) }
 
       context "when the policy allows the user access" do
         include_context "with someone logged in"
@@ -140,7 +140,9 @@ RSpec.describe V1::PackagesController, type: :controller do
         end
 
         it "zips each file in the stored package" do
-          Services.storage.for(package).relative_files.each do |file|
+          # TODO: Once the interface of Repository/DiskStorage is sorted out,
+          #       use that, rather than going around it.
+          Chipmunk::Bag.__from_package__(package).relative_files.each do |file|
             expect(zip).to receive(:write_deflated_file).with(file.to_s)
           end
           get :send_package, params: { bag_id: package.bag_id }

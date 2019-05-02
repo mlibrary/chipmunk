@@ -22,7 +22,6 @@ if Chipmunk.config.keycard&.access
 end
 
 Services = Canister.new
-Services.register(:storage) { BagRepository.new(Chipmunk::Bag) }
 Services.register(:bag_storage) do
   Chipmunk::Bag::DiskStorage.new(Chipmunk.config.upload.storage_path)
 end

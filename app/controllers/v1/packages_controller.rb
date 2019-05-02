@@ -27,13 +27,17 @@ module V1
       # Expose the bag if this is a request for a logical package.
       # Avoid exposing it if this is a request for a logical request.
       if package.stored?
-        @bag = Services.storage.for(package)
+        # TODO: Once the interface of Repository/DiskStorage is sorted out,
+        #       use that, rather than going around it.
+        @bag = Chipmunk::Bag.__from_package__(package)
       end
     end
 
     def sendfile
       resource_policy.new(current_user, package).authorize! :show?
-      bag = Services.storage.for(package)
+      # TODO: Once the interface of Repository/DiskStorage is sorted out,
+      #       use that, rather than going around it.
+      bag = Chipmunk::Bag.__from_package__(package)
       if bag.includes_data?(params[:file])
         file = bag.data_file!(params[:file])
         send_file(file.to_s, type: file.type, status: 200)
@@ -50,8 +54,10 @@ module V1
         return
       end
 
+      # TODO: Once the interface of Repository/DiskStorage is sorted out,
+      #       use that, rather than going around it.
       # Zip Tricks can take only non-directory paths as strings.
-      bag = Services.storage.for(package)
+      bag = Chipmunk::Bag.__from_package__(package)
       zip_tricks_stream do |zip|
         bag.relative_files.each do |file|
           zip.write_deflated_file(file.to_s) do |sink|
