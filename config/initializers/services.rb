@@ -25,5 +25,14 @@ Services = Canister.new
 Services.register(:storage) { BagRepository.new(Chipmunk::Bag) }
 Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
 Services.register(:checkpoint) do
-  Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new)
+  role_map = Checkpoint::Credential::RoleMapResolver.new(
+    {
+      admin: [:show, :create, :edit, :delete],
+      content_manager: [:show, :create, :edit],
+      viewer: [:show],
+    }
+  )
+
+  Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new,
+                            credential_resolver: role_map)
 end

@@ -3,6 +3,7 @@
 require 'rspec/expectations'
 
 class FakeUser < OpenStruct
+
   def initialize(hash = {})
     user_name = Faker::Internet.user_name
     super({ username:   user_name,
@@ -12,6 +13,22 @@ class FakeUser < OpenStruct
             id:         rand(9999),
             agent_type: "user",
             agent_id:   user_name }.merge(hash))
+  end
+
+  def self.admin
+    self.new.tap do |u|
+      Services.checkpoint.grant!(u,
+                                 Checkpoint::Credential::Role.new('admin'),
+                                 Checkpoint::Resource::AllOfAnyType.new)
+    end
+  end
+
+  def self.with_role(role,content_type)
+    self.new.tap do |u|
+      Services.checkpoint.grant!(u,
+                                 Checkpoint::Credential::Role.new(role),
+                                 Checkpoint::Resource::AllOfType.new(content_type))
+    end
   end
 
   def self.with_external_identity(username = Faker::Internet.user_name)
