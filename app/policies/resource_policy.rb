@@ -27,6 +27,12 @@ class ResourcePolicy
   protected
 
   def checkpoint_permits?(action)
-    Checkpoint::Query::ActionPermitted.new(user, action, resource, authority: Services.checkpoint).true?
+    Checkpoint::Query::ActionPermitted.new(user, action, resource, authority: authority).true?
+  end
+
+  alias can? checkpoint_permits?
+
+  def authority
+    Services.checkpoint
   end
 end
