@@ -3,6 +3,10 @@
 class PackagePolicy < ResourcePolicy
 
   def show?
-    checkpoint_permits?(:show)
+    can?(:show)
+  end
+
+  def create?
+    can?(:create)
   end
 end

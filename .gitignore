@@ -64,3 +64,5 @@ config/environments/*.local.yml
 /.yardoc/
 /docs/_build/
 /docs/_yard/
+
+vendor

@@ -2,6 +2,6 @@
 
 class AuditPolicy < ResourcePolicy
   def show?
-    checkpoint_permits?(:show)
+    can?(:show)
   end
 end

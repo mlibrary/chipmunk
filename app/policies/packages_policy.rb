@@ -3,11 +3,11 @@
 class PackagesPolicy < CollectionPolicy
 
   def index?
-    user.known?
+    can?(:show,Package.of_any_type)
   end
 
-  def create?
-    user.known?
+  def new?
+    can?(:create,Package.of_any_type)
   end
 
   def base_scope
@@ -15,12 +15,20 @@ class PackagesPolicy < CollectionPolicy
   end
 
   def resolve
-    if user.admin?
+    scope.any_of( authority
+      .which(user,:show)
+      .select { |r| r.all? || Package.content_types.include?(r.type) }
+      .map { |r| scope_for_resource(r) })
+  end
+
+  def scope_for_resource(resource)
+    if resource.all?
       scope.all
-    elsif user.known?
-      scope.owned(user.id)
+    elsif resource.all_of_type?
+      scope.with_type(resource.type)
     else
-      scope.none
+      scope.with_type_and_id(resource.type,resource.id)
     end
   end
+
 end

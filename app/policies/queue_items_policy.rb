@@ -6,21 +6,32 @@ class QueueItemsPolicy < CollectionPolicy
     QueueItem.all
   end
 
-  def index?
-    user.known?
+  # fixme - should delegate to the related package
+
+  def resolve
+    scope.any_of( authority
+      .which(user,:show)
+      .select { |r| r.all? || r.type == 'QueueItem' }
+      .map { |r| scope_for_resource(r) })
+  end
+
+  def scope_for_resource(resource)
+    if resource.all?
+      scope.all
+    elsif resource.all_of_type?
+      scope.with_type(resource.type)
+    else
+      scope.with_type_and_id(resource.type,resource.id)
+    end
   end
 
   def new?
-    user.known?
+    # FIXME - should delegate to package
+    can?(:create,all_of_type(QueueItem))
   end
 
-  def resolve
-    if user.admin?
-      scope.all
-    elsif user.known?
-      scope.owned(user.id)
-    else
-      scope.none
-    end
+  def index?
+    # FIXME - should delegate to package
+    can?(:show,all_of_type(QueueItem))
   end
 end

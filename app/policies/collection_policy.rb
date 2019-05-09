@@ -30,6 +30,20 @@ class CollectionPolicy
     raise NotAuthorizedError, message unless public_send(action)
   end
 
+  protected
+
+  def authority
+    Services.checkpoint
+  end
+
+  def can?(action,resource)
+    Checkpoint::Query::ActionPermitted.new(user, action, resource, authority: authority).true?
+  end
+
+  def all_of_type(type)
+    resource = Checkpoint::Resource::AllOfType.new(type)
+  end
+
   private
 
   attr_reader :scope

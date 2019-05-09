@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe AuditPolicy do
+RSpec.describe AuditPolicy, type: :policy do
   let(:resource) { double(:resource, resource_type: 'Audit', resource_id: 1) }
 
   context "as a user granted admin" do

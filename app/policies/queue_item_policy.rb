@@ -2,15 +2,17 @@
 
 class QueueItemPolicy < ResourcePolicy
 
-  def create?
-    return false unless QueueItemsPolicy.new(user).new?
-
-    resource&.user == user || checkpoint_permits?(:create)
+  def show?
+    package_policy.show?
   end
 
-  # Does it seem correct to delegate here, or should the controller use
-  # PackagePolicy directly?
-  def show?
-    PackagePolicy.new(user,resource.package).show?
+  def create?
+    package_policy.create?
+  end
+
+  private
+
+  def package_policy
+    PackagePolicy.new(user,resource.package)
   end
 end

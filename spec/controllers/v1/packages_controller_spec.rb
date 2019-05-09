@@ -180,7 +180,8 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       context "as an authorized user" do
         include_context "with someone logged in"
-        before(:each) { collection_policy "PackagesPolicy", create?: true }
+        # FIXME - RequestBuilder should be split and this should authorize create
+        before(:each) { collection_policy "PackagesPolicy", new?: true }
 
         context "new record" do
           context "RequestBuilder returns a valid record" do
@@ -242,7 +243,7 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       context "when the policy denies the user access" do
         include_context "with someone logged in"
-        before(:each) { collection_policy create?: false }
+        before(:each) { collection_policy new?: false }
 
         it "responds with 403 Forbidden" do
           post :create, params: attributes

@@ -1,26 +1,35 @@
 # frozen_string_literal: true
 
-RSpec.describe PackagesPolicy do
+RSpec.describe PackagesPolicy, type: :policy do
   context "as an admin" do
-    let(:user) { FakeUser.new(admin?: true) }
+    let(:user) { FakeUser.admin }
 
-    it_allows :index?, :create?
+    it_allows :index?, :new?
     it_resolves :all
   end
 
-  context "as a persisted non-admin user" do
-    let(:user) { FakeUser.new(admin?: false) }
+  context "as a content manager" do
+    let(:user) { FakeUser.with_role('content_manager','audio') }
 
-    it_allows :index?, :create?
+    it_allows :index?, :new?
 
-    it_resolves_owned
+    xit "resolves audio packages"
   end
 
-  context "as an externally-identified user" do
-    let(:user) { FakeUser.with_external_identity }
+  xcontext "as a content manager for audio and video" do
+    # TODO: grant both audio & video
+    let(:user) {}
 
-    it_disallows :index?, :create?
-    it_resolves :none
+    xit "resolves audio and video packages"
+  end
+
+  context "as a viewer" do
+    let(:user) { FakeUser.with_role('viewer','digital') }
+
+    it_allows :index?
+    it_disallows :new?
+
+    xit "resolves digital packages"
   end
 
   it_has_base_scope(Package.all)

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe EventsPolicy do
+RSpec.describe EventsPolicy, type: :policy do
   let(:policy) { described_class.new(user, FakeCollection.new) }
 
-  context "as an admin" do
-    let(:user) { FakeUser.new(admin?: true) }
+  context "as a user granted admin" do
+    let(:user) { FakeUser.admin }
 
     it_allows :index?
     it_disallows :new?
@@ -12,19 +12,28 @@ RSpec.describe EventsPolicy do
     it_resolves :all
   end
 
-  context "as a persisted non-admin user" do
-    let(:user) { FakeUser.new(admin?: false) }
+  context "as a collection manager" do
+    let(:user) { FakeUser.with_role('content_manager','audio') }
 
     it_allows :index?
     it_disallows :new?
 
-    it_resolves_owned
+    it "resolves all objects of the type the user manages"
   end
 
-  context "as an externally-identified user" do
-    let(:user) { FakeUser.with_external_identity }
+  xcontext "as a viewer" do
+    let(:user) { FakeUser.with_role('viewer','video') }
 
-    it_disallows :index?, :new?
+    it_allows :index?
+    it_disallows :new?
+
+    it "resolves all objects of the type the user is granted"
+  end
+
+  context "as a user granted nothing" do
+    let(:user) { FakeUser.new }
+
+    it_disallows :new?, :index?
     it_resolves :none
   end
 

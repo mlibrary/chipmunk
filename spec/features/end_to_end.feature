@@ -5,7 +5,7 @@ Feature: End to End functionality
 
   Background:
     Given time is frozen at "2017-05-17 18:49:08 UTC"
-    And I am a valid API user with username testuser
+    And I am a audio collection manager with username testuser
     And I send and accept JSON
     And upload.upload_path is "/tmp/chipmunk/inc"
     And upload.rsync_point is "localhost:/tmp/chipmunk/inc"

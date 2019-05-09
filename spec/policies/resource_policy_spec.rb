@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe ResourcePolicy do
+RSpec.describe ResourcePolicy, type: :policy do
   let(:resource) { double(:resource) }
   let(:user) { double(:user) }
 
