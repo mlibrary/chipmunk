@@ -180,7 +180,7 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       context "as an authorized user" do
         include_context "with someone logged in"
-        # FIXME - RequestBuilder should be split and this should authorize create
+        # PFDR-169: FIXME - RequestBuilder should be split and this should authorize create
         before(:each) { collection_policy "PackagesPolicy", new?: true }
 
         context "new record" do

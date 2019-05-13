@@ -25,7 +25,7 @@ module V1
     # POST /v1/requests/:bag_id/complete
     def create
 
-      # FIXME needs some cleanup - this should probably do something different
+      # FIXME PFDR-169 needs some cleanup - this should probably do something different
       descriptor = Package.find_by_bag_id!(params[:bag_id])
       builder = QueueItemBuilder.new
       @queue_item = builder.build(descriptor)

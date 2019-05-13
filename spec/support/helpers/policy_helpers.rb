@@ -15,6 +15,12 @@ class FakeUser < OpenStruct
             agent_id:   user_name }.merge(hash))
   end
 
+  def grant_role!(role,content_type)
+    Services.checkpoint.grant!(self,
+                               Checkpoint::Credential::Role.new(role),
+                               Checkpoint::Resource::AllOfType.new(content_type))
+  end
+
   def self.admin
     self.new.tap do |u|
       Services.checkpoint.grant!(u,
@@ -25,9 +31,7 @@ class FakeUser < OpenStruct
 
   def self.with_role(role,content_type)
     self.new.tap do |u|
-      Services.checkpoint.grant!(u,
-                                 Checkpoint::Credential::Role.new(role),
-                                 Checkpoint::Resource::AllOfType.new(content_type))
+      u.grant_role!(role,content_type)
     end
   end
 
@@ -72,11 +76,14 @@ class FakeCollection < OpenStruct
   end
 end
 
+# FIXME PFDR-170 untested
 RSpec::Matchers.define :allow_action do |action|
   match do |policy|
     if policy <= CollectionPolicy
       policy.new(user, FakeCollection.new).public_send(action)
     elsif policy <= ResourcePolicy
+      # FIXME PFDR-170 - resource seems not to work as expected here - should be a double
+      # -- maybe need to pass it in to the matcher??
       policy.new(user, resource).public_send(action)
     else
       raise "#{described_class} is not a subclass of CollectionPolicy or ResourcePolicy"
@@ -112,18 +119,32 @@ def it_disallows(*actions)
   end
 end
 
-RSpec::Matchers.define :resolve do |expected|
+# FIXME PFDR-170 untested
+RSpec::Matchers.define :resolve do |*expected|
   match do |policy|
     actual = policy.new(user, FakeCollection.new).resolve
 
-    case expected
-    when :all
-      actual == :all || actual == [:all]
-    when :none
-      actual == :none || actual == []
+    if expected.length > 1
+      actual.length == expected.length && expected.map do |scope|
+        actual.include?(scope) || actual.include?([:type,scope.to_s])
+      end.all?
     else
-      actual == expected
+      case expected[0]
+      when :all
+        actual == :all || actual == [:all]
+      when :none
+        actual == :none || actual == []
+      else
+        actual == expected[0] || actual == [[:type,expected[0].to_s]]
+      end
     end
+  end
+  failure_message do |policy|
+    # FIXME PFDR-170 - don't like the double resolve here...
+    "expected that #{policy} would resolve to #{expected}, but it resolves to #{policy.new(user, FakeCollection.new).resolve}"
+  end
+  failure_message_when_negated do |policy|
+    "expected that #{policy} would not resolve to #{expected}, but it did"
   end
 end
 

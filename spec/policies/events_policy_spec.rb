@@ -4,6 +4,7 @@ require "checkpoint_helper"
 
 RSpec.describe EventsPolicy, type: :policy do
   let(:policy) { described_class.new(user, FakeCollection.new) }
+  subject { described_class }
 
   context "as a user granted admin" do
     let(:user) { FakeUser.admin }
@@ -11,32 +12,38 @@ RSpec.describe EventsPolicy, type: :policy do
     it_allows :index?
     it_disallows :new?
 
-    it_resolves :all
+    it { is_expected.to resolve(:all) }
   end
 
-  context "as a collection manager" do
-    let(:user) { FakeUser.with_role('content_manager','audio') }
+  context "as a content manager" do
+    let(:user) do
+      FakeUser.new.tap do |u|
+        u.grant_role!('content_manager','audio')
+        u.grant_role!('content_manager','video')
+      end
+    end
 
     it_allows :index?
     it_disallows :new?
 
-    it "resolves all objects of the type the user manages"
+    it { is_expected.to resolve(:audio,:video) }
   end
 
-  xcontext "as a viewer" do
+  context "as a viewer" do
     let(:user) { FakeUser.with_role('viewer','video') }
 
     it_allows :index?
     it_disallows :new?
 
-    it "resolves all objects of the type the user is granted"
+    it { is_expected.to resolve(:video) }
   end
 
   context "as a user granted nothing" do
     let(:user) { FakeUser.new }
 
     it_disallows :new?, :index?
-    it_resolves :none
+
+    it { is_expected.to resolve(:none) }
   end
 
   it_has_base_scope(Event.all)

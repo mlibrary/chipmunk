@@ -3,11 +3,14 @@
 require "checkpoint_helper"
 
 RSpec.describe PackagesPolicy, type: :policy do
+  subject { described_class }
+
   context "as an admin" do
     let(:user) { FakeUser.admin }
 
     it_allows :index?, :new?
-    it_resolves :all
+
+    it { is_expected.to resolve(:all) }
   end
 
   context "as a content manager" do
@@ -15,14 +18,18 @@ RSpec.describe PackagesPolicy, type: :policy do
 
     it_allows :index?, :new?
 
-    xit "resolves audio packages"
+    it { is_expected.to resolve(:audio) }
   end
 
-  xcontext "as a content manager for audio and video" do
-    # TODO: grant both audio & video
-    let(:user) {}
+  context "as a content manager for audio and video" do
+    let(:user) do
+      FakeUser.new.tap do |u|
+        u.grant_role!('content_manager','audio')
+        u.grant_role!('content_manager','video')
+      end
+    end
 
-    xit "resolves audio and video packages"
+    it { is_expected.to resolve(:audio,:video) }
   end
 
   context "as a viewer" do
@@ -31,7 +38,7 @@ RSpec.describe PackagesPolicy, type: :policy do
     it_allows :index?
     it_disallows :new?
 
-    xit "resolves digital packages"
+    it { is_expected.to resolve(:digital) }
   end
 
   it_has_base_scope(Package.all)

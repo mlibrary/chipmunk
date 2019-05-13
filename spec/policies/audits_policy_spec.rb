@@ -10,6 +10,20 @@ RSpec.describe AuditsPolicy, type: :policy  do
     it_resolves :all
   end
 
+  context "as a content manager" do
+    let(:user) { FakeUser.with_role('content_manager','audio') }
+
+    it_disallows :index?, :new?
+    it_resolves :none
+  end
+
+  context "as a viewer" do
+    let(:user) { FakeUser.with_role('content_manager','digital') }
+
+    it_disallows :index?, :new?
+    it_resolves :none
+  end
+
   context "as a user granted nothing" do
     let(:user) { FakeUser.new() }
 

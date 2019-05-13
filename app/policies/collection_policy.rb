@@ -44,6 +44,23 @@ class CollectionPolicy
     resource = Checkpoint::Resource::AllOfType.new(type)
   end
 
+  def scope_for_resource(resource)
+    if resource.all?
+      scope.all
+    elsif resource.all_of_type?
+      scope.with_type(resource.type)
+    else
+      scope.with_type_and_id(resource.type,resource.id)
+    end
+  end
+
+  def showable_scopes
+    scope.any_of( authority
+      .which(user,:show)
+      .select { |r| r.all? || yield( r) }
+      .map { |r| scope_for_resource(r) })
+  end
+
   private
 
   attr_reader :scope
