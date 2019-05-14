@@ -121,7 +121,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       shared_examples "creates a new queue item" do
         before(:each) do
           resource_policy "QueueItemPolicy", create?: true
-          collection_policy "QueueItemsPolicy", QueueItem.all, new?: true
+          collection_policy "QueueItemsPolicy", new?: true
         end
 
         it "responds with 201" do

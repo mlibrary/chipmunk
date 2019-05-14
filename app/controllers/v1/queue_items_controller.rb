@@ -29,6 +29,7 @@ module V1
       descriptor = Package.find_by_bag_id!(params[:bag_id])
 
       if duplicate = QueueItem.where(package: descriptor, status: [:pending, :done]).first
+        resource_policy.new(current_user,duplicate).authorize! :show?
         head 303, location: v1_queue_item_path(duplicate)
       else
         case create_qitem(descriptor)

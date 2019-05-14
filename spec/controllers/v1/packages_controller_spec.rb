@@ -154,6 +154,7 @@ RSpec.describe V1::PackagesController, type: :controller do
     end
 
     describe "POST #create" do
+      include_context "with someone logged in"
       let(:attributes) do
         {
           bag_id:       SecureRandom.uuid,
@@ -162,83 +163,120 @@ RSpec.describe V1::PackagesController, type: :controller do
         }
       end
 
-      shared_context "mocked RequestBuilder" do |status|
-        let(:result_request) do
-          Fabricate(:package,
-            bag_id: attributes[:bag_id],
-            user: user,
-            external_id: attributes[:external_id],
-            content_type: attributes[:content_type])
-        end
-        let(:result_status) { status }
-        let(:builder) { double(:builder) }
+      shared_examples "creates a new package" do
         before(:each) do
-          allow(RequestBuilder).to receive(:new).and_return(builder)
-          allow(builder).to receive(:create).and_return([result_status, result_request])
+          resource_policy "PackagePolicy", create?: true
+          collection_policy "PackagesPolicy", new?: true
+        end
+
+        it "returns 201 Created" do
+          post :create, params: attributes
+          expect(response).to have_http_status(:created)
+        end
+        it "correctly sets the location header" do
+          post :create, params: attributes
+          expect(response.location).to eql(v1_package_path(assigns(:package)))
+        end
+        it "renders nothing" do
+          post :create, params: attributes
+          expect(response).to render_template(nil)
+        end
+
+        it "assigns the created package" do
+          post :create, params: attributes
+          expect(assigns(:package)).to be_an_instance_of(Package)
+        end
+
+        it "creates a package with the given bag id" do
+          post :create, params: attributes
+          expect(assigns(:package).bag_id).to eq(attributes[:bag_id])
+        end
+
+        it "creates a package with the given content type" do
+          post :create, params: attributes
+          expect(assigns(:package).content_type).to eq(attributes[:content_type])
+        end
+
+        it "creates a package with the given external id" do
+          post :create, params: attributes
+          expect(assigns(:package).external_id).to eq(attributes[:external_id])
+        end
+
+        it "saves the package" do
+          expect { post(:create, params: attributes) }.to change { Package.count }.by(1)
         end
       end
 
-      context "as an authorized user" do
-        include_context "with someone logged in"
-        # PFDR-169: FIXME - RequestBuilder should be split and this should authorize create
-        before(:each) { collection_policy "PackagesPolicy", new?: true }
-
-        context "new record" do
-          context "RequestBuilder returns a valid record" do
-            include_context "mocked RequestBuilder", :created
-
-            it "passes the parameters to a RequestBuilder" do
-              post :create, params: attributes
-              expect(RequestBuilder).to have_received(:new)
-              expect(builder).to have_received(:create).with(attributes.merge(user: user))
-            end
-            it "returns 201 Created" do
-              post :create, params: attributes
-              expect(response).to have_http_status(:created)
-            end
-            it "correctly sets the location header" do
-              post :create, params: attributes
-              expect(response.location).to eql(v1_request_path(result_request))
-            end
-            it "renders nothing" do
-              post :create, params: attributes
-              expect(response).to render_template(nil)
-            end
-          end
-
-          context "RequestBuilder returns an invalid record" do
-            include_context "mocked RequestBuilder", :invalid
-            it "returns 422" do
-              post :create, params: attributes
-              expect(response).to have_http_status(422)
-            end
-            it "renders nothing" do
-              post :create, params: attributes
-              expect(response).to render_template(nil)
-            end
-          end
+      shared_examples "invalid package" do
+        before(:each) do
+          collection_policy "PackagesPolicy", new?: true
+          resource_policy "PackagePolicy", create?: true
         end
 
-        context "as duplicate record" do
-          include_context "mocked RequestBuilder", :duplicate
-
-          it "does not create an additional record" do
-            post :create, params: attributes
-            expect(Package.count).to eql(1)
-          end
-          it "returns 303" do
-            post :create, params: attributes
-            expect(response).to have_http_status(303)
-          end
-          it "correctly sets the location header" do
-            post :create, params: attributes
-            expect(response.location).to eql(v1_request_path(result_request))
-          end
-          it "renders nothing" do
-            post :create, params: attributes
-            expect(response).to render_template(nil)
-          end
+        it "returns 422" do
+          post :create, params: attributes
+          expect(response).to have_http_status(422)
         end
+        it "renders nothing" do
+          post :create, params: attributes
+          expect(response).to render_template(nil)
+        end
+        it "does not create an additional package" do
+          expect { post(:create, params: attributes) }.not_to change { Package.count }
+        end
+      end
+
+      shared_examples "duplicate package" do
+        before(:each) do
+          resource_policy "QueueItemPolicy", show?: true
+        end
+
+        it "returns 303" do
+          post :create, params: attributes
+          expect(response).to have_http_status(303)
+        end
+        it "correctly sets the location header" do
+          post :create, params: attributes
+          expect(response.location).to eql(v1_package_path(duplicate))
+        end
+        it "renders nothing" do
+          post :create, params: attributes
+          expect(response).to render_template(nil)
+        end
+        it "does not create an additional package" do
+          expect { post(:create, params: attributes) }.not_to change { Package.count }
+        end
+      end
+
+      context "duplicate bag id" do
+        let!(:duplicate) { Fabricate(:package, bag_id: attributes[:bag_id]) }
+        it_behaves_like "duplicate package"
+      end
+
+      context "duplicate external id" do
+        let!(:duplicate) { Fabricate(:package, external_id: attributes[:external_id]) }
+        it_behaves_like "duplicate package"
+      end
+
+      context "duplicate bag id and external id" do
+        let!(:duplicate) { Fabricate(:package, bag_id: attributes[:bag_id], external_id: attributes[:external_id]) }
+        it_behaves_like "duplicate package"
+      end
+
+      context "new bag id" do
+        it_behaves_like "creates a new package"
+      end
+
+      context "bad bag id" do
+        let(:attributes) do
+          {
+            bag_id: "bad",
+            content_type: "audio",
+            external_id:  SecureRandom.uuid
+          }
+        end
+
+        it_behaves_like "invalid package"
       end
 
       context "when the policy denies the user access" do

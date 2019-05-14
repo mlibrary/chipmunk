@@ -24,7 +24,7 @@ Feature: End to End functionality
     Then the response status should be "201"
     And the response should be empty
     And the response should have the following headers:
-      | Location | /v1/requests/<bag_id> |
+      | Location | /v1/packages/<bag_id> |
     When I send a GET request to "/v1/requests/<bag_id>"
     Then the response status should be "200"
     And the JSON response should be:
