@@ -19,7 +19,11 @@ module V1
       collection_policy.new(current_user).authorize! :new?
 
       packages = Package.stored
-      audit = Audit.create!(user: current_user, packages: packages.count)
+      audit = Audit.new(user: current_user, packages: packages.count)
+
+      resource_policy.new(current_user,audit).authorize! :create?
+      audit.save
+
       packages.each do |package|
         AuditFixityCheckJob.perform_later(package: package, user: current_user, audit: audit)
       end

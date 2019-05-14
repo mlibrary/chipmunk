@@ -7,7 +7,7 @@ module Chipmunk
 
     def initialize
       super(
-        admin: [:index, :show, :new, :create, :edit, :delete],
+        admin: [:show, :create, :edit],
         content_manager: [:show, :create, :edit],
         viewer: [:show],
       )

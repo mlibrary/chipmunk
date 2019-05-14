@@ -67,7 +67,8 @@ RSpec.describe V1::AuditsController, type: :controller do
       before(:each) do
         # should not appear in audit since it has no storage to audit
         allow(AuditFixityCheckJob).to receive(:perform_later)
-        collection_policy "AuditsPolicy", [double("Audit")], new?: true
+        collection_policy "AuditsPolicy", new?: true
+        resource_policy "AuditPolicy", create?: true
       end
 
       it "starts a AuditFixityCheckJob for each stored package" do

@@ -6,11 +6,11 @@ class AuditsPolicy < CollectionPolicy
   end
 
   def new?
-    can?(:new,all_of_type(Audit))
+    can?(:save,all_of_type(Audit))
   end
 
   def index?
-    can?(:index,all_of_type(Audit))
+    can?(:show,all_of_type(Audit))
   end
 
   def resolve
