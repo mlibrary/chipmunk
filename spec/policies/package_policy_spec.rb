@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "checkpoint_helper"
 require "ostruct"
 
 RSpec.describe PackagePolicy, type: :policy do

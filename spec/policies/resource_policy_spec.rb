@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "checkpoint_helper"
+
 RSpec.describe ResourcePolicy, type: :policy do
   let(:resource) { double(:resource) }
   let(:user) { double(:user) }

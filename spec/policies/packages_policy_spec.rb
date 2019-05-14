@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "checkpoint_helper"
+
 RSpec.describe PackagesPolicy, type: :policy do
   context "as an admin" do
     let(:user) { FakeUser.admin }

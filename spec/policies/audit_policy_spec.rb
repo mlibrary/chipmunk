@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "checkpoint_helper"
+
 RSpec.describe AuditPolicy, type: :policy do
   let(:resource) { double(:resource, resource_type: 'Audit', resource_id: 1) }
 

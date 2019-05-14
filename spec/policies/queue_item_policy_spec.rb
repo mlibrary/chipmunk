@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "checkpoint_helper"
+
 RSpec.describe QueueItemPolicy, type: :policy do
   let(:package) { double(:package, resource_type: 'audio', resource_id: 1) }
   let(:resource) { double(:resource, user: double(:user), resource_type: 'QueueItem', resource_id: 1, package: package) }

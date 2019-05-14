@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+require "checkpoint"
+
 module Chipmunk
   class RoleResolver < Checkpoint::Credential::RoleMapResolver
 

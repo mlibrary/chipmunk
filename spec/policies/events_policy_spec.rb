@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "checkpoint_helper"
+
 RSpec.describe EventsPolicy, type: :policy do
   let(:policy) { described_class.new(user, FakeCollection.new) }
 
