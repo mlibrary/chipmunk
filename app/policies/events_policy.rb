@@ -11,9 +11,7 @@ class EventsPolicy < CollectionPolicy
   end
 
   def resolve
-    # n.b. the base scope is Event.all here, but since Event has the scame
-    # scopes as Packages this will still work as intended.
-    PackagesPolicy.new(user,scope).resolve
+    scope.for_packages(PackagesPolicy.new(user).resolve)
   end
 
 end

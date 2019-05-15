@@ -14,8 +14,8 @@ class PackagesPolicy < CollectionPolicy
     Package.all
   end
 
-  def resolve
-    showable_scopes { |r| Package.content_types.include?(r.type) }
+  def resource_types
+    Package.content_types
   end
 
 end

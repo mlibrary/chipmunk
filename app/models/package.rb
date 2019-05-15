@@ -74,7 +74,7 @@ class Package < ApplicationRecord
     end
 
     def resource_type
-      Package
+      'Package'
     end
 
     def resource_id

@@ -3,7 +3,7 @@
 require "checkpoint_helper"
 require "policy_errors"
 
-RSpec.describe CollectionPolicy, type: :policy do
+RSpec.describe CollectionPolicy, :checkpoint_transaction, type: :policy do
   let(:user) { double(:user) }
 
   describe "#base_scope" do

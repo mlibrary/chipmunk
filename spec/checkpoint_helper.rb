@@ -16,7 +16,7 @@ end
 Checkpoint::DB.initialize!
 
 RSpec.configure do |config|
-  config.around(:each, type: :policy) do |example|
+  config.around(:each, checkpoint_transaction: true) do |example|
     Checkpoint::DB.db.transaction(rollback: :always, auto_savepoint: true) do
       example.run
     end

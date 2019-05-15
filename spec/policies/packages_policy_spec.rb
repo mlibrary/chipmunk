@@ -2,7 +2,7 @@
 
 require "checkpoint_helper"
 
-RSpec.describe PackagesPolicy, type: :policy do
+RSpec.describe PackagesPolicy, :checkpoint_transaction, type: :policy do
   subject { described_class }
 
   context "as an admin" do

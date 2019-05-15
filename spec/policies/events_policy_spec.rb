@@ -2,7 +2,7 @@
 
 require "checkpoint_helper"
 
-RSpec.describe EventsPolicy, type: :policy do
+RSpec.describe EventsPolicy, :checkpoint_transaction, type: :policy do
   let(:policy) { described_class.new(user, FakeCollection.new) }
   subject { described_class }
 

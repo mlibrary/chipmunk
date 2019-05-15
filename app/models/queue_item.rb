@@ -20,8 +20,6 @@ class QueueItem < ApplicationRecord
   end
 
   scope :for_package, ->(package_id) { where(package_id: package_id) unless package_id.blank? }
-
   # FIXME PFDR-168 untested
-  scope :with_type, ->(content_type) { joins(:package).with_type(content_type) }
-  scope :with_type_and_id, ->(content_type, id) { joins(:package).with_type_and_id(content_type, id) }
+  scope :for_packages, ->(package_scope) { joins(:package).merge(package_scope) }
 end

@@ -15,7 +15,10 @@ class CollectionPolicy
   end
 
   def resolve
-    scope
+    scope.any_of( authority
+      .which(user,:show)
+      .select { |token| token.all? || resource_types.include?(token.type) }
+      .map { |token| scope_for_resource(token) })
   end
 
   def index?
@@ -44,21 +47,19 @@ class CollectionPolicy
     resource = Checkpoint::Resource::AllOfType.new(type)
   end
 
-  def scope_for_resource(resource)
-    if resource.all?
+  def scope_for_resource(token)
+    if token.all?
       scope.all
-    elsif resource.all_of_type?
-      scope.with_type(resource.type)
+    elsif token.all_of_type?
+      scope.with_type(token.type)
     else
-      scope.with_type_and_id(resource.type,resource.id)
+      scope.with_type_and_id(token.type,token.id)
     end
   end
 
-  def showable_scopes
-    scope.any_of( authority
-      .which(user,:show)
-      .select { |r| r.all? || yield( r) }
-      .map { |r| scope_for_resource(r) })
+
+  def resource_types
+    []
   end
 
   private

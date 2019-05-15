@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "checkpoint_helper"
 
 module AuthSteps
   step "I am a :content_type collection manager with username :username" do |content_type, username|
@@ -14,7 +15,4 @@ end
 
 RSpec.configure do |config|
   config.include AuthSteps
-  config.after(:each, type: :feature) do
-    Checkpoint::DB.db[:grants].delete
-  end
 end

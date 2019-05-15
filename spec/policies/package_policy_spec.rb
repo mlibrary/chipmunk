@@ -3,7 +3,7 @@
 require "checkpoint_helper"
 require "ostruct"
 
-RSpec.describe PackagePolicy, type: :policy do
+RSpec.describe PackagePolicy, :checkpoint_transaction, type: :policy do
   let(:resource) do
     double(:resource,
       user: double,

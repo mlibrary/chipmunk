@@ -2,7 +2,7 @@
 
 require "checkpoint_helper"
 
-RSpec.describe QueueItemsPolicy, type: :policy do
+RSpec.describe QueueItemsPolicy, :checkpoint_transaction, type: :policy do
   context "as a user granted admin" do
     let(:user) { FakeUser.admin }
 

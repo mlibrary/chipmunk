@@ -14,10 +14,6 @@ RSpec.describe "GET /v1/packages/:bag_id/:file", type: :request do
                                Checkpoint::Resource::AllOfType.new("video"))
   end
 
-  after(:each) do
-    Checkpoint::DB.db[:grants].delete
-  end
-
   let(:headers) do
     { "X-SendFile-Type" => "X-Sendfile",
       "Authorization"   => "Token token=#{key}" }

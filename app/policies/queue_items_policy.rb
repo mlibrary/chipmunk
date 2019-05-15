@@ -17,7 +17,7 @@ class QueueItemsPolicy < CollectionPolicy
   # fixme - should delegate to the related package
 
   def resolve
-    PackagesPolicy.new(user,scope).resolve
+    scope.for_packages(PackagesPolicy.new(user).resolve)
   end
 
 end

@@ -2,7 +2,7 @@
 
 require "checkpoint_helper"
 
-RSpec.describe AuditsPolicy, type: :policy  do
+RSpec.describe AuditsPolicy, :checkpoint_transaction, type: :policy  do
   context "as a user granted admin" do
     let(:user) { FakeUser.admin() }
 

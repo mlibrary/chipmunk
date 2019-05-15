@@ -67,6 +67,10 @@ class FakeCollection < OpenStruct
     [:id, id]
   end
 
+  def for_packages(type)
+    [:packages, type]
+  end
+
   def with_type_and_id_(type, id)
     [:type_and_id, type, id]
   end

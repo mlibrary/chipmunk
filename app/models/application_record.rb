@@ -5,8 +5,6 @@ class ApplicationRecord < ActiveRecord::Base
 
   scope :any_of, ->(*scopes) { scopes.reduce(:or) }
 
-  # by default there's a 1-1 map between checkpoint resource types and AR model
-  # resource types, but specific models can override that.
-  scope :with_type, ->(_) { self.all }
-  scope :with_type_and_id, ->(_) { self.where(id: id) }
+  scope :with_type, ->(type) { type == self.to_s ? self.all : self.none }
+  scope :with_type_and_id, ->(type,id) { type == self.to_s ? self.where(id: id) : self.none }
 end

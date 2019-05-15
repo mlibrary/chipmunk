@@ -1,3 +1,4 @@
+@checkpoint_transaction
 Feature: End to End functionality
   As an digitization technician
   I want to upload packages
