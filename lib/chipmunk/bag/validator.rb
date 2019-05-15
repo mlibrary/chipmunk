@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "chipmunk/validatable"
+require "open3"
 
 module Chipmunk
   class Bag
@@ -19,9 +20,9 @@ module Chipmunk
         @errors = errors
       end
 
-      validates "bag must exist on disk at src_path",
-        condition: -> { File.exist?(src_path) },
-        error: -> { "Bag does not exist at upload location #{src_path}" }
+      # validates "bag must exist on disk at src_path",
+      #   condition: -> { File.exist?(src_path) },
+      #   error: -> { "Bag does not exist at upload location #{src_path}" }
 
       validates "bag on disk must be valid",
         condition: -> { bag.valid? },

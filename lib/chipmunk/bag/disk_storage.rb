@@ -59,5 +59,15 @@ module Chipmunk
         raise BagNotFoundError, "Bag not found with ID: #{id}"
       end
     end
+
+    class FlatStorage < DiskStorage
+      def bag_path(id)
+        root_path/id
+      end
+
+      def valid_id?(id)
+        !id.empty?
+      end
+    end
   end
 end

@@ -32,7 +32,7 @@ Services = Canister.new.tap do |canister|
   canister.register(:packages) do
     Chipmunk::Package::Repository.new(adapters: {
       "none"  => Chipmunk::Package::NullStorage.new,
-      "tmp"   => Chipmunk::Bag::DiskStorage.new(Chipmunk.config.upload.rsync_point),
+      "tmp"   => Chipmunk::Bag::FlatStorage.new(Chipmunk.config.upload.rsync_point),
       "bag:1" => Chipmunk::Bag::DiskStorage.new(Chipmunk.config.upload.storage_path),
     })
   end

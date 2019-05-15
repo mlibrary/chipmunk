@@ -23,10 +23,10 @@ class QueueItem < ApplicationRecord
     update!(status: :failed, error: errors.join("\n\n"))
   end
 
-  def record_successful_move(storage_location:)
+  def record_successful_move(storage_volume:)
     self.transaction do
       self.update!(status: :done)
-      self.package.update!(storage_location: storage_location)
+      self.package.update!(storage_volume: storage_volume)
     end
   end
 

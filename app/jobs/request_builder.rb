@@ -20,7 +20,13 @@ class RequestBuilder
       bag_id: bag_id,
       external_id: external_id,
       content_type: content_type,
-      user: user
+      user: user,
+      # FIXME: This is really, really bad. To-be-ingested packages should not
+      #        have a value for storage_volume until they are stored. For now,
+      #        I'm doubling down because we do not yet have the behavioral
+      #        notions of what's valid in request state vs. stored state or the
+      #        component that manages external/temporary storage sorted out.
+      storage_volume: "none"
       )
     if request.valid?
       request.save!

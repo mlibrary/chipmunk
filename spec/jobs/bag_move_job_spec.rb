@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe BagMoveJob do
   let(:queue_item) { 362368 }
-  let(:operation) { double(:operation, perform: nil) }
+  let(:operation) { double(:operation, call: nil) }
 
   before(:each) do
     allow(BagValidateAndMove).to receive(:new).and_return(operation)
@@ -16,7 +16,7 @@ RSpec.describe BagMoveJob do
   end
 
   it "delegates to BagValidateAndMove" do
-    expect(operation).to receive(:perform)
+    expect(operation).to receive(:call)
     described_class.perform_now(queue_item)
   end
 

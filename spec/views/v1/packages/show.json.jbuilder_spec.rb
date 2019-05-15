@@ -11,6 +11,8 @@ describe "/v1/packages/show.json.jbuilder" do
     assign(:current_user, user)
     assign(:package, package)
     assign(:bag, bag)
+    # TODO: Move stored? logic wherever it goes
+    allow(package).to receive(:stored?).and_return(true)
     render
   end
 

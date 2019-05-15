@@ -13,7 +13,8 @@ Feature: End to End functionality
     And validation.external.audio is "true"
 
   Scenario Outline: Create initial request and verify
-    Given "/tmp/chipmunk/inc/<username>" exists and is empty
+    # TODO: Take these paths out of the feature and use temporary Storage
+    Given "/tmp/chipmunk/inc" exists and is empty
     And "/tmp/chipmunk/store" exists and is empty
 
     When I send a POST request to "/v1/requests" with this json:
@@ -36,7 +37,8 @@ Feature: End to End functionality
       | created_at    | 2017-05-17 18:49:08 UTC              |
       | updated_at    | 2017-05-17 18:49:08 UTC              |
     # simulates action of correctly-configured rsync (out of scope of the application)
-    When I copy a test bag to "/tmp/chipmunk/inc/<username>/<bag_id>"
+    # TODO: sort out user dropboxes.. Right now, flat storage is totally flat
+    When I copy a test bag to "/tmp/chipmunk/inc/<bag_id>"
     Then copy finishes successfully
     When I send an empty POST request to "/v1/requests/<bag_id>/complete"
     Then the response status should be "201"

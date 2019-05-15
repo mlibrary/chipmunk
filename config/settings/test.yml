@@ -1,7 +1,7 @@
 upload:
-  upload_path: /tmp/pfdr/incoming/
-  rsync_point: localhost:incoming
-  storage_path: /tmp/pfdr/storage/
+  upload_path: /tmp/chipmunk/inc
+  rsync_point: /tmp/chipmunk/inc
+  storage_path: /tmp/chipmunk/store
 validation:
   external:
     audio: "bin/validate_audio.sh"
