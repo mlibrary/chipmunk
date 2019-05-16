@@ -3,6 +3,8 @@
 require "checkpoint_helper"
 
 RSpec.describe AuditsPolicy, :checkpoint_transaction, type: :policy  do
+  subject { described_class.new(user, FakeCollection.new) }
+
   context "as a user granted admin" do
     let(:user) { FakeUser.admin() }
 

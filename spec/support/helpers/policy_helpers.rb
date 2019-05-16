@@ -67,8 +67,8 @@ class FakeCollection < OpenStruct
     [:id, id]
   end
 
-  def for_packages(type)
-    [:packages, type]
+  def for_packages(package_relation)
+    [:packages, package_relation]
   end
 
   def with_type_and_id_(type, id)
@@ -80,18 +80,15 @@ class FakeCollection < OpenStruct
   end
 end
 
-# FIXME PFDR-170 untested
 RSpec::Matchers.define :allow_action do |action|
   match do |policy|
-    if policy <= CollectionPolicy
-      policy.new(user, FakeCollection.new).public_send(action)
-    elsif policy <= ResourcePolicy
-      # FIXME PFDR-170 - resource seems not to work as expected here - should be a double
-      # -- maybe need to pass it in to the matcher??
-      policy.new(user, resource).public_send(action)
-    else
-      raise "#{described_class} is not a subclass of CollectionPolicy or ResourcePolicy"
-    end
+    policy.public_send(action)
+  end
+end
+
+RSpec::Matchers.define :forbid_action do |action|
+  match do |policy|
+    !policy.public_send(action)
   end
 end
 
@@ -107,27 +104,31 @@ end
 
 def it_allows(*actions)
   actions.each do |action|
-    it "is allowed to #{action}" do
-      expect(allows_action?(action)).to be(true)
-#      expect(described_class).to allow_action(action)
+    it "allows #{action}" do
+      expect(subject).to allow_action(action)
     end
   end
 end
 
 def it_disallows(*actions)
   actions.each do |action|
-    it "is not allowed to #{action}" do
-      expect(allows_action?(action)).to be(false)
-#      expect(described_class).not_to allow_action(action)
+    it "forbids #{action}" do
+      expect(subject).not_to allow_action(action)
     end
   end
 end
 
-# FIXME PFDR-170 untested
+def it_forbids(*actions)
+  actions.each do |action|
+    it "forbids #{action}" do
+      expect(subject).not_to allow_action(action)
+    end
+  end
+end
+
 RSpec::Matchers.define :resolve do |*expected|
   match do |policy|
-    actual = policy.new(user, FakeCollection.new).resolve
-
+    actual = policy.resolve
     if expected.length > 1
       actual.length == expected.length && expected.map do |scope|
         actual.include?(scope) || actual.include?([:type,scope.to_s])
@@ -144,18 +145,17 @@ RSpec::Matchers.define :resolve do |*expected|
     end
   end
   failure_message do |policy|
-    # FIXME PFDR-170 - don't like the double resolve here...
-    "expected that #{policy} would resolve to #{expected}, but it resolves to #{policy.new(user, FakeCollection.new).resolve}"
+    "expected that #{policy.class} would resolve to #{expected}, but it resolves to #{actual}"
   end
   failure_message_when_negated do |policy|
-    "expected that #{policy} would not resolve to #{expected}, but it did"
+    "expected that #{policy.class} would not resolve to #{expected}, but it did"
   end
 end
 
 def it_resolves(scope)
   describe "#resolve" do
     it "resolves to #{scope}" do
-      expect(described_class).to resolve(scope)
+      expect(subject).to resolve(scope)
     end
   end
 end
@@ -168,18 +168,17 @@ def it_resolves_owned
   end
 end
 
-RSpec::Matchers.define :have_base_scope do |scope|
+RSpec::Matchers.define :have_base_scope do |resource_type, scope|
   match do |policy|
-    policy.new(double).base_scope == scope
+    actual = policy.base_scope
+    actual == resource_type.public_send(scope)
+  end
+
+  description do
+    "have a base scope of '#{resource_type}.#{scope}'"
   end
 end
 
-def it_has_base_scope(scope)
-  describe "#base_scope" do
-    it "returns all events" do
-      expect(described_class).to have_base_scope(scope)
-    end
-  end
+def it_has_base_scope(resource_type, scope)
+  it { is_expected.to have_base_scope(resource_type, scope) }
 end
-
-

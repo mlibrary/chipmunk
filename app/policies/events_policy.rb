@@ -2,8 +2,13 @@
 
 class EventsPolicy < CollectionPolicy
 
+  def initialize(user, scope = nil, packages_policy: PackagesPolicy.new(user))
+    super(user,scope)
+    @packages_policy = packages_policy
+  end
+
   def index?
-    PackagesPolicy.new(user,scope).index?
+    packages_policy.index?
   end
 
   def base_scope
@@ -11,7 +16,8 @@ class EventsPolicy < CollectionPolicy
   end
 
   def resolve
-    scope.for_packages(PackagesPolicy.new(user).resolve)
+    scope.for_packages(packages_policy.resolve)
   end
 
+  attr_reader :packages_policy
 end
