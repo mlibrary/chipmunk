@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+require "support/helpers/policy_helpers"
+
 RSpec.describe QueueItemPolicy do
   let(:resource) { double(:resource, user: double(:user)) }
 

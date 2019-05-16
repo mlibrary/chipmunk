@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 require "bagit"
+require "pathname"
+require "semantic_logger"
+require "chipmunk/package/null_storage"
+require "chipmunk/errors"
 
 module Chipmunk
   class Bag
@@ -9,7 +13,6 @@ module Chipmunk
     # The package ID
     attr_reader :id
 
-    # @param storage: [Storage] a storage adapter for IO operations on the Bag
     # TODO: Decide how much a Chipmunk::Bag needs to access the storage/disk itself or
     #       if the BagIt::Bag bound to somewhere under the storage root is enough.
     # TODO: Reconcile the notions of Bags _inside_ the repository and _outside_ of it.
@@ -19,17 +22,9 @@ module Chipmunk
     #       less strict storage for in-flight packages. These are all draft thoughts
     #       seeking to clarify the role of Chipmunk::Bag -- does it have unmetered
     #       access to disk? There are parallel questions on the Package model.
-    # TODO: Decide what the actual parameters should be here; who makes the
-    #       BagIt::Bag? Does this inherit from Package or just implement all of
-    #       that interface as it emerges?
-    def initialize(path = :REMOVE, id: :REMOVE, storage: Package::NullStorage.new)
-      if id == :REMOVE
-        @id = path
-        @bag = BagIt::Bag.new(path)
-      else
-        @id = id
-        @bag = BagIt::Bag.new(storage.root_path/id)
-      end
+    def initialize(id:, bag:)
+      @id = id
+      @bag = bag
     end
 
     # @deprecated This is a transitional method to move away from BagRepository
@@ -41,7 +36,7 @@ module Chipmunk
     def self.__from_package__(package)
       logger.debug "[DEPRECATION] Bag::__from_package__ called from #{caller(1..1).first}"
       raise Chipmunk::BagNotFoundError unless package.stored?
-      new(package.storage_location)
+      new(id: package.bag_id, bag: BagIt::Bag.new(package.storage_location))
     end
 
     # Copy the file at {path} within the Bag to {dst}, using IO::copy_stream.
@@ -104,6 +99,10 @@ module Chipmunk
       end
     end
 
+    def copy(destination)
+      destination.write(bag_dir, relative_files)
+    end
+
     private
 
     def bag_dir
@@ -134,7 +133,3 @@ module Chipmunk
   end
 end
 
-require_relative "bag/profile"
-require_relative "bag/tag"
-require_relative "bag/disk_storage"
-require_relative "bag/validator"

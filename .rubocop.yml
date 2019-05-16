@@ -73,7 +73,7 @@ Layout/ClosingParenthesisIndentation:
   Enabled: false
 
 Style/ClassAndModuleChildren:
-  Enabled: false
+  EnforcedStyle: nested
 
 Metrics/ModuleLength:
   Exclude:

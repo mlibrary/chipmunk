@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "support/helpers/policy_double"
+require "support/contexts/with_someone_logged_in"
 
 RSpec.describe V1::QueueItemsController, type: :controller do
   include Checkpoint::Spec::Controller

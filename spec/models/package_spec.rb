@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "chipmunk/volume"
 
 RSpec.describe Package, type: :model do
   let(:upload_path) { Rails.application.config.upload["upload_path"] }
@@ -8,14 +9,19 @@ RSpec.describe Package, type: :model do
   let(:storage_path) { Rails.application.config.upload["storage_path"] }
   let(:uuid) { "6d11833a-d5fd-44f8-9205-277218578901" }
 
-  [:bag_id, :user_id, :external_id, :storage_location, :content_type].each do |field|
+  [:bag_id, :user, :external_id, :storage_volume, :content_type].each do |field|
     it "#{field} is required" do
       expect(Fabricate.build(:package, field => nil)).not_to be_valid
     end
   end
 
-  it "can be valid" do
-    expect(Fabricate(:package)).to be_valid
+  it { expect(Fabricate.build(:package)).to be_valid }
+  it { expect(Fabricate.create(:package)).to be_valid }
+
+  describe "#storage_volume" do
+    it "returns a volume" do
+      expect(Fabricate.build(:package).storage_volume).to be_an_instance_of(Chipmunk::Volume)
+    end
   end
 
   [:bag_id, :external_id].each do |field|

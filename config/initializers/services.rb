@@ -24,14 +24,16 @@ end
 SemanticLogger.default_level = (ENV["LOG_LEVEL"] || :info).to_sym
 SemanticLogger.add_appender(file_name: 'log/chipmunk.log', formatter: :color)
 
-Services = Canister.new
-Services.register(:bag_storage) do
-  Chipmunk::Bag::DiskStorage.new(Chipmunk.config.upload.storage_path)
-end
-Services.register(:packages) do
-  Chipmunk::Package::Repository.new(adapters: { bag: bag_storage })
-end
-Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
-Services.register(:checkpoint) do
-  Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new)
+Services = Canister.new.tap do |canister|
+  canister.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
+  canister.register(:checkpoint) do
+    Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new)
+  end
+  canister.register(:packages) do
+    Chipmunk::Package::Repository.new(adapters: {
+      "none"  => Chipmunk::Package::NullStorage.new,
+      "tmp"   => Chipmunk::Bag::DiskStorage.new(Chipmunk.config.upload.rsync_point),
+      "bag:1" => Chipmunk::Bag::DiskStorage.new(Chipmunk.config.upload.storage_path),
+    })
+  end
 end

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "support/helpers/policy_double"
+require "support/contexts/with_someone_logged_in"
+require "support/examples/an_index_endpoint"
 
 RSpec.describe V1::EventsController, type: :controller do
   include Checkpoint::Spec::Controller

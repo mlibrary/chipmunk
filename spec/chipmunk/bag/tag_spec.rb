@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "chipmunk/bag/tag"
+require "json"
 
 RSpec.describe Chipmunk::Bag::Tag do
   describe "::from_hash" do

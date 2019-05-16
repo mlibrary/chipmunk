@@ -1,9 +1,17 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "support/helpers/policy_double"
+require "support/contexts/with_someone_logged_in"
+require "support/examples/an_index_endpoint"
 
 RSpec.describe V1::PackagesController, type: :controller do
   include Checkpoint::Spec::Controller
+
+  let(:repo) { double(:repo) }
+  before(:each) do
+    controller.repository = repo
+  end
 
   describe "/v1" do
     it "uses PackagesPolicy as its collection_policy" do
@@ -22,7 +30,14 @@ RSpec.describe V1::PackagesController, type: :controller do
       let(:package) { Fabricate(:package) }
       let(:bag) { double(:bag) }
 
-      before(:each) { allow(Chipmunk::Bag).to receive(:__from_package__).with(package).and_return(bag) }
+      before(:each) do
+        allow(repo).to receive(:exists?)
+          .with(id: package.bag_id, volume: package.storage_volume)
+          .and_return(true)
+        allow(repo).to receive(:find)
+          .with(id: package.bag_id, volume: package.storage_volume)
+          .and_return(bag)
+      end
 
       context "when the policy allows the user access" do
         include_context "with someone logged in"
@@ -94,8 +109,17 @@ RSpec.describe V1::PackagesController, type: :controller do
       include_context "with someone logged in"
 
       let(:package) { Fabricate(:stored_package, user: user) }
+      let(:bag) { Chipmunk::Bag.__from_package__(package) }
 
-      before(:each) { resource_policy "PackagePolicy", show?: true }
+      before(:each) do
+        resource_policy "PackagePolicy", show?: true
+        allow(repo).to receive(:exists?)
+          .with(id: package.bag_id, volume: package.storage_volume)
+          .and_return(true)
+        allow(repo).to receive(:find)
+          .with(id: package.bag_id, volume: package.storage_volume)
+          .and_return(bag)
+      end
 
       context "the file is not present in the bag" do
         it "returns a 404 if the file isn't present in the bag" do
@@ -121,6 +145,11 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       context "the package is not stored" do
         let(:package) { Fabricate(:package, user: user, storage_location: nil) }
+        before(:each) do
+          allow(repo).to receive(:exists?)
+            .with(id: package.bag_id, volume: package.storage_volume)
+            .and_return(false)
+        end
 
         it "returns a 404" do
           get :send_package, params: { bag_id: package.bag_id }
@@ -131,12 +160,19 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       context "the package is stored" do
         let(:package) { Fabricate(:stored_package, user: user) }
+        let(:bag) { Chipmunk::Bag.__from_package__(package) }
         let(:zip) { double(:zip) }
 
         before(:each) do
           allow(controller).to receive(:zip_tricks_stream).and_yield(zip)
           allow(zip).to receive(:write_deflated_file).and_yield(double(:sink))
           allow(IO).to receive(:copy_stream)
+          allow(repo).to receive(:exists?)
+            .with(id: package.bag_id, volume: package.storage_volume)
+            .and_return(true)
+          allow(repo).to receive(:find)
+            .with(id: package.bag_id, volume: package.storage_volume)
+            .and_return(bag)
         end
 
         it "zips each file in the stored package" do

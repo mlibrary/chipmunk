@@ -19,6 +19,17 @@ class QueueItem < ApplicationRecord
     package.user
   end
 
+  def fail!(errors)
+    update!(status: :failed, error: errors.join("\n\n"))
+  end
+
+  def record_successful_move(storage_location:)
+    self.transaction do
+      self.update!(status: :done)
+      self.package.update!(storage_location: storage_location)
+    end
+  end
+
   scope :for_package, ->(package_id) { where(package_id: package_id) unless package_id.blank? }
 
 end

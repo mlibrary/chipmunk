@@ -7,6 +7,9 @@ RSpec.describe User, type: :model do
     Fabricate.build(:user)
   end
 
+  it { expect(Fabricate.build(:user)).to be_valid }
+  it { expect(Fabricate.create(:user)).to be_valid }
+
   [:email, :admin, :username].each do |field|
     it "#{field} is required" do
       expect(Fabricate.build(:user, field => nil)).not_to be_valid

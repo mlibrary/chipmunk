@@ -12,7 +12,10 @@ class QueueItemBuilder
 
     queue_item = QueueItem.new(package: request)
     if queue_item.valid?
-      queue_item.save!
+      request.transaction do
+        queue_item.save!
+        request.update!(storage_volume: "tmp")
+      end
       BagMoveJob.perform_later(queue_item)
       return :created, queue_item
     else

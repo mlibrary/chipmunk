@@ -3,8 +3,6 @@
 require "coveralls"
 Coveralls.wear!("rails")
 
-require "chipmunk"
-
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
@@ -40,19 +38,18 @@ RSpec.configure do |config|
   config.example_status_persistence_file_path = "spec/examples.txt"
 end
 
-support_dir = File.expand_path(File.join(File.dirname(__FILE__), "support"))
-["examples", "contexts", "helpers"].each do |folder|
-  Dir[File.join(support_dir, folder, "**", "*.rb")].each {|f| require f }
-end
-
 # Load Turnip. The rest of the config is in the turnip_helper.rb
 require "turnip/rspec"
 require "webmock/rspec"
 
-def fixture(*path)
-  File.join(Rails.application.root, "spec", "support", "fixtures", File.join(*path))
-end
-
 require "pathname"
 
-RSPEC_ROOT = Pathname.new(__dir__)
+def application_root
+  Pathname.new(__dir__).parent
+end
+
+def fixture(*path)
+  application_root/"spec"/"support"/"fixtures"/File.join(*path)
+end
+
+RSPEC_ROOT = application_root/"spec"

@@ -11,6 +11,8 @@ module V1
     collection_policy PackagesPolicy
     resource_policy PackagePolicy
 
+    attr_writer :repository
+
     # GET /packages
     def index
       policy = collection_policy.new(current_user)
@@ -26,18 +28,17 @@ module V1
 
       # Expose the bag if this is a request for a logical package.
       # Avoid exposing it if this is a request for a logical request.
-      if package.stored?
-        # TODO: Once the interface of Repository/DiskStorage is sorted out,
-        #       use that, rather than going around it.
-        @bag = Chipmunk::Bag.__from_package__(package)
+      if repository.exists?(volume: package.storage_volume, id: package.bag_id)
+        @bag = repository.find(
+          volume: package.storage_volume,
+          id: package.bag_id
+        )
       end
     end
 
     def sendfile
       resource_policy.new(current_user, package).authorize! :show?
-      # TODO: Once the interface of Repository/DiskStorage is sorted out,
-      #       use that, rather than going around it.
-      bag = Chipmunk::Bag.__from_package__(package)
+      bag = repository.find( volume: package.storage_volume, id: package.bag_id)
       if bag.includes_data?(params[:file])
         file = bag.data_file!(params[:file])
         send_file(file.to_s, type: file.type, status: 200)
@@ -49,15 +50,13 @@ module V1
     def send_package
       resource_policy.new(current_user, package).authorize! :show?
 
-      unless package.stored?
+      unless repository.exists?(volume: package.storage_volume, id: package.bag_id)
         head 404
         return
       end
 
-      # TODO: Once the interface of Repository/DiskStorage is sorted out,
-      #       use that, rather than going around it.
       # Zip Tricks can take only non-directory paths as strings.
-      bag = Chipmunk::Bag.__from_package__(package)
+      bag = repository.find( volume: package.storage_volume, id: package.bag_id)
       zip_tricks_stream do |zip|
         bag.relative_files.each do |file|
           zip.write_deflated_file(file.to_s) do |sink|
@@ -93,6 +92,10 @@ module V1
       params.permit([:bag_id, :external_id, :content_type])
         .to_h
         .symbolize_keys
+    end
+
+    def repository
+      @repository ||= Services.packages
     end
 
   end

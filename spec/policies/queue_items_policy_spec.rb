@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+require "support/helpers/policy_helpers"
+
 RSpec.describe QueueItemsPolicy do
   context "as an admin" do
     let(:user) { FakeUser.new(admin?: true) }

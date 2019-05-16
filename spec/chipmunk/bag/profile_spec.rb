@@ -4,7 +4,7 @@ require "chipmunk/bag/profile"
 
 RSpec.describe Chipmunk::Bag::Profile do
   let(:bagger_profile) do
-    described_class.new("file://" + Rails.root.join("spec", "support", "fixtures", "test-profile.json").to_s)
+    described_class.new("file://" +  (application_root/"spec"/"support"/"fixtures"/"test-profile.json").to_s)
   end
 
   let(:errors) { [] }

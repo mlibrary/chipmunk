@@ -2,6 +2,7 @@
 
 require "rails_helper"
 require "fileutils"
+require "support/examples/a_validation_integration"
 
 RSpec.describe "video validation integration", integration: true do
   it_behaves_like "a validation integration" do

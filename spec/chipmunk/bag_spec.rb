@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+require "chipmunk/bag"
+require "chipmunk/errors"
+require "core_extensions/pathname"
+require "fileutils"
+require "pathname"
+require "bagit"
+
 RSpec.describe Chipmunk::Bag do
   # set up data in safe area
   around(:each) do |example|
@@ -7,20 +14,29 @@ RSpec.describe Chipmunk::Bag do
       @empty_path = Pathname.new(tmp_dir)/"emptybag"
       FileUtils.mkdir_p @empty_path
       @stored_path = Pathname.new(tmp_dir)/"test_bag"
-      FileUtils.cp_r(Rails.root/"spec"/"support"/"fixtures"/"test_bag", @stored_path)
+      FileUtils.cp_r(application_root/"spec"/"support"/"fixtures"/"test_bag", @stored_path)
       example.run
     end
   end
 
   let(:empty_path) { @empty_path }
   let(:stored_path) { @stored_path }
-  let(:empty_bag) { described_class.new(@empty_path) }
-  let(:stored_bag) { described_class.new(@stored_path) }
+  let(:empty_bag) { described_class.new(id: "empty", bag: BagIt::Bag.new(@empty_path)) }
+  let(:stored_bag) { described_class.new(id: "stored", bag: BagIt::Bag.new(@stored_path)) }
 
   let(:stored_files) do
     Dir.glob(stored_path/"**"/"*")
       .map {|f| Pathname.new(f) }
       .reject(&:directory?)
+  end
+
+  describe "#copy" do
+    let(:dest) { double(:dest, write: true) }
+    it "passes its files" do
+      relative_files = stored_files.map {|f| f.relative_path_from(stored_path) }
+      expect(dest).to receive(:write).with(stored_path, relative_files)
+      stored_bag.copy(dest)
+    end
   end
 
   describe "#relative_files" do

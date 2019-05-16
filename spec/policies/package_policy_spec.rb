@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "ostruct"
+require "rails_helper"
+require "support/helpers/policy_helpers"
 
 RSpec.describe PackagePolicy do
   let(:resource) do

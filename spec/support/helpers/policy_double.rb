@@ -102,14 +102,16 @@ end
 # mock the policies. These have the same behavior as policy_double and
 # collection_policy_double except that they are also attached to the controller
 # instance already defined within the spec.
-module Checkpoint::Spec
-  module Controller
-    def collection_policy(*name_and_scope, **actions, &block)
-      controller.collection_policy = PolicyDouble.new(*name_and_scope, **actions, &block)
-    end
+module Checkpoint
+  module Spec
+    module Controller
+      def collection_policy(*name_and_scope, **actions, &block)
+        controller.collection_policy = PolicyDouble.new(*name_and_scope, **actions, &block)
+      end
 
-    def resource_policy(name = nil, **actions, &block)
-      controller.resource_policy = PolicyDouble.new(name, **actions, &block)
+      def resource_policy(name = nil, **actions, &block)
+        controller.resource_policy = PolicyDouble.new(name, **actions, &block)
+      end
     end
   end
 end

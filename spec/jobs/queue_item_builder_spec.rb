@@ -32,6 +32,9 @@ RSpec.describe QueueItemBuilder do
     it "the queue_item is pending" do
       expect(queue_item.pending?).to be true
     end
+    it "sets the packages's storage_volume to tmp" do
+      expect(queue_item.package.storage_volume).to eql(Chipmunk::Volume.new("tmp"))
+    end
     it "enqueues a BagMoveJob to /<storage_path>/:bag_id" do
       expect(BagMoveJob).to have_received(:perform_later).with(queue_item)
     end
