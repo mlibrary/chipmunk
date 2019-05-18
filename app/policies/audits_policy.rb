@@ -13,7 +13,7 @@ class AuditsPolicy < CollectionPolicy
     can?(:index,all_of_type(Audit))
   end
 
-  def resource_types
-    ['Audit']
+  def resolve
+    ViewableResources.for(user, scope)
   end
 end

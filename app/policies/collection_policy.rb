@@ -10,15 +10,13 @@ class CollectionPolicy
     @scope = scope || base_scope
   end
 
+  # This should potentially move to private, requiring resolve from outside
   def base_scope
     ApplicationRecord.none
   end
 
   def resolve
-    scope.any_of( authority
-      .which(user,:show)
-      .select { |token| token.all? || resource_types.include?(token.type) }
-      .map { |token| scope_for_resource(token) })
+    scope.all
   end
 
   def index?

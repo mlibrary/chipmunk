@@ -3,7 +3,12 @@
 require "checkpoint_helper"
 
 RSpec.describe PackagesPolicy, :checkpoint_transaction, type: :policy do
-  subject { described_class }
+  subject { described_class.new(user, scope) }
+
+  let(:user)  { FakeUser.new }
+  let(:scope) { FakeCollection.new(resource_types: ['digital', 'audio', 'video']) }
+
+  it_has_base_scope Package, :all
 
   context "as an admin" do
     let(:user) { FakeUser.admin }
@@ -40,6 +45,4 @@ RSpec.describe PackagesPolicy, :checkpoint_transaction, type: :policy do
 
     it { is_expected.to resolve(:digital) }
   end
-
-  it_has_base_scope(Package.all)
 end

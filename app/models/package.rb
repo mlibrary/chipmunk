@@ -59,6 +59,10 @@ class Package < ApplicationRecord
     content_type
   end
 
+  def self.resource_types
+    self.content_types
+  end
+
   def self.content_types
     Rails.application.config.validation["bagger_profile"].keys +
     Rails.application.config.validation["external"].keys

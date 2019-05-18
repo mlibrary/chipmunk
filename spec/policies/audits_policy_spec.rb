@@ -3,7 +3,12 @@
 require "checkpoint_helper"
 
 RSpec.describe AuditsPolicy, :checkpoint_transaction, type: :policy  do
-  subject { described_class.new(user, FakeCollection.new) }
+  subject { described_class.new(user, scope) }
+
+  it_has_base_scope Audit, :all
+
+  let(:user)  { FakeUser.new }
+  let(:scope) { FakeCollection.new(resource_types: ['Audit']) }
 
   context "as a user granted admin" do
     let(:user) { FakeUser.admin() }
@@ -32,6 +37,4 @@ RSpec.describe AuditsPolicy, :checkpoint_transaction, type: :policy  do
     it_disallows :index?, :new?
     it_resolves :none
   end
-
-  it_has_base_scope(Audit.all)
 end

@@ -2,7 +2,7 @@
 
 class QueueItemsPolicy < CollectionPolicy
 
-  def initialize(user, scope = nil, packages_policy = PackagesPolicy.new(user))
+  def initialize(user, scope = nil, packages_policy: PackagesPolicy.new(user))
     super(user,scope)
     @packages_policy = packages_policy
   end
@@ -19,14 +19,11 @@ class QueueItemsPolicy < CollectionPolicy
     QueueItem.all
   end
 
-  # fixme - should delegate to the related package
-
   def resolve
     scope.for_packages(packages_policy.resolve)
   end
 
   private
 
-  attr_reader :package_scope
-
+  attr_reader :packages_policy
 end

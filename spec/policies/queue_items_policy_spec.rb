@@ -3,43 +3,43 @@
 require "checkpoint_helper"
 
 RSpec.describe QueueItemsPolicy, :checkpoint_transaction, type: :policy do
-  context "as a user granted admin" do
-    let(:user) { FakeUser.admin }
+  subject { described_class.new(user, scope, packages_policy: packages_policy) }
 
-    it_allows :index?, :new?
+  it_has_base_scope QueueItem, :all
 
-    it { expect(described_class).to resolve(:all) }
-  end
+  let(:user)  { FakeUser.new }
+  let(:scope) { FakeCollection.new }
+  let(:packages_policy) { double() }
 
-  context "as a content manager" do
-    let(:user) { FakeUser.with_role('content_manager','digital') }
-
-    it_allows :index?, :new?
-
-    it { expect(described_class).to resolve(:digital) }
-  end
-
-  context "as a viewer for multiple content types" do
-    let(:user) do
-      FakeUser.new.tap do |u|
-        u.grant_role!('viewer','video')
-        u.grant_role!('viewer','digital')
-      end
-    end
+  context "when the PackagesPolicy allows index?" do
+    let(:packages_policy) { double('PackagesPolicy', index?: true) }
 
     it_allows :index?
-    it_disallows :new?
-
-    it { expect(described_class).to resolve(:video,:digital) }
   end
 
-  context "as a user granted nothing" do
-    let(:user) { FakeUser.new }
+  context "when the PackagesPolicy allows new?" do
+    let(:packages_policy) { double('PackagesPolicy', new?: true) }
 
-    it_disallows :index?, :new?
-
-    it { expect(described_class).to resolve(:none) }
+    it_allows :new?
   end
 
-  it_has_base_scope(QueueItem.all)
+  context "when the PackagesPolicy forbids index?" do
+    let(:packages_policy) { double('PackagesPolicy', index?: false) }
+
+    it_forbids :index?
+  end
+
+  context "when the PackagesPolicy forbids new?" do
+    let(:packages_policy) { double('PackagesPolicy', new?: false) }
+
+    it_forbids :new?
+  end
+
+  describe "#resolve" do
+    let(:packages_policy) { double('PackagesPolicy', resolve: ['dummy-relation']) }
+
+    it "scopes events to corresponding, visible packages" do
+      expect(subject).to resolve([:packages, ['dummy-relation']])
+    end
+  end
 end

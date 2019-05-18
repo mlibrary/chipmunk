@@ -47,36 +47,47 @@ class FakeUser < OpenStruct
 end
 
 class FakeCollection < OpenStruct
+  attr_reader :scopes
+
+  def initialize(scopes = [], **kwargs)
+    super(**kwargs)
+    @scopes = scopes
+  end
+
   def all
-    :all
+    chain :all
   end
 
   def none
-    :none
+    chain :none
   end
 
   def owned(user_id)
-    [:owned, user_id]
+    chain [:owned, user_id]
   end
 
   def with_type(type)
-    [:type, type]
+    chain [:type, type]
   end
 
   def with_id(id)
-    [:id, id]
+    chain [:id, id]
   end
 
   def for_packages(package_relation)
-    [:packages, package_relation]
+    chain [:packages, package_relation]
   end
 
-  def with_type_and_id_(type, id)
-    [:type_and_id, type, id]
+  def with_type_and_id(type, id)
+    chain [:type_and_id, type, id]
   end
 
-  def any_of(scopes)
-    scopes
+  def chain(scope)
+    FakeCollection.new(scopes + [scope])
+  end
+
+  def or(other)
+    FakeCollection.new(scopes + other.scopes)
   end
 end
 
@@ -129,23 +140,18 @@ end
 RSpec::Matchers.define :resolve do |*expected|
   match do |policy|
     actual = policy.resolve
-    if expected.length > 1
-      actual.length == expected.length && expected.map do |scope|
-        actual.include?(scope) || actual.include?([:type,scope.to_s])
-      end.all?
-    else
-      case expected[0]
-      when :all
-        actual == :all || actual == [:all]
-      when :none
-        actual == :none || actual == []
-      else
-        actual == expected[0] || actual == [[:type,expected[0].to_s]]
-      end
+
+    if actual.is_a? FakeCollection
+      actual = actual.scopes
+    end
+    @scopes = actual
+
+    actual.length == expected.length && expected.all? do |scope|
+      actual.include?(scope) || actual.include?([:type,scope.to_s])
     end
   end
   failure_message do |policy|
-    "expected that #{policy.class} would resolve to #{expected}, but it resolves to #{actual}"
+    "expected that #{policy.class} would resolve to #{expected}, but it resolves to #{@scopes}"
   end
   failure_message_when_negated do |policy|
     "expected that #{policy.class} would not resolve to #{expected}, but it did"

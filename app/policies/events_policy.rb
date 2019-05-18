@@ -19,5 +19,7 @@ class EventsPolicy < CollectionPolicy
     scope.for_packages(packages_policy.resolve)
   end
 
+  private
+
   attr_reader :packages_policy
 end
