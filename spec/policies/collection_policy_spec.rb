@@ -1,20 +1,21 @@
 # frozen_string_literal: true
 
+require "checkpoint_helper"
 require "policy_errors"
 
-RSpec.describe CollectionPolicy, type: :policy do
-  let(:user) { double(:user) }
+RSpec.describe CollectionPolicy, :checkpoint_transaction, type: :policy do
+  subject { described_class.new(user, scope) }
 
-  describe "#base_scope" do
-    it "returns an empty collection" do
-      expect(described_class.new(user).base_scope).to eq(ApplicationRecord.none)
-    end
-  end
+  it_has_base_scope ApplicationRecord, :none
 
-  describe "#resolve" do
-    it "returns the original scope" do
-      scope = double(:scope)
-      expect(described_class.new(user, scope).resolve).to be(scope)
+  let(:user)  { double(:user) }
+  let(:scope) { double(:scope, all: []) }
+
+  context "with a scope supplied" do
+    let(:scope) { double(:scope, all: 'all') }
+
+    it "returns all of the supplied scope" do
+      expect(subject.resolve).to eq 'all'
     end
   end
 

@@ -24,11 +24,15 @@ module V1
 
     # POST /v1/requests/:bag_id/complete
     def create
-      request = Package.find_by_bag_id!(params[:bag_id])
-      policy = resource_policy.new(current_user, request)
-      policy.authorize! :create?, "not allowed to create? this QueueItem for #{params[:bag_id]}"
 
-      status, @queue_item = QueueItemBuilder.new.create(request)
+      # FIXME PFDR-169 needs some cleanup - this should probably do something different
+      descriptor = Package.find_by_bag_id!(params[:bag_id])
+      builder = QueueItemBuilder.new
+      @queue_item = builder.build(descriptor)
+      policy = resource_policy.new(current_user, @queue_item)
+      policy.authorize! :create?, "not allowed to create? this QueueItem for #{params[:bag_id]}"
+      status, @queue_item = builder.save
+
       case status
       when :duplicate
         head 303, location: v1_queue_item_path(@queue_item)

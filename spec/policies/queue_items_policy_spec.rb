@@ -1,27 +1,45 @@
 # frozen_string_literal: true
 
-RSpec.describe QueueItemsPolicy do
-  context "as an admin" do
-    let(:user) { FakeUser.new(admin?: true) }
+require "checkpoint_helper"
 
-    it_allows :index?, :new?
-    it_resolves :all
+RSpec.describe QueueItemsPolicy, :checkpoint_transaction, type: :policy do
+  subject { described_class.new(user, scope, packages_policy: packages_policy) }
+
+  it_has_base_scope QueueItem, :all
+
+  let(:user)  { FakeUser.new }
+  let(:scope) { FakeCollection.new }
+  let(:packages_policy) { double() }
+
+  context "when the PackagesPolicy allows index?" do
+    let(:packages_policy) { double('PackagesPolicy', index?: true) }
+
+    it_allows :index?
   end
 
-  context "as a persisted non-admin user" do
-    let(:user) { FakeUser.new(admin?: false) }
+  context "when the PackagesPolicy allows new?" do
+    let(:packages_policy) { double('PackagesPolicy', new?: true) }
 
-    it_allows :index?, :new?
-    it_resolves_owned
+    it_allows :new?
   end
 
-  context "as an externally-identified user" do
-    let(:user) { FakeUser.with_external_identity }
-    let(:request) { double(:request, user: double) }
+  context "when the PackagesPolicy forbids index?" do
+    let(:packages_policy) { double('PackagesPolicy', index?: false) }
 
-    it_disallows :index?, :new?
-    it_resolves :none
+    it_forbids :index?
   end
 
-  it_has_base_scope(QueueItem.all)
+  context "when the PackagesPolicy forbids new?" do
+    let(:packages_policy) { double('PackagesPolicy', new?: false) }
+
+    it_forbids :new?
+  end
+
+  describe "#resolve" do
+    let(:packages_policy) { double('PackagesPolicy', resolve: ['dummy-relation']) }
+
+    it "scopes events to corresponding, visible packages" do
+      expect(subject).to resolve([:packages, ['dummy-relation']])
+    end
+  end
 end

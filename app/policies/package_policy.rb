@@ -3,6 +3,10 @@
 class PackagePolicy < ResourcePolicy
 
   def show?
-    user&.admin? || resource&.user == user || checkpoint_permits?(:show)
+    can?(:show)
+  end
+
+  def create?
+    can?(:create)
   end
 end

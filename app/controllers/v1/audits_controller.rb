@@ -16,7 +16,7 @@ module V1
     end
 
     def create
-      collection_policy.new(current_user).authorize! :create?
+      collection_policy.new(current_user).authorize! :new?
 
       packages = Package.stored
       audit = Audit.create!(user: current_user, packages: packages.count)

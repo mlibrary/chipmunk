@@ -1,66 +1,54 @@
 # frozen_string_literal: true
 
+require "checkpoint_helper"
 require "ostruct"
 
-RSpec.describe PackagePolicy do
+RSpec.describe PackagePolicy, :checkpoint_transaction, type: :policy do
+  subject { described_class.new(user, resource) }
+
   let(:resource) do
     double(:resource,
       user: double,
-      resource_type: Faker::Lorem.word,
+      resource_type: 'video',
       id: 1)
   end
 
   context "as an admin" do
-    let(:user) { FakeUser.new(admin?: true) }
+    let(:user) { FakeUser.admin }
 
-    it_allows :show?
+    it_allows :show?, :create?
     it_disallows :update?, :destroy?
   end
 
-  context "as a persisted non-admin user" do
-    let(:user) { FakeUser.new(admin?: false) }
+  context "as a content manager for the content type of the related package" do
+    let(:user) { FakeUser.with_role('content_manager','video') }
 
-    context "with an owned resource" do
-      before(:each) { allow(resource).to receive(:user).and_return(user) }
-
-      it_allows :show?
-      it_disallows :update?, :destroy?
-    end
-
-    context "with an unowned resource" do
-      it_disallows :show?, :update?, :destroy?
-    end
+    it_allows :show?, :create?
+    it_disallows :update?, :destroy?
   end
 
-  context "as an externally-identified user" do
-    let(:username) { Faker::Internet.user_name }
-    let(:user) { FakeUser.with_external_identity(username) }
+  context "as a content manager for a content type not for the related packages" do
+    let(:user) { FakeUser.with_role('content_manager','digital') }
 
-    after(:each) do
-      Checkpoint::DB.db[:grants].delete
-    end
+    it_disallows :show?, :create?, :update?, :destroy?
+  end
 
-    context "with a grant for that user & resource" do
-      before(:each) do
-        Services.checkpoint.grant!(user, :show, resource)
-      end
+  context "as a viewer for the content type of the related package" do
+    let(:user) { FakeUser.with_role('viewer','video') }
 
-      it_allows :show?
-      it_disallows :update?, :destroy?
-    end
+    it_allows :show?
+    it_disallows :create?, :update?, :destroy?
+  end
 
-    context "with a grant for a different user" do
-      let(:other_user) { FakeUser.new }
+  context "as a viewer for the content type not for the related package" do
+    let(:user) { FakeUser.with_role('viewer','digital') }
 
-      before(:each) do
-        Services.checkpoint.grant!(other_user, :show, resource)
-      end
+    it_disallows :show?, :create?, :update?, :destroy?
+  end
 
-      it_disallows :show?, :update?, :destroy?
-    end
+  context "as a user granted nothing" do
+    let(:user) {  FakeUser.new }
 
-    context "without a grant for that user & resource" do
-      it_disallows :show?, :update?, :destroy?
-    end
+    it_disallows :show?, :create?, :update?, :destroy?
   end
 end

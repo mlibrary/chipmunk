@@ -11,4 +11,8 @@ class Audit < ApplicationRecord
   def failed_events
     events.failed
   end
+
+  def self.resource_types
+    ['Audit']
+  end
 end

@@ -91,7 +91,8 @@ RSpec.describe V1::QueueItemsController, type: :controller do
 
       before(:each) do
         allow(QueueItemBuilder).to receive(:new).and_return(builder)
-        allow(builder).to receive(:create).and_return([result_status, result_queue_item])
+        allow(builder).to receive(:build).and_return(result_queue_item)
+        allow(builder).to receive(:save).and_return([result_status, result_queue_item])
         resource_policy "QueueItemPolicy", create?: true
       end
 

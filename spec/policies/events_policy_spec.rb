@@ -1,32 +1,33 @@
 # frozen_string_literal: true
 
-RSpec.describe EventsPolicy do
-  let(:policy) { described_class.new(user, FakeCollection.new) }
+require "checkpoint_helper"
 
-  context "as an admin" do
-    let(:user) { FakeUser.new(admin?: true) }
+RSpec.describe EventsPolicy, :checkpoint_transaction, type: :policy do
+  subject { described_class.new(user, scope, packages_policy: packages_policy) }
+
+  it_has_base_scope Event, :all
+
+  let(:user)  { FakeUser.new }
+  let(:scope) { FakeCollection.new }
+  let(:packages_policy) { double() }
+
+  context "when the PackagesPolicy allows index?" do
+    let(:packages_policy) { double('PackagesPolicy', index?: true) }
 
     it_allows :index?
-    it_disallows :new?
-
-    it_resolves :all
   end
 
-  context "as a persisted non-admin user" do
-    let(:user) { FakeUser.new(admin?: false) }
+  context "when the PackagesPolicy denies index?" do
+    let(:packages_policy) { double('PackagesPolicy', index?: false) }
 
-    it_allows :index?
-    it_disallows :new?
-
-    it_resolves_owned
+    it_forbids :index?
   end
 
-  context "as an externally-identified user" do
-    let(:user) { FakeUser.with_external_identity }
+  describe "#resolve" do
+    let(:packages_policy) { double('PackagesPolicy', resolve: ['dummy-relation']) }
 
-    it_disallows :index?, :new?
-    it_resolves :none
+    it "scopes events to corresponding, visible packages" do
+      expect(subject).to resolve([:packages, ['dummy-relation']])
+    end
   end
-
-  it_has_base_scope(Event.all)
 end

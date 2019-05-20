@@ -5,19 +5,15 @@ class AuditsPolicy < CollectionPolicy
     Audit.all
   end
 
-  def resolve
-    if user.admin?
-      scope.all
-    else
-      scope.none
-    end
-  end
-
-  def create?
-    user.admin?
+  def new?
+    can?(:new,all_of_type(Audit))
   end
 
   def index?
-    user.admin?
+    can?(:index,all_of_type(Audit))
+  end
+
+  def resolve
+    ViewableResources.for(user, scope)
   end
 end

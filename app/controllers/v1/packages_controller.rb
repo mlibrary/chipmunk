@@ -63,7 +63,8 @@ module V1
 
     # POST /v1/requests
     def create
-      collection_policy.new(current_user).authorize! :create?
+      # FIXME PFDR-169 - needs to be split like QueueItemBuilder
+      collection_policy.new(current_user).authorize! :new?
       status, @request_record = RequestBuilder.new
         .create(create_params.merge(user: current_user))
       case status

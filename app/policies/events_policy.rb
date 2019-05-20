@@ -2,8 +2,13 @@
 
 class EventsPolicy < CollectionPolicy
 
+  def initialize(user, scope = nil, packages_policy: PackagesPolicy.new(user))
+    super(user,scope)
+    @packages_policy = packages_policy
+  end
+
   def index?
-    user.known?
+    packages_policy.index?
   end
 
   def base_scope
@@ -11,13 +16,10 @@ class EventsPolicy < CollectionPolicy
   end
 
   def resolve
-    if user.admin?
-      scope.all
-    elsif user.known?
-      scope.owned(user.id)
-    else
-      scope.none
-    end
+    scope.for_packages(packages_policy.resolve)
   end
 
+  private
+
+  attr_reader :packages_policy
 end

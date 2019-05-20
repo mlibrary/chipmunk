@@ -4,9 +4,15 @@ require "rails_helper"
 
 RSpec.describe "GET /v1/packages/:bag_id/:file", type: :request do
   let(:key)  { Keycard::DigestKey.new }
-  let(:user) { Fabricate(:user, admin: false, api_key_digest: key.digest) }
+  let(:user) { Fabricate(:user, api_key_digest: key.digest) }
   let(:fixture_path) { fixture("video/upload/goodbag") }
-  let(:package) { Fabricate(:package, user: user, storage_location: fixture_path) }
+  let(:package) { Fabricate(:package, user: user, storage_location: fixture_path, content_type: 'video') }
+
+  before(:each) do
+    Services.checkpoint.grant!(user,
+                               Checkpoint::Credential::Role.new("viewer"),
+                               Checkpoint::Resource::AllOfType.new("video"))
+  end
 
   let(:headers) do
     { "X-SendFile-Type" => "X-Sendfile",

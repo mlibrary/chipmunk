@@ -25,5 +25,7 @@ Services = Canister.new
 Services.register(:storage) { BagRepository.new(Chipmunk::Bag) }
 Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
 Services.register(:checkpoint) do
-  Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new)
+  Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new,
+                            credential_resolver: Chipmunk::RoleResolver.new,
+                            resource_resolver: Chipmunk::ResourceResolver.new)
 end

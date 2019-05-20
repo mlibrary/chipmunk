@@ -20,13 +20,21 @@ class ResourcePolicy
     false
   end
 
+  def create?
+    false
+  end
+
   def authorize!(action, message = nil)
     raise NotAuthorizedError, message unless public_send(action)
   end
 
   protected
 
-  def checkpoint_permits?(action)
-    Checkpoint::Query::ActionPermitted.new(user, action, resource, authority: Services.checkpoint).true?
+  def can?(action)
+    Checkpoint::Query::ActionPermitted.new(user, action, resource, authority: authority).true?
+  end
+
+  def authority
+    Services.checkpoint
   end
 end
