@@ -21,7 +21,7 @@ module V1
       packages = Package.stored
       audit = Audit.new(user: current_user, packages: packages.count)
 
-      resource_policy.new(current_user,audit).authorize! :create?
+      resource_policy.new(current_user,audit).authorize! :save?
       audit.save
 
       packages.each do |package|

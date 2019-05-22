@@ -108,7 +108,7 @@ module V1
     end
 
     def save_descriptor(descriptor)
-      resource_policy.new(current_user,descriptor).authorize! :create?
+      resource_policy.new(current_user,descriptor).authorize! :save?
 
       if descriptor.valid?
         descriptor.save!

@@ -6,8 +6,8 @@ class QueueItemPolicy < ResourcePolicy
     package_policy.show?
   end
 
-  def create?
-    package_policy.create?
+  def save?
+    package_policy.save?
   end
 
   private

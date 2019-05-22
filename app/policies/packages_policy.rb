@@ -6,7 +6,7 @@ class PackagesPolicy < CollectionPolicy
   end
 
   def new?
-    can?(:create,Package.of_any_type)
+    can?(:save,Package.of_any_type)
   end
 
   def base_scope

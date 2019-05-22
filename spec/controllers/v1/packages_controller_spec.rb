@@ -165,7 +165,7 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       shared_examples "creates a new package" do
         before(:each) do
-          resource_policy "PackagePolicy", create?: true
+          resource_policy "PackagePolicy", save?: true
           collection_policy "PackagesPolicy", new?: true
         end
 
@@ -210,7 +210,7 @@ RSpec.describe V1::PackagesController, type: :controller do
       shared_examples "invalid package" do
         before(:each) do
           collection_policy "PackagesPolicy", new?: true
-          resource_policy "PackagePolicy", create?: true
+          resource_policy "PackagePolicy", save?: true
         end
 
         it "returns 422" do

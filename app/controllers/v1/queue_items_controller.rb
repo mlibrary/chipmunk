@@ -61,7 +61,7 @@ module V1
     end
 
     def save_qitem(queue_item)
-      resource_policy.new(current_user,queue_item).authorize! :create?
+      resource_policy.new(current_user,queue_item).authorize! :save?
 
       if queue_item.valid?
         queue_item.save!

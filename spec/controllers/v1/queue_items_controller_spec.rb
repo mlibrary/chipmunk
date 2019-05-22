@@ -120,7 +120,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
 
       shared_examples "creates a new queue item" do
         before(:each) do
-          resource_policy "QueueItemPolicy", create?: true
+          resource_policy "QueueItemPolicy", save?: true
           collection_policy "QueueItemsPolicy", new?: true
         end
 
@@ -176,7 +176,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       end
 
       context "when the policy denies the user access" do
-        before(:each) { resource_policy "QueueItemPolicy", create?: false }
+        before(:each) { resource_policy "QueueItemPolicy", save?: false }
 
         it "responds with 403 Forbidden" do
           post :create, params: { bag_id: package.bag_id }

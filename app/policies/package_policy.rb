@@ -6,7 +6,7 @@ class PackagePolicy < ResourcePolicy
     can?(:show)
   end
 
-  def create?
-    can?(:create)
+  def save?
+    can?(:save)
   end
 end
