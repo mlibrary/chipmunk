@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "request_builder"
 require "zip_tricks"
 
 module V1
@@ -63,17 +62,19 @@ module V1
 
     # POST /v1/requests
     def create
-      # FIXME PFDR-169 - needs to be split like QueueItemBuilder
-      collection_policy.new(current_user).authorize! :new?
-      status, @request_record = RequestBuilder.new
-        .create(create_params.merge(user: current_user))
-      case status
-      when :duplicate
-        head 303, location: v1_request_path(@request_record)
-      when :created
-        head 201, location: v1_request_path(@request_record)
-      when :invalid
-        render json: @request_record.errors, status: :unprocessable_entity
+      duplicate = Package.find_by_bag_id(params[:bag_id])
+      duplicate ||= Package.find_by_external_id(params[:external_id])
+
+      if duplicate
+        resource_policy.new(current_user,duplicate).authorize! :show?
+        head 303, location: v1_package_path(duplicate)
+      else
+        case create_package(create_params)
+        when :created
+          head 201, location: v1_package_path(@package)
+        when :invalid
+          render json: @package.errors, status: :unprocessable_entity
+        end
       end
     end
 
@@ -88,6 +89,33 @@ module V1
       params.permit([:bag_id, :external_id, :content_type])
         .to_h
         .symbolize_keys
+    end
+
+    def create_package(create_params)
+      @package = new_descriptor(**create_params)
+      save_descriptor(@package)
+    end
+
+    def new_descriptor(bag_id:, external_id:, content_type:)
+      collection_policy.new(current_user).authorize! :new?
+
+      Package.new(
+        bag_id: bag_id,
+        external_id: external_id,
+        content_type: content_type,
+        user: current_user
+      )
+    end
+
+    def save_descriptor(descriptor)
+      resource_policy.new(current_user,descriptor).authorize! :save?
+
+      if descriptor.valid?
+        descriptor.save!
+        return :created
+      else
+        return :invalid
+      end
     end
 
   end

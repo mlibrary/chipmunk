@@ -20,7 +20,7 @@ class ResourcePolicy
     false
   end
 
-  def create?
+  def save?
     false
   end
 
