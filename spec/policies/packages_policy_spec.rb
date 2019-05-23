@@ -3,7 +3,7 @@
 require "checkpoint_helper"
 
 RSpec.describe PackagesPolicy, :checkpoint_transaction, type: :policy do
-  subject { described_class.new(user, scope) }
+  subject(:policy) { described_class.new(user, scope) }
 
   let(:user)  { FakeUser.new }
   let(:scope) { FakeCollection.new(resource_types: ["digital", "audio", "video"]) }
@@ -15,7 +15,7 @@ RSpec.describe PackagesPolicy, :checkpoint_transaction, type: :policy do
 
     it_allows :index?, :new?
 
-    it { expect(subject).to resolve(:all) }
+    it_resolves :all
   end
 
   context "as a content manager" do
@@ -23,7 +23,7 @@ RSpec.describe PackagesPolicy, :checkpoint_transaction, type: :policy do
 
     it_allows :index?, :new?
 
-    it { expect(subject).to resolve(:audio) }
+    it_resolves :audio
   end
 
   context "as a content manager for audio and video" do
@@ -34,15 +34,15 @@ RSpec.describe PackagesPolicy, :checkpoint_transaction, type: :policy do
       end
     end
 
-    it { expect(subject).to resolve(:audio, :video) }
+    it_resolves :audio, :video
   end
 
   context "as a viewer" do
     let(:user) { FakeUser.with_role("viewer", "digital") }
 
     it_allows :index?
-    it_disallows :new?
+    it_forbids :new?
 
-    it { expect(subject).to resolve(:digital) }
+    it_resolves :digital
   end
 end

@@ -3,7 +3,7 @@
 require "checkpoint_helper"
 
 RSpec.describe QueueItemsPolicy, :checkpoint_transaction, type: :policy do
-  subject { described_class.new(user, scope, packages_policy: packages_policy) }
+  subject(:policy) { described_class.new(user, scope, packages_policy: packages_policy) }
 
   it_has_base_scope QueueItem, :all
 
@@ -39,7 +39,7 @@ RSpec.describe QueueItemsPolicy, :checkpoint_transaction, type: :policy do
     let(:packages_policy) { double("PackagesPolicy", resolve: ["dummy-relation"]) }
 
     it "scopes events to corresponding, visible packages" do
-      expect(subject).to resolve([:packages, ["dummy-relation"]])
+      expect(policy).to resolve([:packages, ["dummy-relation"]])
     end
   end
 end

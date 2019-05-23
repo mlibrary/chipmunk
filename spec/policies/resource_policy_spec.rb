@@ -3,12 +3,12 @@
 require "checkpoint_helper"
 
 RSpec.describe ResourcePolicy, :checkpoint_transaction, type: :policy do
-  subject { described_class.new(user, resource) }
+  subject(:policy) { described_class.new(user, resource) }
 
   let(:resource) { double(:resource) }
   let(:user) { double(:user) }
 
-  it_disallows :show?, :update?, :destroy?
+  it_forbids :show?, :update?, :destroy?
 
   describe "authorize!" do
     [:show?, :update?, :destroy?].each do |action|

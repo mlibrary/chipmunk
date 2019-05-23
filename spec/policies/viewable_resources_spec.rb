@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe ViewableResources do
-  subject { described_class.new(actor: actor, relation: relation, authority: authority) }
+  subject(:scope) { described_class.new(actor: actor, relation: relation, authority: authority) }
 
   let(:actor)     { double(:actor) }
   let(:authority) { double(:authority) }
@@ -14,7 +14,7 @@ RSpec.describe ViewableResources do
     end
 
     it "scopes the relation to none" do
-      expect(subject.all).to eq "none"
+      expect(scope.all).to eq "none"
     end
   end
 
@@ -27,7 +27,7 @@ RSpec.describe ViewableResources do
     end
 
     it "scopes the relation to all" do
-      expect(subject.all).to eq ["all"]
+      expect(scope.all).to eq ["all"]
     end
   end
 
@@ -42,7 +42,7 @@ RSpec.describe ViewableResources do
     end
 
     it "scopes the relation tall twice and joins with OR" do
-      expect(subject.all.scopes).to contain_exactly(:all, :all)
+      expect(scope.all.scopes).to contain_exactly(:all, :all)
     end
   end
 
@@ -55,7 +55,7 @@ RSpec.describe ViewableResources do
     end
 
     it "scopes the relation twice and joins with OR" do
-      expect(subject.all.scopes).to eq [[:type, "some-type"]]
+      expect(scope.all.scopes).to eq [[:type, "some-type"]]
     end
   end
 
@@ -70,7 +70,7 @@ RSpec.describe ViewableResources do
     end
 
     it "scopes the relation twice and joins with OR" do
-      expect(subject.all.scopes).to contain_exactly([:type, "some-type"], [:type_and_id, "foo", "id"])
+      expect(scope.all.scopes).to contain_exactly([:type, "some-type"], [:type_and_id, "foo", "id"])
     end
   end
 end

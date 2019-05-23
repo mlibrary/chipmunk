@@ -91,49 +91,28 @@ class FakeCollection < OpenStruct
   end
 end
 
+# Implicit subject is OK for these concise spec generator helpers
+# rubocop:disable RSpec/ImplicitSubject
+
 RSpec::Matchers.define :allow_action do |action|
   match do |policy|
     policy.public_send(action)
   end
-end
 
-RSpec::Matchers.define :forbid_action do |action|
-  match do |policy|
-    !policy.public_send(action)
-  end
-end
-
-def allows_action?(action)
-  if described_class <= CollectionPolicy
-    described_class.new(user, FakeCollection.new).public_send(action)
-  elsif described_class <= ResourcePolicy
-    described_class.new(user, resource).public_send(action)
-  else
-    raise "#{described_class} is not a subclass of CollectionPolicy or ResourcePolicy"
+  description do
+    "allow action #{action}"
   end
 end
 
 def it_allows(*actions)
   actions.each do |action|
-    it "allows #{action}" do
-      expect(subject).to allow_action(action)
-    end
-  end
-end
-
-def it_disallows(*actions)
-  actions.each do |action|
-    it "forbids #{action}" do
-      expect(subject).not_to allow_action(action)
-    end
+    it { is_expected.to allow_action(action) }
   end
 end
 
 def it_forbids(*actions)
   actions.each do |action|
-    it "forbids #{action}" do
-      expect(subject).not_to allow_action(action)
-    end
+    it { is_expected.not_to allow_action(action) }
   end
 end
 
@@ -150,6 +129,9 @@ RSpec::Matchers.define :resolve do |*expected|
       actual.include?(scope) || actual.include?([:type, scope.to_s])
     end
   end
+  description do
+    "resolves to #{expected}"
+  end
   failure_message do |policy|
     "expected that #{policy.class} would resolve to #{expected}, but it resolves to #{@scopes}"
   end
@@ -158,20 +140,8 @@ RSpec::Matchers.define :resolve do |*expected|
   end
 end
 
-def it_resolves(scope)
-  describe "#resolve" do
-    it "resolves to #{scope}" do
-      expect(subject).to resolve(scope)
-    end
-  end
-end
-
-def it_resolves_owned
-  describe "#resolve" do
-    it "resolves using the owned scope with the current user" do
-      expect(described_class).to resolve([:owned, user.id])
-    end
-  end
+def it_resolves(*scope)
+  it { is_expected.to resolve(*scope) }
 end
 
 RSpec::Matchers.define :have_base_scope do |resource_type, scope|
@@ -186,5 +156,7 @@ RSpec::Matchers.define :have_base_scope do |resource_type, scope|
 end
 
 def it_has_base_scope(resource_type, scope)
-  it { expect(subject).to have_base_scope(resource_type, scope) }
+  it { is_expected.to have_base_scope(resource_type, scope) }
 end
+
+# rubocop:enable RSpec/ImplicitSubject

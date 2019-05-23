@@ -3,7 +3,7 @@
 require "checkpoint_helper"
 
 RSpec.describe AuditsPolicy, :checkpoint_transaction, type: :policy do
-  subject { described_class.new(user, scope) }
+  subject(:policy) { described_class.new(user, scope) }
 
   it_has_base_scope Audit, :all
 
@@ -20,21 +20,21 @@ RSpec.describe AuditsPolicy, :checkpoint_transaction, type: :policy do
   context "as a content manager" do
     let(:user) { FakeUser.with_role("content_manager", "audio") }
 
-    it_disallows :index?, :new?
+    it_forbids :index?, :new?
     it_resolves :none
   end
 
   context "as a viewer" do
     let(:user) { FakeUser.with_role("content_manager", "digital") }
 
-    it_disallows :index?, :new?
+    it_forbids :index?, :new?
     it_resolves :none
   end
 
   context "as a user granted nothing" do
     let(:user) { FakeUser.new }
 
-    it_disallows :index?, :new?
+    it_forbids :index?, :new?
     it_resolves :none
   end
 end

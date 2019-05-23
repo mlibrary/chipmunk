@@ -205,7 +205,8 @@ RSpec/MessageSpies:
 RSpec/EmptyExampleGroup:
   CustomIncludeMethods:
     - it_allows
-    - it_disallows
+    - it_forbids
+    - it_resolves
 
 RSpec/ContextWording:
   Prefixes:
