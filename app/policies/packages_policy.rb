@@ -21,8 +21,4 @@ class PackagesPolicy < CollectionPolicy
     #   * Any specific packages for which the user is granted access
     ViewableResources.for(user, scope)
   end
-
-  def resource_types
-    Package.content_types
-  end
 end

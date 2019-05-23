@@ -45,20 +45,6 @@ class CollectionPolicy
     Checkpoint::Resource::AllOfType.new(type)
   end
 
-  def scope_for_resource(token)
-    if token.all?
-      scope.all
-    elsif token.all_of_type?
-      scope.with_type(token.type)
-    else
-      scope.with_type_and_id(token.type, token.id)
-    end
-  end
-
-  def resource_types
-    []
-  end
-
   private
 
   attr_reader :scope
