@@ -28,13 +28,6 @@ ROLES = ["admin", "content_manager", "viewer"].freeze
 # should get this from Package
 CONTENT_TYPES = ["audio", "video", "digital"].freeze
 
-# Would like to grant without having a real user / loading all of Rails
-# Might be helpful to have Checkpoint::Agent.from_token..?
-class TokenUser < Checkpoint::Agent::Token
-  alias_method :agent_type, :type
-  alias_method :agent_id, :id
-end
-
 def grant
   (username, role, content_type) = ARGV
   check_usage(username, role, content_type)
@@ -54,7 +47,7 @@ def revoke
 end
 
 def agent_for(username)
-  TokenUser.new("user", username)
+  Checkpoint::Agent::Token.new("user", username)
 end
 
 def credential_for(role)
