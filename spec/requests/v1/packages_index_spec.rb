@@ -7,9 +7,8 @@ RSpec.describe "GET /v1/packages", :checkpoint_transaction, type: :request do
   let(:key)  { Keycard::DigestKey.new }
   let!(:user) { Fabricate(:user, api_key_digest: key.digest) }
 
-  let!(:video1) { Fabricate(:package, content_type: 'video') }
-  let!(:video2) { Fabricate(:package, content_type: 'video') }
-  let!(:audio1) { Fabricate(:package, content_type: 'audio') }
+  let!(:video_packages) { Array.new(2) { Fabricate(:package, content_type: 'video') } }
+  let!(:all_packages) { video_packages + [Fabricate(:package, content_type: 'audio')] }
 
   let(:headers) do
     {  "Authorization"   => "Token token=#{key}" }
@@ -27,7 +26,7 @@ RSpec.describe "GET /v1/packages", :checkpoint_transaction, type: :request do
     it "lists all video packages & only video packages" do
       get "/v1/packages", headers: headers
 
-      expect(JSON.parse(response.body).map { |i| i["bag_id"] }).to contain_exactly(video1.bag_id, video2.bag_id)
+      expect(JSON.parse(response.body).map { |i| i["bag_id"] }).to contain_exactly(*video_packages.map(&:bag_id))
     end
   end
 
@@ -41,7 +40,7 @@ RSpec.describe "GET /v1/packages", :checkpoint_transaction, type: :request do
     it "lists all packages" do
       get "/v1/packages", headers: headers
 
-      expect(JSON.parse(response.body).map { |i| i["bag_id"] }).to contain_exactly(video1.bag_id, video2.bag_id, audio1.bag_id)
+      expect(JSON.parse(response.body).map { |i| i["bag_id"] }).to contain_exactly(*all_packages.map(&:bag_id))
     end
   end
 

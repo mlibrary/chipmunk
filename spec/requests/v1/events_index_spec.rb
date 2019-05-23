@@ -10,10 +10,8 @@ RSpec.describe "GET /v1/events", :checkpoint_transaction, type: :request do
   let!(:video) { Fabricate(:package, content_type: 'video') }
   let!(:audio) { Fabricate(:package, content_type: 'audio') }
 
-  let!(:event1) { Fabricate(:event, package: video) }
-  let!(:event2) { Fabricate(:event, package: video) }
-  let!(:event3) { Fabricate(:event, package: audio) }
-  let!(:event4) { Fabricate(:event, package: audio) }
+  let!(:video_events) { Array.new(2) { Fabricate(:event, package: video) } }
+  let!(:audio_events) { Array.new(2) { Fabricate(:event, package: audio) } }
 
   let(:headers) do
     { "Authorization"   => "Token token=#{key}" }
@@ -29,7 +27,9 @@ RSpec.describe "GET /v1/events", :checkpoint_transaction, type: :request do
     it "lists all events from audio packages" do
       get "/v1/events", headers: headers
 
-      expect(JSON.parse(response.body).map { |i| i["id"] }).to contain_exactly(event3.id,event4.id)
+      actual = JSON.parse(response.body).map { |event| event["id"] }
+
+      expect(actual).to contain_exactly(*audio_events.map(&:id))
     end
 
     xit "lists nothing when asked for events from a video package - pending PFDR-175"
@@ -45,7 +45,10 @@ RSpec.describe "GET /v1/events", :checkpoint_transaction, type: :request do
     it "lists all events" do
       get "/v1/events", headers: headers
 
-      expect(JSON.parse(response.body).map { |i| i["id"] }).to contain_exactly(event1.id,event2.id,event3.id,event4.id)
+      actual = JSON.parse(response.body).map { |event| event["id"] }
+      all_events = audio_events + video_events
+
+      expect(actual).to contain_exactly(*all_events.map(&:id))
     end
   end
 
