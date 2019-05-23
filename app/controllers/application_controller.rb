@@ -53,9 +53,7 @@ class ApplicationController < ActionController::API
 
   def authenticate_token(request_attributes)
     digest = Keycard::DigestKey.new(key: request_attributes.auth_token).digest
-    if (@current_user = User.find_by(api_key_digest: digest))
-      @current_user.identity = { username: @current_user.username }
-    else
+    unless (@current_user = User.find_by(api_key_digest: digest))
       render_unauthorized
     end
   end
@@ -64,8 +62,7 @@ class ApplicationController < ActionController::API
     @current_user = User.find_by(username: request_attributes.user_eid)
     @current_user ||= User.new
     @current_user.username ||= request_attributes.user_eid
-    @current_user.identity = request_attributes.identity
-    @current_user.identity[:username] = @current_user.username
+    @current_user.identity = @current_user.identity.merge(request_attributes.identity)
     unless @current_user.identity[:username]
       if request.get? && !request.xhr?
         session[:return_to] = request.path

@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 class PackagesPolicy < CollectionPolicy
-
   def index?
-    user.known?
+    can?(:show, Package.of_any_type)
   end
 
-  def create?
-    user.known?
+  def new?
+    can?(:save, Package.of_any_type)
   end
 
   def base_scope
@@ -15,12 +14,11 @@ class PackagesPolicy < CollectionPolicy
   end
 
   def resolve
-    if user.admin?
-      scope.all
-    elsif user.known?
-      scope.owned(user.id)
-    else
-      scope.none
-    end
+    # Via the role map resolver, a user has access to:
+    #   * All packages, if the user is an administrator
+    #   * Packages of content types for which the user is a content manager
+    #   * Packages of content types for which the user is authorized viewer
+    #   * Any specific packages for which the user is granted access
+    ViewableResources.for(user, scope)
   end
 end

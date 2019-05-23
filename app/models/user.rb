@@ -2,7 +2,7 @@
 
 class User < ApplicationRecord
 
-  attr_accessor :identity
+  attr_writer :identity
 
   validates :email, presence: true
   validates :admin, inclusion: { in: [true, false] }
@@ -30,6 +30,10 @@ class User < ApplicationRecord
 
   def agent_id
     username
+  end
+
+  def identity
+    @identity ||= { username: username }.reject {|_, v| v.nil? }
   end
 
   private

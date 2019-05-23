@@ -9,4 +9,6 @@ class Event < ApplicationRecord
   scope :successful, -> { where(outcome: "success") }
   scope :failed, -> { where(outcome: "failure") }
   scope :owned, ->(user_id) { joins(:package).where(packages: { user_id: user_id }) if user_id }
+
+  scope :for_packages, ->(package_scope) { joins(:package).merge(package_scope) }
 end

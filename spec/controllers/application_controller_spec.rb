@@ -47,7 +47,7 @@ RSpec.describe ApplicationController, type: :controller do
     end
   end
 
-  shared_examples_for "a disallowed request" do
+  shared_examples_for "a forbidden request" do
     it { expect(response).to render_template(nil) }
 
     it "does not execute the controller action" do
@@ -77,7 +77,7 @@ RSpec.describe ApplicationController, type: :controller do
       let(:auth_header) { { "Authorization" => "Token token=bad_token" } }
 
       it { expect(response).to have_http_status(401) }
-      it_behaves_like "a disallowed request"
+      it_behaves_like "a forbidden request"
     end
   end
 
@@ -87,7 +87,7 @@ RSpec.describe ApplicationController, type: :controller do
     context "without X-Remote-User" do
       context "without Authorization" do
         it { expect(response).to redirect_to("/login") }
-        it_behaves_like "a disallowed request"
+        it_behaves_like "a forbidden request"
 
         it "stores the requested return path in the session" do
           expect(session[:return_to]).to eq("/something")

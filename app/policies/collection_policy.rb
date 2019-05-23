@@ -10,12 +10,13 @@ class CollectionPolicy
     @scope = scope || base_scope
   end
 
+  # This should potentially move to private, requiring resolve from outside
   def base_scope
     ApplicationRecord.none
   end
 
   def resolve
-    scope
+    scope.all
   end
 
   def index?
@@ -28,6 +29,20 @@ class CollectionPolicy
 
   def authorize!(action, message = nil)
     raise NotAuthorizedError, message unless public_send(action)
+  end
+
+  protected
+
+  def authority
+    Services.checkpoint
+  end
+
+  def can?(action, resource)
+    Checkpoint::Query::ActionPermitted.new(user, action, resource, authority: authority).true?
+  end
+
+  def all_of_type(type)
+    Checkpoint::Resource::AllOfType.new(type)
   end
 
   private

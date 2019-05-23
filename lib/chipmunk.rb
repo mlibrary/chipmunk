@@ -9,4 +9,5 @@ require_relative "chipmunk/errors"
 require_relative "chipmunk/validatable"
 
 require_relative "chipmunk/bag"
+require_relative "chipmunk/resolvers"
 require_relative "bag_repository"

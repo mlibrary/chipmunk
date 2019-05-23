@@ -1,3 +1,4 @@
+@checkpoint_transaction
 Feature: End to End functionality
   As an digitization technician
   I want to upload packages
@@ -5,7 +6,7 @@ Feature: End to End functionality
 
   Background:
     Given time is frozen at "2017-05-17 18:49:08 UTC"
-    And I am a valid API user with username testuser
+    And I am a audio content manager with username testuser
     And I send and accept JSON
     And upload.upload_path is "/tmp/chipmunk/inc"
     And upload.rsync_point is "localhost:/tmp/chipmunk/inc"
@@ -23,7 +24,7 @@ Feature: End to End functionality
     Then the response status should be "201"
     And the response should be empty
     And the response should have the following headers:
-      | Location | /v1/requests/<bag_id> |
+      | Location | /v1/packages/<bag_id> |
     When I send a GET request to "/v1/requests/<bag_id>"
     Then the response status should be "200"
     And the JSON response should be:

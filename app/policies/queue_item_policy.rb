@@ -2,13 +2,17 @@
 
 class QueueItemPolicy < ResourcePolicy
 
-  def create?
-    return false unless QueueItemsPolicy.new(user).new?
-
-    user&.admin? || resource&.user == user
+  def show?
+    package_policy.show?
   end
 
-  def show?
-    user&.admin? || resource&.user == user
+  def save?
+    package_policy.save?
+  end
+
+  private
+
+  def package_policy
+    PackagePolicy.new(user, resource.package)
   end
 end

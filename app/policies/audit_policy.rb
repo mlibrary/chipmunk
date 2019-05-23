@@ -2,6 +2,6 @@
 
 class AuditPolicy < ResourcePolicy
   def show?
-    user.admin?
+    can?(:show)
   end
 end
