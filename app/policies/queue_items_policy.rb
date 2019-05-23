@@ -3,7 +3,7 @@
 class QueueItemsPolicy < CollectionPolicy
 
   def initialize(user, scope = nil, packages_policy: PackagesPolicy.new(user))
-    super(user,scope)
+    super(user, scope)
     @packages_policy = packages_policy
   end
 

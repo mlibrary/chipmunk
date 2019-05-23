@@ -12,10 +12,10 @@ RSpec.describe CollectionPolicy, :checkpoint_transaction, type: :policy do
   let(:scope) { double(:scope, all: []) }
 
   context "with a scope supplied" do
-    let(:scope) { double(:scope, all: 'all') }
+    let(:scope) { double(:scope, all: "all") }
 
     it "returns all of the supplied scope" do
-      expect(subject.resolve).to eq 'all'
+      expect(subject.resolve).to eq "all"
     end
   end
 

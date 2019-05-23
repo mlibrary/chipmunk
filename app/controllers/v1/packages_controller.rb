@@ -66,7 +66,7 @@ module V1
       duplicate ||= Package.find_by_external_id(params[:external_id])
 
       if duplicate
-        resource_policy.new(current_user,duplicate).authorize! :show?
+        resource_policy.new(current_user, duplicate).authorize! :show?
         head 303, location: v1_package_path(duplicate)
       else
         case create_package(create_params)
@@ -108,7 +108,7 @@ module V1
     end
 
     def save_descriptor(descriptor)
-      resource_policy.new(current_user,descriptor).authorize! :save?
+      resource_policy.new(current_user, descriptor).authorize! :save?
 
       if descriptor.valid?
         descriptor.save!

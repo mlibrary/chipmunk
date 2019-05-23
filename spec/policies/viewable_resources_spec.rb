@@ -7,9 +7,9 @@ RSpec.describe ViewableResources do
   let(:authority) { double(:authority) }
 
   context "with no grants" do
-    let(:relation)  { double(:relation, none: "none") }
+    let(:relation) { double(:relation, none: "none") }
 
-    before do
+    before(:each) do
       allow(authority).to receive(:which).with(actor, :show).and_return([])
     end
 
@@ -20,14 +20,14 @@ RSpec.describe ViewableResources do
 
   context "with a global wildcard show grant" do
     let(:token) { Checkpoint::Resource::Token.all }
-    let(:relation)  { double(:relation, all: ['all']) }
+    let(:relation) { double(:relation, all: ["all"]) }
 
-    before do
+    before(:each) do
       allow(authority).to receive(:which).with(actor, :show).and_return([token])
     end
 
     it "scopes the relation to all" do
-      expect(subject.all).to eq ['all']
+      expect(subject.all).to eq ["all"]
     end
   end
 
@@ -37,7 +37,7 @@ RSpec.describe ViewableResources do
     let(:authority) { double(:authority) }
     let(:relation)  { FakeCollection.new }
 
-    before do
+    before(:each) do
       allow(authority).to receive(:which).with(actor, :show).and_return([token1, token2])
     end
 
@@ -47,10 +47,10 @@ RSpec.describe ViewableResources do
   end
 
   context "with a type wildcard show grant" do
-    let(:token) { Checkpoint::Resource::Token.new('some-type', '(all)') }
-    let(:relation)  { FakeCollection.new(resource_types: ['some-type']) }
+    let(:token) { Checkpoint::Resource::Token.new("some-type", "(all)") }
+    let(:relation) { FakeCollection.new(resource_types: ["some-type"]) }
 
-    before do
+    before(:each) do
       allow(authority).to receive(:which).with(actor, :show).and_return([token])
     end
 
@@ -60,17 +60,17 @@ RSpec.describe ViewableResources do
   end
 
   context "with a type wildcard and a specific show grant" do
-    let(:token1) { Checkpoint::Resource::Token.new('some-type', '(all)') }
-    let(:token2) { Checkpoint::Resource::Token.new('foo', 'id') }
+    let(:token1) { Checkpoint::Resource::Token.new("some-type", "(all)") }
+    let(:token2) { Checkpoint::Resource::Token.new("foo", "id") }
     let(:authority) { double(:authority) }
-    let(:relation)  { FakeCollection.new(resource_types: ['some-type', 'foo']) }
+    let(:relation)  { FakeCollection.new(resource_types: ["some-type", "foo"]) }
 
-    before do
+    before(:each) do
       allow(authority).to receive(:which).with(actor, :show).and_return([token1, token2])
     end
 
     it "scopes the relation twice and joins with OR" do
-      expect(subject.all.scopes).to contain_exactly([:type, 'some-type'], [:type_and_id, 'foo', 'id'])
+      expect(subject.all.scopes).to contain_exactly([:type, "some-type"], [:type_and_id, "foo", "id"])
     end
   end
 end

@@ -13,6 +13,6 @@ class Audit < ApplicationRecord
   end
 
   def self.resource_types
-    ['Audit']
+    ["Audit"]
   end
 end

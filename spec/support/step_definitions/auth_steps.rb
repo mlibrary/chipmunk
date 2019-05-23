@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "checkpoint_helper"
 
 module AuthSteps
@@ -8,8 +9,8 @@ module AuthSteps
     header "Authorization", "Token token=#{key}"
 
     Services.checkpoint.grant!(@user,
-                               Checkpoint::Credential::Role.new('content_manager'),
-                               Checkpoint::Resource::AllOfType.new(content_type))
+      Checkpoint::Credential::Role.new("content_manager"),
+      Checkpoint::Resource::AllOfType.new(content_type))
   end
 end
 

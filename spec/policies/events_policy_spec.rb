@@ -9,25 +9,25 @@ RSpec.describe EventsPolicy, :checkpoint_transaction, type: :policy do
 
   let(:user)  { FakeUser.new }
   let(:scope) { FakeCollection.new }
-  let(:packages_policy) { double() }
+  let(:packages_policy) { double }
 
   context "when the PackagesPolicy allows index?" do
-    let(:packages_policy) { double('PackagesPolicy', index?: true) }
+    let(:packages_policy) { double("PackagesPolicy", index?: true) }
 
     it_allows :index?
   end
 
   context "when the PackagesPolicy denies index?" do
-    let(:packages_policy) { double('PackagesPolicy', index?: false) }
+    let(:packages_policy) { double("PackagesPolicy", index?: false) }
 
     it_forbids :index?
   end
 
   describe "#resolve" do
-    let(:packages_policy) { double('PackagesPolicy', resolve: ['dummy-relation']) }
+    let(:packages_policy) { double("PackagesPolicy", resolve: ["dummy-relation"]) }
 
     it "scopes events to corresponding, visible packages" do
-      expect(subject).to resolve([:packages, ['dummy-relation']])
+      expect(subject).to resolve([:packages, ["dummy-relation"]])
     end
   end
 end

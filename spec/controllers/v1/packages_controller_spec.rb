@@ -203,7 +203,7 @@ RSpec.describe V1::PackagesController, type: :controller do
         end
 
         it "saves the package" do
-          expect { post(:create, params: attributes) }.to change { Package.count }.by(1)
+          expect { post(:create, params: attributes) }.to change(Package, :count).by(1)
         end
       end
 
@@ -222,7 +222,7 @@ RSpec.describe V1::PackagesController, type: :controller do
           expect(response).to render_template(nil)
         end
         it "does not create an additional package" do
-          expect { post(:create, params: attributes) }.not_to change { Package.count }
+          expect { post(:create, params: attributes) }.not_to change(Package, :count)
         end
       end
 
@@ -244,22 +244,25 @@ RSpec.describe V1::PackagesController, type: :controller do
           expect(response).to render_template(nil)
         end
         it "does not create an additional package" do
-          expect { post(:create, params: attributes) }.not_to change { Package.count }
+          expect { post(:create, params: attributes) }.not_to change(Package, :count)
         end
       end
 
       context "duplicate bag id" do
         let!(:duplicate) { Fabricate(:package, bag_id: attributes[:bag_id]) }
+
         it_behaves_like "duplicate package"
       end
 
       context "duplicate external id" do
         let!(:duplicate) { Fabricate(:package, external_id: attributes[:external_id]) }
+
         it_behaves_like "duplicate package"
       end
 
       context "duplicate bag id and external id" do
         let!(:duplicate) { Fabricate(:package, bag_id: attributes[:bag_id], external_id: attributes[:external_id]) }
+
         it_behaves_like "duplicate package"
       end
 
@@ -270,7 +273,7 @@ RSpec.describe V1::PackagesController, type: :controller do
       context "bad bag id" do
         let(:attributes) do
           {
-            bag_id: "bad",
+            bag_id:       "bad",
             content_type: "audio",
             external_id:  SecureRandom.uuid
           }

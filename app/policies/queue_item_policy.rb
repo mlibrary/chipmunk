@@ -13,6 +13,6 @@ class QueueItemPolicy < ResourcePolicy
   private
 
   def package_policy
-    PackagePolicy.new(user,resource.package)
+    PackagePolicy.new(user, resource.package)
   end
 end

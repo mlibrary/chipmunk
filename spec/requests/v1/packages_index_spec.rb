@@ -4,14 +4,14 @@ require "rails_helper"
 require "checkpoint_helper"
 
 RSpec.describe "GET /v1/packages", :checkpoint_transaction, type: :request do
-  let(:key)  { Keycard::DigestKey.new }
+  let(:key) { Keycard::DigestKey.new }
   let!(:user) { Fabricate(:user, api_key_digest: key.digest) }
 
-  let!(:video_packages) { Array.new(2) { Fabricate(:package, content_type: 'video') } }
-  let!(:all_packages) { video_packages + [Fabricate(:package, content_type: 'audio')] }
+  let!(:video_packages) { Array.new(2) { Fabricate(:package, content_type: "video") } }
+  let!(:all_packages) { video_packages + [Fabricate(:package, content_type: "audio")] }
 
   let(:headers) do
-    {  "Authorization"   => "Token token=#{key}" }
+    { "Authorization" => "Token token=#{key}" }
   end
 
   context "as a video viewer" do
@@ -19,28 +19,28 @@ RSpec.describe "GET /v1/packages", :checkpoint_transaction, type: :request do
     # TODO: allow specifying something more concise in grant!?
     before(:each) do
       Services.checkpoint.grant!(user,
-                                 Checkpoint::Credential::Role.new("viewer"),
-                                 Checkpoint::Resource::AllOfType.new("video"))
+        Checkpoint::Credential::Role.new("viewer"),
+        Checkpoint::Resource::AllOfType.new("video"))
     end
 
     it "lists all video packages & only video packages" do
       get "/v1/packages", headers: headers
 
-      expect(JSON.parse(response.body).map { |i| i["bag_id"] }).to contain_exactly(*video_packages.map(&:bag_id))
+      expect(JSON.parse(response.body).map {|i| i["bag_id"] }).to contain_exactly(*video_packages.map(&:bag_id))
     end
   end
 
   context "as an admin" do
     before(:each) do
       Services.checkpoint.grant!(user,
-                                 Checkpoint::Credential::Role.new('admin'),
-                                 Checkpoint::Resource::AllOfAnyType.new)
+        Checkpoint::Credential::Role.new("admin"),
+        Checkpoint::Resource::AllOfAnyType.new)
     end
 
     it "lists all packages" do
       get "/v1/packages", headers: headers
 
-      expect(JSON.parse(response.body).map { |i| i["bag_id"] }).to contain_exactly(*all_packages.map(&:bag_id))
+      expect(JSON.parse(response.body).map {|i| i["bag_id"] }).to contain_exactly(*all_packages.map(&:bag_id))
     end
   end
 

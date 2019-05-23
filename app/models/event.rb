@@ -10,6 +10,5 @@ class Event < ApplicationRecord
   scope :failed, -> { where(outcome: "failure") }
   scope :owned, ->(user_id) { joins(:package).where(packages: { user_id: user_id }) if user_id }
 
-  # FIXME PFDR-168 untested
   scope :for_packages, ->(package_scope) { joins(:package).merge(package_scope) }
 end

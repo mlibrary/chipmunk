@@ -50,10 +50,10 @@ class ViewableResources
   private
 
   def authorized_scopes
-    @scopes ||= authority
+    @authorized_scopes ||= authority
       .which(actor, :show)
-      .select { |token| token.all? || relation.resource_types.include?(token.type) }
-      .map { |token| scope_for_resource(token) }
+      .select {|token| token.all? || relation.resource_types.include?(token.type) }
+      .map {|token| scope_for_resource(token) }
   end
 
   def scope_for_resource(token)
@@ -62,7 +62,7 @@ class ViewableResources
     elsif token.all_of_type?
       relation.with_type(token.type)
     else
-      relation.with_type_and_id(token.type,token.id)
+      relation.with_type_and_id(token.type, token.id)
     end
   end
 

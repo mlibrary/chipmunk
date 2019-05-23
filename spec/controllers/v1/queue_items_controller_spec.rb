@@ -87,7 +87,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
       let(:result_status) { status }
       let(:builder) { double(:builder) }
       let(:status) { nil }
-      let(:bag_move_job) { double(:bag_move_job,perform_later: nil) }
+      let(:bag_move_job) { double(:bag_move_job, perform_later: nil) }
 
       before(:each) do
         controller.bag_move_job = bag_move_job
@@ -97,6 +97,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
         before(:each) do
           resource_policy "QueueItemPolicy", show?: true
         end
+
         it "responds with 303" do
           post :create, params: { bag_id: package.bag_id }
           expect(response).to have_http_status(303)
@@ -110,7 +111,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
           expect(response).to render_template(nil)
         end
         it "does not create a queue item" do
-          expect { post :create, params: { bag_id: package.bag_id } }.not_to change { QueueItem.count }
+          expect { post :create, params: { bag_id: package.bag_id } }.not_to change(QueueItem, :count)
         end
         it "does not enqueue a BagMoveJob" do
           expect(bag_move_job).not_to receive(:perform_later)
@@ -137,7 +138,7 @@ RSpec.describe V1::QueueItemsController, type: :controller do
           expect(response).to render_template(nil)
         end
         it "creates a queue item" do
-          expect { post :create, params: { bag_id: package.bag_id } }.to change { QueueItem.count }.by(1)
+          expect { post :create, params: { bag_id: package.bag_id } }.to change(QueueItem, :count).by(1)
         end
         it "the queue item is for the expected descriptor" do
           post :create, params: { bag_id: package.bag_id }

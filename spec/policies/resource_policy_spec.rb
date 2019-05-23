@@ -2,7 +2,7 @@
 
 require "checkpoint_helper"
 
-RSpec.describe ResourcePolicy, :checkpoint_transaction, type: :policy  do
+RSpec.describe ResourcePolicy, :checkpoint_transaction, type: :policy do
   subject { described_class.new(user, resource) }
 
   let(:resource) { double(:resource) }

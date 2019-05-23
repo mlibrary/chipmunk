@@ -114,19 +114,19 @@ RSpec.describe Package, type: :model do
   describe Package::AnyPackage do
     let(:resolver) { Chipmunk::ResourceResolver.new }
     let(:any_package) { Package::AnyPackage.new }
-    it "expands to all configured package types" do
-      expect(resolver.expand(any_package).map { |r| r.token.to_s }).to include(
-        'digital:(all)',
-        'audio:(all)',
-        'video:(all)',
-        'Package:(all)',
-        '(all):(all)'
-      )
 
+    it "expands to all configured package types" do
+      expect(resolver.expand(any_package).map {|r| r.token.to_s }).to include(
+        "digital:(all)",
+        "audio:(all)",
+        "video:(all)",
+        "Package:(all)",
+        "(all):(all)"
+      )
     end
 
     it "converts to Package:(all)" do
-      expect(resolver.convert(any_package).token.to_s).to eq('Package:(all)')
+      expect(resolver.convert(any_package).token.to_s).to eq("Package:(all)")
     end
   end
 end

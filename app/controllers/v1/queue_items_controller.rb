@@ -28,8 +28,8 @@ module V1
     def create
       descriptor = Package.find_by_bag_id!(params[:bag_id])
 
-      if duplicate = QueueItem.where(package: descriptor, status: [:pending, :done]).first
-        resource_policy.new(current_user,duplicate).authorize! :show?
+      if (duplicate = QueueItem.where(package: descriptor, status: [:pending, :done]).first)
+        resource_policy.new(current_user, duplicate).authorize! :show?
         head 303, location: v1_queue_item_path(duplicate)
       else
         case create_qitem(descriptor)
@@ -61,7 +61,7 @@ module V1
     end
 
     def save_qitem(queue_item)
-      resource_policy.new(current_user,queue_item).authorize! :save?
+      resource_policy.new(current_user, queue_item).authorize! :save?
 
       if queue_item.valid?
         queue_item.save!

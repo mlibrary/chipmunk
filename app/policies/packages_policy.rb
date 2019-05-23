@@ -2,11 +2,11 @@
 
 class PackagesPolicy < CollectionPolicy
   def index?
-    can?(:show,Package.of_any_type)
+    can?(:show, Package.of_any_type)
   end
 
   def new?
-    can?(:save,Package.of_any_type)
+    can?(:save, Package.of_any_type)
   end
 
   def base_scope

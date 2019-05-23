@@ -5,6 +5,6 @@ class ApplicationRecord < ActiveRecord::Base
 
   scope :any_of, ->(*scopes) { scopes.reduce(:or) }
 
-  scope :with_type, ->(type) { type == self.to_s ? self.all : self.none }
-  scope :with_type_and_id, ->(type,id) { type == self.to_s ? self.where(id: id) : self.none }
+  scope :with_type, ->(type) { type == to_s ? all : none }
+  scope :with_type_and_id, ->(type, id) { type == to_s ? where(id: id) : none }
 end

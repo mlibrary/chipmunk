@@ -9,8 +9,7 @@ class Package < ApplicationRecord
   scope :stored, -> { Package.where.not(storage_location: nil) }
   scope :owned, ->(user_id) { Package.where(user_id: user_id) }
   scope :with_type, ->(content_type) { Package.where(content_type: content_type) }
-  scope :with_type_and_id, ->(content_type,id) { Package.where(content_type: content_type, id: id) }
-
+  scope :with_type_and_id, ->(content_type, id) { Package.where(content_type: content_type, id: id) }
 
   def to_param
     bag_id
@@ -60,12 +59,12 @@ class Package < ApplicationRecord
   end
 
   def self.resource_types
-    self.content_types
+    content_types
   end
 
   def self.content_types
     Rails.application.config.validation["bagger_profile"].keys +
-    Rails.application.config.validation["external"].keys
+      Rails.application.config.validation["external"].keys
   end
 
   def self.of_any_type
@@ -74,11 +73,11 @@ class Package < ApplicationRecord
 
   class AnyPackage
     def to_resources
-      Package.content_types.map { |t| Checkpoint::Resource::AllOfType.new(t) }
+      Package.content_types.map {|t| Checkpoint::Resource::AllOfType.new(t) }
     end
 
     def resource_type
-      'Package'
+      "Package"
     end
 
     def resource_id

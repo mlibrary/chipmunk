@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rspec/expectations'
+require "rspec/expectations"
 
 class FakeUser < OpenStruct
 
@@ -15,23 +15,23 @@ class FakeUser < OpenStruct
             agent_id:   user_name }.merge(hash))
   end
 
-  def grant_role!(role,content_type)
+  def grant_role!(role, content_type)
     Services.checkpoint.grant!(self,
-                               Checkpoint::Credential::Role.new(role),
-                               Checkpoint::Resource::AllOfType.new(content_type))
+      Checkpoint::Credential::Role.new(role),
+      Checkpoint::Resource::AllOfType.new(content_type))
   end
 
   def self.admin
-    self.new.tap do |u|
+    new.tap do |u|
       Services.checkpoint.grant!(u,
-                                 Checkpoint::Credential::Role.new('admin'),
-                                 Checkpoint::Resource::AllOfAnyType.new)
+        Checkpoint::Credential::Role.new("admin"),
+        Checkpoint::Resource::AllOfAnyType.new)
     end
   end
 
-  def self.with_role(role,content_type)
-    self.new.tap do |u|
-      u.grant_role!(role,content_type)
+  def self.with_role(role, content_type)
+    new.tap do |u|
+      u.grant_role!(role, content_type)
     end
   end
 
@@ -147,7 +147,7 @@ RSpec::Matchers.define :resolve do |*expected|
     @scopes = actual
 
     actual.length == expected.length && expected.all? do |scope|
-      actual.include?(scope) || actual.include?([:type,scope.to_s])
+      actual.include?(scope) || actual.include?([:type, scope.to_s])
     end
   end
   failure_message do |policy|
@@ -186,5 +186,5 @@ RSpec::Matchers.define :have_base_scope do |resource_type, scope|
 end
 
 def it_has_base_scope(resource_type, scope)
-  it { is_expected.to have_base_scope(resource_type, scope) }
+  it { expect(subject).to have_base_scope(resource_type, scope) }
 end

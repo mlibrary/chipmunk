@@ -33,7 +33,7 @@ class User < ApplicationRecord
   end
 
   def identity
-    @identity ||= { username: username }.reject { |_,v| v.nil? }
+    @identity ||= { username: username }.reject {|_, v| v.nil? }
   end
 
   private

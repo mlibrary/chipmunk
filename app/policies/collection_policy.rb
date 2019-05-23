@@ -37,12 +37,12 @@ class CollectionPolicy
     Services.checkpoint
   end
 
-  def can?(action,resource)
+  def can?(action, resource)
     Checkpoint::Query::ActionPermitted.new(user, action, resource, authority: authority).true?
   end
 
   def all_of_type(type)
-    resource = Checkpoint::Resource::AllOfType.new(type)
+    Checkpoint::Resource::AllOfType.new(type)
   end
 
   def scope_for_resource(token)
@@ -51,10 +51,9 @@ class CollectionPolicy
     elsif token.all_of_type?
       scope.with_type(token.type)
     else
-      scope.with_type_and_id(token.type,token.id)
+      scope.with_type_and_id(token.type, token.id)
     end
   end
-
 
   def resource_types
     []

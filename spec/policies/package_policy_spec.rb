@@ -9,7 +9,7 @@ RSpec.describe PackagePolicy, :checkpoint_transaction, type: :policy do
   let(:resource) do
     double(:resource,
       user: double,
-      resource_type: 'video',
+      resource_type: "video",
       id: 1)
   end
 
@@ -21,33 +21,33 @@ RSpec.describe PackagePolicy, :checkpoint_transaction, type: :policy do
   end
 
   context "as a content manager for the content type of the related package" do
-    let(:user) { FakeUser.with_role('content_manager','video') }
+    let(:user) { FakeUser.with_role("content_manager", "video") }
 
     it_allows :show?, :save?
     it_disallows :update?, :destroy?
   end
 
   context "as a content manager for a content type not for the related packages" do
-    let(:user) { FakeUser.with_role('content_manager','digital') }
+    let(:user) { FakeUser.with_role("content_manager", "digital") }
 
     it_disallows :show?, :save?, :update?, :destroy?
   end
 
   context "as a viewer for the content type of the related package" do
-    let(:user) { FakeUser.with_role('viewer','video') }
+    let(:user) { FakeUser.with_role("viewer", "video") }
 
     it_allows :show?
     it_disallows :save?, :update?, :destroy?
   end
 
   context "as a viewer for the content type not for the related package" do
-    let(:user) { FakeUser.with_role('viewer','digital') }
+    let(:user) { FakeUser.with_role("viewer", "digital") }
 
     it_disallows :show?, :save?, :update?, :destroy?
   end
 
   context "as a user granted nothing" do
-    let(:user) {  FakeUser.new }
+    let(:user) { FakeUser.new }
 
     it_disallows :show?, :save?, :update?, :destroy?
   end
