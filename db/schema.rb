@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190301184824) do
+ActiveRecord::Schema.define(version: 20190525124800) do
 
   create_table "audits", force: :cascade do |t|
     t.integer "user_id"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 20190301184824) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "content_type", default: "default", null: false
+    t.string "format", default: "bag", null: false
     t.index ["bag_id"], name: "index_packages_on_bag_id", unique: true
     t.index ["external_id"], name: "index_packages_on_external_id", unique: true
     t.index ["user_id"], name: "index_packages_on_user_id"
