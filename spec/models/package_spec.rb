@@ -8,7 +8,7 @@ RSpec.describe Package, type: :model do
   let(:storage_path) { Rails.application.config.upload["storage_path"] }
   let(:uuid) { "6d11833a-d5fd-44f8-9205-277218578901" }
 
-  [:bag_id, :user_id, :external_id, :storage_location, :content_type].each do |field|
+  [:bag_id, :user_id, :external_id, :format, :storage_location, :content_type].each do |field|
     it "#{field} is required" do
       expect(Fabricate.build(:package, field => nil)).not_to be_valid
     end
@@ -38,14 +38,24 @@ RSpec.describe Package, type: :model do
   end
 
   describe "#dest_path" do
-    it "is based on the storage path and bag id with three levels of hierarchy" do
-      request = Fabricate.build(:package, bag_id: uuid)
-      expect(request.dest_path).to eq(File.join(storage_path, "6d", "11", "83", uuid))
+    context "with a Bag" do
+      it "is based on the storage path and bag id with three levels of hierarchy" do
+        request = Fabricate.build(:package, bag_id: uuid)
+        expect(request.dest_path).to eq(File.join(storage_path, "6d", "11", "83", uuid))
+      end
+
+      it "raises an exception if the bag id is shorter than 6 characters" do
+        request = Fabricate.build(:package, bag_id: "short")
+        expect { request.dest_path }.to raise_error RuntimeError
+      end
     end
 
-    it "raises an exception if the bag id is shorter than 6 characters" do
-      request = Fabricate.build(:package, bag_id: "short")
-      expect { request.dest_path }.to raise_error RuntimeError
+    context "with a plain old zip" do
+      subject(:package) { Fabricate.build(:package, format: 'zip') }
+
+      it "raises an Unsupported Format error" do
+        expect { package.dest_path}.to raise_error(Chipmunk::UnsupportedFormatError, /zip/)
+      end
     end
   end
 

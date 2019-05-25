@@ -18,6 +18,19 @@ class Package < ApplicationRecord
   validates :bag_id, presence: true, length: { minimum: 6 }
   validates :user_id, presence: true
   validates :external_id, presence: true
+  validates :format, presence: true
+
+  class Format < String
+    class Bag < Format
+      def initialize
+        super('bag')
+      end
+    end
+
+    def self.bag
+      Bag.new
+    end
+  end
 
   # Declare the policy class to use for authz
   def self.policy_class
@@ -29,10 +42,14 @@ class Package < ApplicationRecord
   end
 
   def dest_path
-    prefixes = bag_id.match(/^(..)(..)(..).*/)
-    raise "bag_id too short" unless prefixes
+    if format == Format.bag
+      prefixes = bag_id.match(/^(..)(..)(..).*/)
+      raise "bag_id too short" unless prefixes
 
-    File.join(Rails.application.config.upload["storage_path"], *prefixes[1..3], bag_id)
+      File.join(Rails.application.config.upload["storage_path"], *prefixes[1..3], bag_id)
+    else
+      raise Chipmunk::UnsupportedFormatError, "Package #{id} has invalid format: #{format}"
+    end
   end
 
   def upload_link
