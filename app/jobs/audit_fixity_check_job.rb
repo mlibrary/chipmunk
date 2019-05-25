@@ -3,23 +3,36 @@
 class AuditFixityCheckJob < ApplicationJob
   queue_as :default
 
-  def perform(package:, user:, audit:, **kwargs)
+  # TODO: Taking a bag as `storage` here is a testing concession; this should
+  # be cleaned up such that the package and its storage are not separately
+  # passed. We also need a better naming distinction between the artifact and
+  # the storage of it. That may fall out of the other refactoring.
+  def perform(
+    package:,
+    user:,
+    audit:,
+    storage: Services.storage.for(package),
+    mailer: AuditMailer
+  )
     @package = package
     @user = user
     @audit = audit
+    @mailer = mailer
+    @storage = storage
 
-    save_event(*validate_bag(**kwargs))
+    save_event(*validate)
   end
 
-  # TODO: This should just receive a bag.
-  def validate_bag(storage: Services.storage, bag: storage.for(package), mailer: AuditMailer)
+  private
+
+  def validate
     begin
-      if bag.valid?
+      if storage.valid?
         outcome = "success"
         detail = nil
       else
         outcome = "failure"
-        detail = bag.errors.full_messages.join("\n")
+        detail = storage.errors.full_messages.join("\n")
         mailer.failure(emails: [audit.user.email], package: package, error: detail).deliver_now
       end
     rescue RuntimeError => e
@@ -42,8 +55,6 @@ class AuditFixityCheckJob < ApplicationJob
     )
   end
 
-  private
-
-  attr_reader :package, :user, :audit
+  attr_reader :package, :user, :audit, :mailer, :storage
 
 end

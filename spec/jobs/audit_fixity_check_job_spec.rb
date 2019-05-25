@@ -12,7 +12,7 @@ RSpec.describe AuditFixityCheckJob do
   subject(:event) { package.events.last }
 
   def run_job
-    described_class.perform_now(audit: audit, package: package, user: user, bag: bag, mailer: mailer)
+    described_class.perform_now(audit: audit, package: package, user: user, storage: bag, mailer: mailer)
   end
 
   shared_examples_for "a fixity check job" do |outcome|
