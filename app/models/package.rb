@@ -23,7 +23,7 @@ class Package < ApplicationRecord
   class Format < String
     class Bag < Format
       def initialize
-        super('bag')
+        super("bag")
       end
     end
 

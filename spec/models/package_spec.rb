@@ -51,10 +51,10 @@ RSpec.describe Package, type: :model do
     end
 
     context "with a plain old zip" do
-      subject(:package) { Fabricate.build(:package, format: 'zip') }
+      subject(:package) { Fabricate.build(:package, format: "zip") }
 
       it "raises an Unsupported Format error" do
-        expect { package.dest_path}.to raise_error(Chipmunk::UnsupportedFormatError, /zip/)
+        expect { package.dest_path }.to raise_error(Chipmunk::UnsupportedFormatError, /zip/)
       end
     end
   end

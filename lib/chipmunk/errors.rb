@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 module Chipmunk
-  class FileNotFoundError < RuntimeError
-  end
-
-  class UnsupportedFormatError < RuntimeError; end
+  class FileNotFoundError < StandardError; end
+  class PackageNotStoredError < StandardError; end
+  class UnsupportedFormatError < StandardError; end
 end
