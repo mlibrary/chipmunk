@@ -12,3 +12,7 @@ end
 Fabricator(:stored_package, from: :package) do
   storage_location { Rails.root/"spec"/"support"/"fixtures"/"test_bag" }
 end
+
+Fabricator(:unstored_package, from: :package) do
+  storage_location { nil }
+end

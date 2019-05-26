@@ -48,7 +48,7 @@ class Package < ApplicationRecord
 
       File.join(Rails.application.config.upload["storage_path"], *prefixes[1..3], bag_id)
     else
-      raise Chipmunk::UnsupportedFormatError, "Package #{id} has invalid format: #{format}"
+      raise Chipmunk::UnsupportedFormatError, "Package #{bag_id} has invalid format: #{format}"
     end
   end
 
@@ -58,6 +58,23 @@ class Package < ApplicationRecord
 
   def stored?
     storage_location != nil
+  end
+
+  # TODO: This is nasty... but the storage factory checks that the package is stored,
+  # so we have to make the storage proxy manually here. Once the ingest and preservation
+  # responsibilities are clarified, this will fall out. See PFDR-184.
+  def valid_for_ingest?(errors = [])
+    if stored?
+      errors << "Package #{bag_id} is already stored"
+    elsif format != Format.bag
+      errors << "Package #{bag_id} has invalid format: #{format}"
+    elsif !File.exist?(src_path)
+      errors << "Bag does not exist at upload location #{src_path}"
+    end
+
+    return false unless errors.empty?
+
+    Chipmunk::Bag::Validator.new(self, errors, Chipmunk::Bag.new(src_path)).valid?
   end
 
   def external_validation_cmd

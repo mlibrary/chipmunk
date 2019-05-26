@@ -34,9 +34,11 @@ RSpec.describe BagMoveJob do
     end
 
     context "when the package is valid" do
-      let(:validator) { double(:validator, valid?: true) }
+      subject(:run_job) { described_class.perform_now(queue_item) }
 
-      subject(:run_job) { described_class.perform_now(queue_item, validator: validator) }
+      before(:each) do
+        allow(queue_item.package).to receive(:valid_for_ingest?).and_return true
+      end
 
       it "moves the bag" do
         expect(File).to receive(:rename).with(src_path, dest_path)
@@ -78,9 +80,14 @@ RSpec.describe BagMoveJob do
     end
 
     context "when the package is invalid" do
-      let(:validator) { double(:validator, valid?: false) }
+      subject(:run_job) { described_class.perform_now(queue_item) }
 
-      subject(:run_job) { described_class.perform_now(queue_item, errors: ["my error"], validator: validator) }
+      before(:each) do
+        allow(queue_item.package).to receive(:valid_for_ingest?) do |errors|
+          errors << "my error"
+          false
+        end
+      end
 
       it "does not move the bag" do
         expect(File).not_to receive(:rename).with(src_path, dest_path)
@@ -104,31 +111,29 @@ RSpec.describe BagMoveJob do
     end
 
     context "when validation raises an exception" do
-      let(:validator) { double(:validator) }
-
-      subject(:run_job) { described_class.perform_now(queue_item, validator: validator) }
+      subject(:run_job) { described_class.perform_now(queue_item) }
 
       before(:each) do
-        allow(validator).to receive(:valid?).and_raise InjectedError, "injected error"
+        allow(queue_item.package).to receive(:valid_for_ingest?).and_raise("arbitrary failure")
       end
 
       it "re-raises the exception" do
-        expect { run_job }.to raise_exception(InjectedError)
+        expect { run_job }.to raise_exception(/arbitrary failure/)
       end
 
       it "records the exception" do
         begin
           run_job
-        rescue InjectedError
+        rescue StandardError
         end
 
-        expect(queue_item.error).to match(/injected error/)
+        expect(queue_item.error).to match(/arbitrary failure/)
       end
 
       it "records the stack trace" do
         begin
           run_job
-        rescue InjectedError
+        rescue StandardError
         end
 
         expect(queue_item.error).to match(__FILE__)

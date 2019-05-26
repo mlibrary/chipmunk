@@ -64,6 +64,76 @@ RSpec.describe Package, type: :model do
     expect(request.upload_link).to eq(File.join(upload_link, uuid))
   end
 
+  # TODO: This group's ugliness is because we have odd and temporary coupling between
+  # Package and Bag::Validator. Once the ingest/storage phases are separated, this will
+  # clean up considerably. See PFDR-184.
+  describe "#valid_for_ingest?" do
+    context "with an unstored bag" do
+      let(:package)   { Fabricate.build(:unstored_package) }
+      let(:result)    { package.valid_for_ingest? }
+      let(:validator) { double(:validator) }
+      let(:bag_path)  { Rails.root/"spec"/"support"/"fixtures"/"test_bag" }
+
+      before(:each) do
+        allow(package).to receive(:src_path).and_return(bag_path)
+      end
+
+      it "validates the bag with its validator" do
+        expect(Chipmunk::Bag::Validator).to receive(:new).with(package, any_args).and_return(validator)
+        expect(validator).to receive(:valid?)
+        result
+      end
+    end
+
+    context "with a stored bag" do
+      let(:package) { Fabricate.build(:stored_package) }
+      let(:result)  { package.valid_for_ingest? }
+
+      it "fails" do
+        expect(result).to be false
+      end
+
+      it "does not create or use the bag validator" do
+        expect(Chipmunk::Bag::Validator).not_to receive(:new)
+        result
+      end
+    end
+
+    context "with a bag with a bad path" do
+      let(:package) { Fabricate.build(:stored_package) }
+      let(:result)  { package.valid_for_ingest? }
+
+      before(:each) do
+        allow(package).to receive(:src_path).and_return("/bad/path")
+        allow(File).to receive(:exist?).and_call_original
+        allow(File).to receive(:exist?).with("/bad/path").and_return(false)
+      end
+
+      it "fails" do
+        expect(result).to be false
+      end
+
+      it "does not create or use the bag validator" do
+        expect(Chipmunk::Bag::Validator).not_to receive(:new)
+        result
+      end
+    end
+
+    context "with a plain zip" do
+      let(:package) { Fabricate.build(:stored_package) }
+      let(:result)  { package.valid_for_ingest? }
+
+      it "fails" do
+        expect(result).to be false
+      end
+
+      it "does not create or use the bag validator" do
+        expect(Chipmunk::Bag::Validator).not_to receive(:new)
+        result
+      end
+    end
+  end
+
   describe "#external_validation_cmd" do
     let(:package) { Fabricate.build(:package) }
 

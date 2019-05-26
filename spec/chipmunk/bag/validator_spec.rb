@@ -12,6 +12,7 @@ RSpec.describe Chipmunk::Bag::Validator do
   let(:package) { queue_item.package }
   let(:src_path) { queue_item.package.src_path }
   let(:dest_path) { queue_item.package.dest_path }
+  # TODO: Don't depend on package / src_path, just the bag - see PFDR-184
   let(:good_tag_files) { [File.join(src_path, "marc.xml")] }
 
   let(:chipmunk_info_db) do
@@ -51,7 +52,6 @@ RSpec.describe Chipmunk::Bag::Validator do
     let(:validator) { described_class.new(package, errors, fakebag) }
 
     before(:each) do
-      allow(File).to receive(:'exist?').with(src_path).and_return true
       allow(fakebag).to receive(:chipmunk_info).and_return(chipmunk_info)
       allow(fakebag).to receive(:tag_files).and_return(tag_files)
       allow(fakebag).to receive(:bag_info).and_return(bag_info)
