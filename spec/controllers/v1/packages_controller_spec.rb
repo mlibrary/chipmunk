@@ -19,7 +19,7 @@ RSpec.describe V1::PackagesController, type: :controller do
     it_behaves_like "an index endpoint", "PackagesPolicy"
 
     describe "GET #show" do
-      let(:package) { Fabricate(:package) }
+      let(:package) { Fabricate(:stored_package) }
       let(:bag) { double(:bag) }
 
       before(:each) { allow(Services.storage).to receive(:for).with(package).and_return(bag) }
@@ -73,7 +73,7 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       context "with the external_id supplied" do
         include_context "with someone logged in"
-        let(:package) { Fabricate(:package, user: user) }
+        let(:package) { Fabricate(:stored_package, user: user) }
 
         before(:each) { resource_policy "PackagePolicy", show?: true }
 

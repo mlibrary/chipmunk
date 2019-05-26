@@ -42,6 +42,7 @@ class BagMoveJob < ApplicationJob
       queue_item.status = :done
       queue_item.save!
       package.storage_location = package.dest_path
+      package.storage_volume = "root"
       package.save!
     end
   end

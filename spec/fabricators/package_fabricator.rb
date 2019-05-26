@@ -5,8 +5,8 @@ Fabricator(:package, aliases: [:request]) do
   user { Fabricate(:user) }
   external_id { SecureRandom.uuid }
   format { "bag" }
-  storage_location { File.join Faker::Lorem.word, Faker::Lorem.word, Faker::Lorem.word }
-  storage_volume { "root" }
+  storage_location { nil }
+  storage_volume { nil }
   content_type { ["digital", "audio"].sample }
 end
 

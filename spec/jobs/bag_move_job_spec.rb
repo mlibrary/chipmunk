@@ -50,6 +50,12 @@ RSpec.describe BagMoveJob do
         expect(queue_item.status).to eql("done")
       end
 
+      # TODO: Make sure that the destination volume is set properly, not literally; see PFDR-185
+      it "sets the package storage_volume to root" do
+        run_job
+        expect(queue_item.package.storage_volume).to eql("root")
+      end
+
       context "but the move fails" do
         before(:each) do
           allow(File).to receive(:rename).with(src_path, dest_path).and_raise InjectedError, "injected error"

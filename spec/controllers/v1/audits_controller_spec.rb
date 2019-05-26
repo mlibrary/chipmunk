@@ -61,8 +61,8 @@ RSpec.describe V1::AuditsController, type: :controller do
       # create two packages
       include_context "with someone logged in"
 
-      let!(:packages) { Array.new(2) { Fabricate(:package) } }
-      let!(:unstored_package) { Fabricate(:package, storage_location: nil) }
+      let!(:packages) { Array.new(2) { Fabricate(:stored_package) } }
+      let!(:unstored_package) { Fabricate(:unstored_package) }
 
       before(:each) do
         # should not appear in audit since it has no storage to audit
