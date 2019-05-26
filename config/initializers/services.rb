@@ -23,6 +23,12 @@ end
 
 Services = Canister.new
 Services.register(:storage) { PackageStorage.new(formats: { bag: Chipmunk::Bag }) }
+Services.register(:volumes) do
+  VolumeManager.new(volumes: [
+    Volume.new(name: "root", format: :bag, root_path: "/"), # For migration purposes
+    Volume.new(name: "incoming", format: :bag, root_path: Chipmunk.config.upload.upload_path)
+  ])
+end
 Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
 Services.register(:checkpoint) do
   Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new,
