@@ -3,6 +3,8 @@
 require "rails_helper"
 
 describe "/v1/packages/show.json.jbuilder" do
+  include_context "with test volume"
+
   let(:package) { Fabricate.create(:stored_package) }
   let(:bag) { double(:bag, relative_data_files: files) }
   let(:files) { 3.times { Faker::Lorem.word } }

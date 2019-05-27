@@ -11,8 +11,8 @@ Fabricator(:package, aliases: [:request]) do
 end
 
 Fabricator(:stored_package, from: :package) do
-  storage_location { Rails.root/"spec"/"support"/"fixtures"/"test_bag" }
-  storage_volume { "root" }
+  storage_location { "/test_bag" }
+  storage_volume { "test" }
 end
 
 Fabricator(:unstored_package, from: :package) do

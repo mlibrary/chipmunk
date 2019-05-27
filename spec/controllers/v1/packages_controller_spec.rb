@@ -4,6 +4,7 @@ require "rails_helper"
 
 RSpec.describe V1::PackagesController, type: :controller do
   include Checkpoint::Spec::Controller
+  include_context "with test volume"
 
   describe "/v1" do
     it "uses PackagesPolicy as its collection_policy" do

@@ -49,7 +49,7 @@ RSpec.describe PackageStorage do
     double(:package, stored?: true, format: format, storage_location: storage_location)
   end
 
-  def unstored_package(format:, storage_location: "/path")
-    double(:package, stored?: false, format: format, storage_location: storage_location)
+  def unstored_package(format:)
+    double(:package, stored?: false, format: format)
   end
 end

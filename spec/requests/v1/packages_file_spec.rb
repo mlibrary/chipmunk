@@ -4,10 +4,12 @@ require "rails_helper"
 require "checkpoint_helper"
 
 RSpec.describe "GET /v1/packages/:bag_id/:file", type: :request do
+  include_context "with test volume"
+
   let(:key)  { Keycard::DigestKey.new }
   let(:user) { Fabricate(:user, api_key_digest: key.digest) }
   let(:fixture_path) { fixture("video/upload/goodbag") }
-  let(:package) { Fabricate(:package, storage_location: fixture_path, content_type: "video") }
+  let(:package) { Fabricate(:stored_package, storage_location: "/video/upload/goodbag", content_type: "video") }
 
   let(:headers) do
     { "X-SendFile-Type" => "X-Sendfile",

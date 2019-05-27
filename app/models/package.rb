@@ -6,7 +6,7 @@ class Package < ApplicationRecord
   has_one :queue_item
   has_many :events
 
-  scope :stored, -> { Package.where.not(storage_location: nil) }
+  scope :stored, -> { Package.where.not(storage_volume: nil, storage_location: nil) }
   scope :owned, ->(user_id) { Package.where(user_id: user_id) }
   scope :with_type, ->(content_type) { Package.where(content_type: content_type) }
   scope :with_type_and_id, ->(content_type, id) { Package.where(content_type: content_type, id: id) }
@@ -41,12 +41,6 @@ class Package < ApplicationRecord
     File.join(Rails.application.config.upload["upload_path"], user.username, bag_id)
   end
 
-  def storage_root
-    if stored?
-      volumes.find(storage_volume).root_path
-    end
-  end
-
   def dest_path
     if format == Format.bag
       prefixes = bag_id.match(/^(..)(..)(..).*/)
@@ -76,7 +70,25 @@ class Package < ApplicationRecord
   end
 
   def stored?
-    storage_location != nil
+    !storage_volume.nil? && !storage_path.nil?
+  end
+
+  def storage_root
+    if stored?
+      volumes.find(storage_volume).root_path
+    end
+  end
+
+  def storage_path
+    attribute(:storage_location)
+  end
+
+  # TODO: While Package is still responsible for knowing its absolute path in
+  # various places, this adapts the reader to give absolute while the writer
+  # is relative. While using the root volume, they are equivalent.
+  def storage_location
+    path = super&.gsub(/^\/*/, "")
+    storage_root&.join(path).to_s
   end
 
   # TODO: This is nasty... but the storage factory checks that the package is stored,
