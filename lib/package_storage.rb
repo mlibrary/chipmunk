@@ -7,11 +7,19 @@ class PackageStorage
 
   # Create a PackageStorage instance.
   #
-  # @param formats: [Hash<Symbol, Class>] a mapping of the format name to proxy class
+  # TODO: unify VolumeManager and PackageStorage -- Volume should bind not only
+  # its format name, but the storage proxy class; then this should take the volumes
+  # and the volume manager is no longer needed. We only use volumes to encapsulate
+  # the actual storage and storage proxy classes, so they should not leak from here.
+  #
+  # @param formats [Hash<Symbol, Class>] a mapping of the format name to proxy class
+  # @param volume_manager [VolumeManager] the VolumeManager for the Volumes where
+  #   packages are stored
   # @example
-  #   PackageStorage.new(formats: { bag: Chipmunk::Bag })
-  def initialize(formats:)
+  #   PackageStorage.new(formats: { bag: Chipmunk::Bag }, volume_manager: a_volume_manager)
+  def initialize(formats:, volume_manager:)
     @formats = formats
+    @volume_manager = volume_manager
   end
 
   # Retrieve the storage proxy for a given package. The package must be stored and of a registered format.
@@ -21,16 +29,24 @@ class PackageStorage
   def for(package)
     raise Chipmunk::PackageNotStoredError, package unless package.stored?
 
-    factory(package.format).new(package.storage_location)
+    storage_for(package.format).new(path_to(package))
   end
 
   private
 
-  def factory(format)
+  def storage_for(format)
     formats[format.to_sym].tap do |type|
       raise Chipmunk::UnsupportedFormatError, format if type.nil?
     end
   end
 
-  attr_reader :formats
+  def path_to(package)
+    volume_for(package).expand(package.storage_path).to_s
+  end
+
+  def volume_for(package)
+    volume_manager.find(package.storage_volume)
+  end
+
+  attr_reader :formats, :volume_manager
 end

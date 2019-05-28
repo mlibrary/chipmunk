@@ -18,8 +18,16 @@ RSpec.describe Volume do
       expect(volume.format).to eq :fmt
     end
 
-    it "has the correct path" do
+    it "has the correct root path" do
       expect(volume.root_path).to eq Pathname("/path")
+    end
+
+    it "expands relative paths correctly" do
+      expect(volume.expand("foo/bar")).to eq "/path/foo/bar"
+    end
+
+    it "expands absolute paths correctly" do
+      expect(volume.expand("/foo/bar")).to eq "/path/foo/bar"
     end
   end
 

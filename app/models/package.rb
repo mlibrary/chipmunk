@@ -37,6 +37,9 @@ class Package < ApplicationRecord
     PackagePolicy
   end
 
+  # @deprecated need to remove actual paths leaking from the package
+  # TODO: Wrap up the concept and config of incoming bags and set up a volume
+  #       for that, separate from the preservation storage.
   def src_path
     File.join(Rails.application.config.upload["upload_path"], user.username, bag_id)
   end
@@ -73,22 +76,21 @@ class Package < ApplicationRecord
     !storage_volume.nil? && !storage_path.nil?
   end
 
-  def storage_root
-    if stored?
-      volumes.find(storage_volume).root_path
-    end
-  end
-
   def storage_path
     attribute(:storage_location)
   end
 
-  # TODO: While Package is still responsible for knowing its absolute path in
+  def storage_path=(path)
+    storage_location = path # rubocop:disable Lint/UselessAssignment
+  end
+
+  # TODO: While Package is still responsible for sharing its absolute path in
   # various places, this adapts the reader to give absolute while the writer
   # is relative. While using the root volume, they are equivalent.
   def storage_location
-    path = super&.gsub(/^\/*/, "")
-    storage_root&.join(path).to_s
+    if stored?
+      volumes.find(storage_volume).expand(storage_path).to_s
+    end
   end
 
   # TODO: This is nasty... but the storage factory checks that the package is stored,

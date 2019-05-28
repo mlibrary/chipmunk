@@ -28,11 +28,29 @@ class Volume
     validate!
   end
 
+  # Expand a path within the volume for an absolute path on disk. Note that
+  # this does not verify that the path is valid, just that it is localized to
+  # storage volume. Any leading slashes will be flattened. The convention is
+  # to pass absolute paths as if the volume were an isolated system.
+  #
+  # @param path [String|Pathname] the path to expand within the volume
+  # @return [Pathname] the absolute path, suitable for File operations
+  # @example Given a Volume with root_path of "/volume-root":
+  #   volume.expand("/path/within/volume") # ==> Pathname("/volume-root/path/within/volume")
+  def expand(path)
+    (root_path/trim(path)).to_s
+  end
+
   private
 
   def validate!
     raise ArgumentError, "Volume name must not be blank" if name.strip.empty?
     raise ArgumentError, "Volume format must not be blank" if format.to_s.strip.empty?
     raise ArgumentError, "Volume root_path must be absolute (#{root_path})" unless root_path.absolute?
+  end
+
+  # Remove any leading slashes so Pathname joins properly
+  def trim(path)
+    path.to_s.sub(/^\/*/, "")
   end
 end
