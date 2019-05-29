@@ -11,7 +11,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__) + "/../lib")
 module Chipmunk
   class << self
     def config
-      @config ||= Ettin.for(Ettin.settings_files("config", ENV["RAILS_ENVIRONMENT"] || "development"))
+      @config ||= Ettin.for(Ettin.settings_files("config", ENV["RAILS_ENV"] || "development"))
     end
   end
 
