@@ -10,6 +10,14 @@ module Chipmunk
       @bag = BagIt::Bag.new(path, info, _create)
     end
 
+    def self.format
+      "bag"
+    end
+
+    def path
+      bag_dir
+    end
+
     def bag_dir
       Pathname.new(super)
     end

@@ -4,10 +4,12 @@ require "open3"
 
 class BagMoveJob < ApplicationJob
 
-  def perform(queue_item)
+  def perform(queue_item, incoming_storage: Services.incoming_storage, package_storage: Services.storage)
     @queue_item = queue_item
     @package = queue_item.package
     @errors = []
+    @incoming_storage = incoming_storage
+    @package_storage = package_storage
 
     # TODO
     #  - if all validation succeeds:
@@ -31,18 +33,15 @@ class BagMoveJob < ApplicationJob
     package.valid_for_ingest?(errors)
   end
 
-  # TODO: break the connection between the ingest format and storage format
   def move_bag
-    FileUtils.mkdir_p(File.dirname(package.dest_path))
-    File.rename(package.src_path, package.dest_path)
+    source = incoming_storage.for(package)
+    package_storage.write(package, source)
   end
 
   def record_success
     queue_item.transaction do
       queue_item.status = :done
       queue_item.save!
-      package.storage_location = package.dest_path
-      package.storage_volume = "root"
       package.save!
     end
   end
@@ -63,4 +62,5 @@ class BagMoveJob < ApplicationJob
   end
 
   attr_accessor :queue_item, :package, :errors
+  attr_accessor :incoming_storage, :package_storage
 end

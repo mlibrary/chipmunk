@@ -5,7 +5,7 @@ require "rspec/expectations"
 class FakeUser < OpenStruct
 
   def initialize(hash = {})
-    user_name = Faker::Internet.unique.user_name
+    user_name = ChipmunkFaker::Internet.unique.user_name
     super({ username:   user_name,
             identity:   {},
             admin?:     false,

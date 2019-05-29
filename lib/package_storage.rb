@@ -7,19 +7,9 @@ class PackageStorage
 
   # Create a PackageStorage instance.
   #
-  # TODO: unify VolumeManager and PackageStorage -- Volume should bind not only
-  # its format name, but the storage proxy class; then this should take the volumes
-  # and the volume manager is no longer needed. We only use volumes to encapsulate
-  # the actual storage and storage proxy classes, so they should not leak from here.
-  #
-  # @param formats [Hash<Symbol, Class>] a mapping of the format name to proxy class
-  # @param volume_manager [VolumeManager] the VolumeManager for the Volumes where
-  #   packages are stored
-  # @example
-  #   PackageStorage.new(formats: { bag: Chipmunk::Bag }, volume_manager: a_volume_manager)
-  def initialize(formats:, volume_manager:)
-    @formats = formats
-    @volume_manager = volume_manager
+  # @param volumes [Array<Volume>] the storage volumes where packages are stored
+  def initialize(volumes:)
+    @volumes = Hash[volumes.map {|volume| [volume.name, volume] }]
   end
 
   # Retrieve the storage proxy for a given package. The package must be stored and of a registered format.
@@ -29,24 +19,52 @@ class PackageStorage
   def for(package)
     raise Chipmunk::PackageNotStoredError, package unless package.stored?
 
-    storage_for(package.format).new(path_to(package))
+    volume_for(package).get(package.storage_path)
+  end
+
+  def write(package, source)
+    if package.format == Package::Format.bag
+      move_bag(package, source)
+    else
+      raise Chipmunk::UnsupportedFormatError, "Package #{package.bag_id} has invalid format: #{package.format}"
+    end
   end
 
   private
 
-  def storage_for(format)
-    formats[format.to_sym].tap do |type|
-      raise Chipmunk::UnsupportedFormatError, format if type.nil?
+  def move_bag(package, source)
+    bag_id = package.bag_id
+    prefixes = bag_id.match(/^(..)(..)(..).*/)
+    raise "bag_id too short: #{bag_id}" unless prefixes
+
+    storage_path = File.join("/", prefixes[1..3], bag_id)
+    volume = destination_volume(package)
+    dest_path = volume.expand(storage_path)
+
+    FileUtils.mkdir_p(dest_path)
+    File.rename(source.path, dest_path)
+
+    package.storage_volume = volume.name
+    package.storage_path = storage_path
+    true
+  end
+
+  def destination_volume(package)
+    volumes["bags"].tap do |volume|
+      raise Chipmunk::VolumeNotFoundError, "Cannot find destination volume: bags" if volume.nil?
     end
   end
 
-  def path_to(package)
-    volume_for(package).expand(package.storage_path).to_s
-  end
-
   def volume_for(package)
-    volume_manager.find(package.storage_volume)
+    volumes[package.storage_volume].tap do |volume|
+      raise Chipmunk::VolumeNotFoundError, package.storage_volume if volume.nil?
+      unsupported_format!(volume, package) if volume.format != package.format
+    end
   end
 
-  attr_reader :formats, :volume_manager
+  def unsupported_format!(volume, package)
+    raise Chipmunk::UnsupportedFormatError, "Volume #{volume.name} does not support #{package.format}"
+  end
+
+  attr_reader :volumes
 end

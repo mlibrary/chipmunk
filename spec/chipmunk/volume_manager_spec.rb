@@ -3,9 +3,9 @@
 RSpec.describe VolumeManager do
   subject(:manager) { described_class.new(volumes: volumes) }
 
-  let(:volume_one)  { Volume.new(name: "one", format: :fmt, root_path: "/one") }
-  let(:volume_two)  { Volume.new(name: "two", format: :fmt, root_path: "/two") }
-  let(:dupe_volume) { Volume.new(name: "two", format: :fmt, root_path: "/dupe") }
+  let(:volume_one)  { Volume.new(name: "one", package_type: double(:package_type, format: "pkg"), root_path: "/one") }
+  let(:volume_two)  { Volume.new(name: "two", package_type: double(:package_type, format: "pkg"), root_path: "/two") }
+  let(:dupe_volume) { Volume.new(name: "two", package_type: double(:package_type, format: "pkg"), root_path: "/dupe") }
 
   context "when given one volume" do
     let(:volumes) { [volume_one] }

@@ -2,13 +2,13 @@
 
 RSpec.describe PackageStorage do
   FakeBag = Struct.new(:storage_location) do
-    def format
+    def self.format
       "bag"
     end
   end
 
   FakeZip = Struct.new(:storage_location) do
-    def format
+    def self.format
       "zip"
     end
   end
@@ -22,18 +22,17 @@ RSpec.describe PackageStorage do
   # inclusion of specific contexts in tests that need them. In this group,
   # the volumes and volume manager can be considered environmental, while the
   # packages are scenario data.
-  let(:bags)      { Volume.new(name: "bags", format: :bag, root_path: "/bags") }
-  let(:zips)      { Volume.new(name: "zips", format: :zip, root_path: "/zips") }
-  let(:manager)   { VolumeManager.new(volumes: [bags, zips]) }
+  let(:bags)      { Volume.new(name: "bags", package_type: FakeBag, root_path: "/bags") }
+  let(:zips)      { Volume.new(name: "zips", package_type: FakeZip, root_path: "/zips") }
 
   context "with two formats registered: bag and zip" do
-    let(:storage)   { described_class.new(formats: formats, volume_manager: manager) }
+    let(:storage)   { described_class.new(volumes: [bags, zips]) }
 
     let(:formats)   { { bag: FakeBag, zip: FakeZip } }
     let(:bag)       { stored_package(format: "bag", storage_volume: "bags", storage_path: "/a-bag") }
     let(:zip)       { stored_package(format: "zip", storage_volume: "zips", storage_path: "/a-zip") }
-    let(:transient) { unstored_package(format: "bag") }
-    let(:tarball)   { stored_package(format: "tar-gz") }
+    let(:transient) { unstored_package(format: "bag", id: "abcdef-123456") }
+    let(:badvolume) { stored_package(format: "bag", storage_volume: "notfound") }
 
     let(:bag_proxy) { storage.for(bag) }
     let(:zip_proxy) { storage.for(zip) }
@@ -58,18 +57,48 @@ RSpec.describe PackageStorage do
       expect { storage.for(transient) }.to raise_error(Chipmunk::PackageNotStoredError)
     end
 
-    # A package may have a declared storage volume and path, but be of a format
-    # for which we do not have a registered proxy class; raise exception if so.
-    it "raises an error for an unsupported storage format" do
-      expect { storage.for(tarball) }.to raise_error(Chipmunk::UnsupportedFormatError)
+    it "raises an error for a bad volume" do
+      expect { storage.for(badvolume) }.to raise_error(Chipmunk::VolumeNotFoundError)
+    end
+  end
+
+  describe "writing a bag" do
+    subject(:storage) { described_class.new(volumes: [bags]) }
+
+    let(:package)  { spy(:package, format: "bag", bag_id: "abcdef-123456") }
+    let(:disk_bag) { double(:bag, path: "/uploaded/abcdef-123456") }
+
+    before(:each) do
+      allow(FileUtils).to receive(:mkdir_p).with("/bags/ab/cd/ef/abcdef-123456")
+      allow(File).to receive(:rename).with("/uploaded/abcdef-123456", "/bags/ab/cd/ef/abcdef-123456")
+    end
+
+    it "ensures the destination directory exists" do
+      expect(FileUtils).to receive(:mkdir_p)
+      storage.write(package, disk_bag)
+    end
+
+    it "moves the source bag to the destination directory" do
+      expect(File).to receive(:rename)
+      storage.write(package, disk_bag)
+    end
+
+    it "sets the storage_volume" do
+      expect(package).to receive(:storage_volume=).with("bags")
+      storage.write(package, disk_bag)
+    end
+
+    it "sets the storage_path" do
+      expect(package).to receive(:storage_path=).with("/ab/cd/ef/abcdef-123456")
+      storage.write(package, disk_bag)
     end
   end
 
   def stored_package(format:, storage_volume: "test", storage_path: "/path")
-    double(:package, stored?: true, format: format.to_sym, storage_volume: storage_volume, storage_path: storage_path)
+    double(:package, stored?: true, format: format.to_s, storage_volume: storage_volume, storage_path: storage_path)
   end
 
-  def unstored_package(format:)
-    double(:package, stored?: false, format: format)
+  def unstored_package(format:, id:)
+    double(:package, stored?: false, format: format, bag_id: id)
   end
 end

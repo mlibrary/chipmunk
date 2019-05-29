@@ -58,7 +58,7 @@ class Package < ApplicationRecord
       #       the volume. With Pathname's behavior, we have to be careful that
       #       we don't clobber the storage root. This concern should be wrapped
       #       up somewhere specific so it doesn't trickle through the app.
-      root = volumes.find("root").root_path
+      root = volumes.find("bags").root_path
       config_base = Rails.application.config.upload["storage_path"].sub(/^\/*/, "")
       pairtree = File.join(prefixes[1..3])
 
@@ -81,7 +81,7 @@ class Package < ApplicationRecord
   end
 
   def storage_path=(path)
-    storage_location = path # rubocop:disable Lint/UselessAssignment
+    write_attribute(:storage_location, path)
   end
 
   # TODO: While Package is still responsible for sharing its absolute path in
@@ -101,13 +101,13 @@ class Package < ApplicationRecord
       errors << "Package #{bag_id} is already stored"
     elsif format != Format.bag
       errors << "Package #{bag_id} has invalid format: #{format}"
-    elsif !File.exist?(src_path)
-      errors << "Bag does not exist at upload location #{src_path}"
+    elsif !incoming_storage.include?(self)
+      errors << "Bag does not exist at upload location: .../#{user.username}/#{bag_id}"
     end
 
     return false unless errors.empty?
 
-    Chipmunk::Bag::Validator.new(self, errors, Chipmunk::Bag.new(src_path)).valid?
+    Chipmunk::Bag::Validator.new(self, errors, incoming_storage.for(self)).valid?
   end
 
   def external_validation_cmd
@@ -156,5 +156,13 @@ class Package < ApplicationRecord
 
   def volumes
     @volumes ||= Services.volumes
+  end
+
+  def package_storage
+    @package_storage ||= Services.storage
+  end
+
+  def incoming_storage
+    @incoming_storage ||= Services.incoming_storage
   end
 end

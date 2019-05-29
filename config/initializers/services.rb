@@ -21,15 +21,31 @@ if Chipmunk.config.keycard&.access
   Keycard.config.access = Chipmunk.config.keycard.access
 end
 
+Chipmunk.config.upload.tap do |upload|
+  %w[upload_path storage_path].each do |option|
+    path = upload[option].to_s.strip
+    raise ArgumentError, "Configuration option upload.#{option} must not be empty" if path.empty?
+    upload[option] = Rails.root.join(path).to_s unless path.start_with?("/")
+  end
+end
+
 Services = Canister.new
 Services.register(:volumes) do
   VolumeManager.new(volumes: [
-    Volume.new(name: "root", format: :bag, root_path: "/"), # For migration purposes
-    Volume.new(name: "incoming", format: :bag, root_path: Chipmunk.config.upload.upload_path)
+    Volume.new(name: "root", package_type: Chipmunk::Bag, root_path: "/"), # For migration purposes
+    Volume.new(name: "incoming", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.upload_path),
+    Volume.new(name: "bags", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.storage_path)
   ])
 end
-Services.register(:storage) do |services|
-  PackageStorage.new(formats: { bag: Chipmunk::Bag }, volume_manager: services.volumes)
+# TODO: consult the environment-specific configuration for a set of volumes
+Services.register(:incoming_storage) do
+  IncomingStorage.new(volume: Volume.new(name: "incoming", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.upload_path))
+end
+Services.register(:storage) do
+  PackageStorage.new(volumes: [
+      Volume.new(name: "root", package_type: Chipmunk::Bag, root_path: "/"), # For migration purposes
+      Volume.new(name: "bags", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.storage_path)
+  ])
 end
 Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
 Services.register(:checkpoint) do

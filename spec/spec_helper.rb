@@ -38,6 +38,11 @@ RSpec.configure do |config|
 
   config.filter_run_excluding integration: true unless ENV["RUN_INTEGRATION"]
   config.example_status_persistence_file_path = "spec/examples.txt"
+
+  config.after(:each) do
+    # Reset the unique generator used for usernames for each example
+    ChipmunkFaker::Internet.clear
+  end
 end
 
 support_dir = File.expand_path(File.join(File.dirname(__FILE__), "support"))
@@ -51,4 +56,8 @@ require "webmock/rspec"
 
 def fixture(*path)
   File.join(Rails.application.root, "spec", "support", "fixtures", File.join(*path))
+end
+
+module ChipmunkFaker
+  Internet = Faker::Internet.unique
 end

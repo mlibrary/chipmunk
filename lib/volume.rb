@@ -8,22 +8,19 @@ class Volume
   # @return [String] the name of the volume
   attr_reader :name
 
-  # @return [Symbol] the format of the volume
-  attr_reader :format
-
   # @return [Pathname] the absolute path to the storage root of the volume
   attr_reader :root_path
 
   # Create a new Volume.
   #
   # @param name [String] the name of the Volume; coerced to String
-  # @param format [Symbol] the format of the Volume; coerced to Symbol
+  # @param package_type [Class] the storage class for this volume (Chipmunk::Bag)
   # @param root_path [String|Pathname] the path to the storage root for this Volume;
   #   must be absolute; coerced to Pathname
   # @raise [ArgumentError] if the name is blank or root_path is relative
-  def initialize(name:, format:, root_path:)
+  def initialize(name:, package_type:,  root_path:)
     @name = name.to_s
-    @format = format.to_sym
+    @package_type = package_type
     @root_path = Pathname(root_path)
     validate!
   end
@@ -41,6 +38,20 @@ class Volume
     (root_path/trim(path)).to_s
   end
 
+  def get(path)
+    package_type.new(expand(path))
+  end
+
+  def include?(path)
+    File.exist?(expand(path))
+  end
+
+  # @!attribute [r]
+  #   @return [String] the format name of the items in this volume
+  def format
+    package_type.format
+  end
+
   private
 
   def validate!
@@ -53,4 +64,6 @@ class Volume
   def trim(path)
     path.to_s.sub(/^\/*/, "")
   end
+
+  attr_reader :package_type
 end

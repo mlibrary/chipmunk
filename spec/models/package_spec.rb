@@ -31,13 +31,15 @@ RSpec.describe Package, type: :model do
     expect(package).not_to be_valid
   end
 
+  # TODO: Move the source path stuff to IncomingStorage
   it "has an source path based on the user and the bag id" do
     user = Fabricate.build(:user, username: "someuser")
     request = Fabricate.build(:package, user: user, bag_id: uuid)
     expect(request.src_path).to eq(File.join(upload_path, "someuser", uuid))
   end
 
-  describe "#dest_path" do
+  # TODO: Move the pairtree stuff to PackageStorage#write
+  xdescribe "#dest_path" do
     context "with a Bag" do
       it "is based on the storage path and bag id with three levels of hierarchy" do
         request = Fabricate.build(:package, bag_id: uuid)
@@ -70,18 +72,18 @@ RSpec.describe Package, type: :model do
   describe "#valid_for_ingest?" do
     context "with an unstored bag" do
       let(:package)   { Fabricate.build(:unstored_package) }
-      let(:result)    { package.valid_for_ingest? }
       let(:validator) { double(:validator) }
-      let(:bag_path)  { Rails.root/"spec"/"support"/"fixtures"/"test_bag" }
+      let(:disk_bag)  { double(:bag) }
 
       before(:each) do
-        allow(package).to receive(:src_path).and_return(bag_path)
+        allow(Services.incoming_storage).to receive(:include?).with(package).and_return(true)
+        allow(Services.incoming_storage).to receive(:for).with(package).and_return(disk_bag)
+        allow(Chipmunk::Bag::Validator).to receive(:new).with(package, anything, disk_bag).and_return(validator)
       end
 
       it "validates the bag with its validator" do
-        expect(Chipmunk::Bag::Validator).to receive(:new).with(package, any_args).and_return(validator)
         expect(validator).to receive(:valid?)
-        result
+        package.valid_for_ingest?
       end
     end
 

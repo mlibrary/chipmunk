@@ -10,6 +10,7 @@ require_relative "chipmunk/validatable"
 
 require_relative "chipmunk/bag"
 require_relative "chipmunk/resolvers"
+require_relative "incoming_storage"
 require_relative "package_storage"
 
 require_relative "volume"
