@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe Chipmunk::PackageStorage do
-  FakeBag = Struct.new(:storage_location) do
+  FakeBag = Struct.new(:storage_path) do
     def self.format
       "bag"
     end
   end
 
-  FakeZip = Struct.new(:storage_location) do
+  FakeZip = Struct.new(:storage_path) do
     def self.format
       "zip"
     end

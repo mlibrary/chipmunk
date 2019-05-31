@@ -19,7 +19,7 @@ describe "/v1/packages/show.json.jbuilder" do
   context "with an underprivileged user" do
     let(:user) { double(:user, admin?: false) }
 
-    it "renders correct json w/o storage_location" do
+    it "renders correct json w/o storage details" do
       expect(JSON.parse(rendered, symbolize_names: true))
         .to eql(
           bag_id:       package.bag_id,
@@ -46,8 +46,7 @@ describe "/v1/packages/show.json.jbuilder" do
           content_type: package.content_type,
           external_id:  package.external_id,
           upload_link:  package.upload_link,
-          storage_volume: package.storage_volume,
-          storage_path: package.storage_path,
+          storage_location: package.storage_location,
           stored:       package.stored?,
           files:        files,
           created_at:   package.created_at.to_formatted_s(:default),

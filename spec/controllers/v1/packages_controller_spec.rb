@@ -121,7 +121,7 @@ RSpec.describe V1::PackagesController, type: :controller do
       before(:each) { resource_policy "PackagePolicy", show?: true }
 
       context "the package is not stored" do
-        let(:package) { Fabricate(:package, user: user, storage_location: nil) }
+        let(:package) { Fabricate(:package, user: user) }
 
         it "returns a 404" do
           get :send_package, params: { bag_id: package.bag_id }

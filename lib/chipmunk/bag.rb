@@ -15,7 +15,7 @@ module Chipmunk
     end
 
     def path
-      bag_dir
+      bag_dir.to_s
     end
 
     def bag_dir

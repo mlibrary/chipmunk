@@ -6,7 +6,7 @@ class Package < ApplicationRecord
   has_one :queue_item
   has_many :events
 
-  scope :stored, -> { Package.where.not(storage_volume: nil, storage_location: nil) }
+  scope :stored, -> { Package.where.not(storage_volume: nil, storage_path: nil) }
   scope :owned, ->(user_id) { Package.where(user_id: user_id) }
   scope :with_type, ->(content_type) { Package.where(content_type: content_type) }
   scope :with_type_and_id, ->(content_type, id) { Package.where(content_type: content_type, id: id) }
@@ -45,21 +45,13 @@ class Package < ApplicationRecord
     !storage_volume.nil? && !storage_path.nil?
   end
 
-  def storage_path
-    attribute(:storage_location)
-  end
-
-  def storage_path=(path)
-    write_attribute(:storage_location, path)
-  end
-
-  # TODO: While Package is still responsible for sharing its absolute path in
-  # various places, this adapts the reader to give absolute while the writer
-  # is relative. While using the root volume, they are equivalent.
+  # V1 API exposes the absolute path to storage.
   def storage_location
-    if stored?
-      storage.for(self).path
-    end
+    package_storage.for(self).path if stored?
+  end
+
+  def storage_location=
+    raise "storage_location is not writable; use storage_volume and storage_path"
   end
 
   # TODO: This is nasty... but the storage factory checks that the package is stored,

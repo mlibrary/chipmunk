@@ -39,7 +39,6 @@ RSpec.shared_examples "a validation integration" do
 
   def package_with_id(bag_id)
     Fabricate(:package, content_type: content_type,
-              storage_location: nil,
               bag_id: bag_id,
               external_id: external_id,
               user: upload_user)

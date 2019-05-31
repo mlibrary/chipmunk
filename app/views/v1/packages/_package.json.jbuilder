@@ -6,8 +6,7 @@ json.content_type package.content_type
 json.external_id package.external_id
 json.upload_link package.upload_link
 if @current_user&.admin?
-  json.storage_volume package.storage_volume
-  json.storage_path package.storage_path
+  json.storage_location package.storage_location
 end
 json.stored package.stored?
 json.created_at package.created_at.to_formatted_s(:default)

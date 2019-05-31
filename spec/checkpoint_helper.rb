@@ -14,6 +14,7 @@ unless Checkpoint::DB.connected?
   end
 end
 Checkpoint::DB.initialize!
+Checkpoint::DB[:grants].truncate
 
 RSpec.configure do |config|
   config.around(:each, checkpoint_transaction: true) do |example|
