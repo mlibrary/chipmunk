@@ -11,7 +11,6 @@ RSpec.describe Chipmunk::Bag::Validator do
   let(:queue_item) { Fabricate(:queue_item) }
   let(:package) { queue_item.package }
   let(:src_path) { queue_item.package.src_path }
-  let(:dest_path) { queue_item.package.dest_path }
   # TODO: Don't depend on package / src_path, just the bag - see PFDR-184
   let(:good_tag_files) { [File.join(src_path, "marc.xml")] }
 

@@ -22,6 +22,8 @@ class PackageStorage
     volume_for(package).get(package.storage_path)
   end
 
+  # Move the source archive into preservation storage and update the package's
+  # storage_volume and storage_path accordingly.
   def write(package, source)
     if package.format == Package::Format.bag
       move_bag(package, source)

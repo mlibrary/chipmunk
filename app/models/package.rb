@@ -44,30 +44,6 @@ class Package < ApplicationRecord
     File.join(Rails.application.config.upload["upload_path"], user.username, bag_id)
   end
 
-  def dest_path
-    if format == Format.bag
-      prefixes = bag_id.match(/^(..)(..)(..).*/)
-      raise "bag_id too short" unless prefixes
-
-      # TODO: Temporary path handling based on the "root" volume and applying
-      #       the upload.storage_path within it. This will fall away when there
-      #       is a structured way to move packages between volumes.
-      # TODO: Find a replacement/wrapper for Pathname; its path1 + path2
-      #       behavior is to take path2 if it is absolute. We want the
-      #       semantics and consistency of storage paths as absolute _within_
-      #       the volume. With Pathname's behavior, we have to be careful that
-      #       we don't clobber the storage root. This concern should be wrapped
-      #       up somewhere specific so it doesn't trickle through the app.
-      root = volumes.find("bags").root_path
-      config_base = Rails.application.config.upload["storage_path"].sub(/^\/*/, "")
-      pairtree = File.join(prefixes[1..3])
-
-      (root/config_base/pairtree/bag_id).to_s
-    else
-      raise Chipmunk::UnsupportedFormatError, "Package #{bag_id} has invalid format: #{format}"
-    end
-  end
-
   def upload_link
     File.join(Rails.application.config.upload["rsync_point"], bag_id)
   end

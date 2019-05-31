@@ -62,35 +62,59 @@ RSpec.describe PackageStorage do
     end
   end
 
-  describe "writing a bag" do
-    subject(:storage) { described_class.new(volumes: [bags]) }
+  describe "writing a package" do
+    context "with a good bag" do
+      subject(:storage) { described_class.new(volumes: [bags]) }
 
-    let(:package)  { spy(:package, format: "bag", bag_id: "abcdef-123456") }
-    let(:disk_bag) { double(:bag, path: "/uploaded/abcdef-123456") }
+      let(:package)  { spy(:package, format: "bag", bag_id: "abcdef-123456") }
+      let(:disk_bag) { double(:bag, path: "/uploaded/abcdef-123456") }
 
-    before(:each) do
-      allow(FileUtils).to receive(:mkdir_p).with("/bags/ab/cd/ef/abcdef-123456")
-      allow(File).to receive(:rename).with("/uploaded/abcdef-123456", "/bags/ab/cd/ef/abcdef-123456")
+      before(:each) do
+        allow(FileUtils).to receive(:mkdir_p).with("/bags/ab/cd/ef/abcdef-123456")
+        allow(File).to receive(:rename).with("/uploaded/abcdef-123456", "/bags/ab/cd/ef/abcdef-123456")
+      end
+
+      it "ensures the destination directory exists" do
+        expect(FileUtils).to receive(:mkdir_p)
+        storage.write(package, disk_bag)
+      end
+
+      it "moves the source bag to the destination directory" do
+        expect(File).to receive(:rename)
+        storage.write(package, disk_bag)
+      end
+
+      it "sets the storage_volume" do
+        expect(package).to receive(:storage_volume=).with("bags")
+        storage.write(package, disk_bag)
+      end
+
+      it "sets the storage_path with three levels of hierarchy" do
+        expect(package).to receive(:storage_path=).with("/ab/cd/ef/abcdef-123456")
+        storage.write(package, disk_bag)
+      end
     end
 
-    it "ensures the destination directory exists" do
-      expect(FileUtils).to receive(:mkdir_p)
-      storage.write(package, disk_bag)
+    context "with a badly identified bag (shorter than 6 chars)" do
+      subject(:storage) { described_class.new(volumes: [bags]) }
+
+      let(:package)  { double(:package, format: "bag", bag_id: "ab12") }
+      let(:disk_bag) { double(:bag, path: "/uploaded/ab12") }
+
+      it "raises an exception" do
+        expect { storage.write(package, disk_bag) }.to raise_error RuntimeError
+      end
     end
 
-    it "moves the source bag to the destination directory" do
-      expect(File).to receive(:rename)
-      storage.write(package, disk_bag)
-    end
+    context "with an unsupported archive format" do
+      subject(:storage) { described_class.new(volumes: [bags]) }
 
-    it "sets the storage_volume" do
-      expect(package).to receive(:storage_volume=).with("bags")
-      storage.write(package, disk_bag)
-    end
+      let(:package) { double(:package, format: "junk", bag_id: "id") }
+      let(:archive) { double(:archive) }
 
-    it "sets the storage_path" do
-      expect(package).to receive(:storage_path=).with("/ab/cd/ef/abcdef-123456")
-      storage.write(package, disk_bag)
+      it "raises an Unsupported Format error" do
+        expect { storage.write(package, archive) }.to raise_error(Chipmunk::UnsupportedFormatError, /junk/)
+      end
     end
   end
 

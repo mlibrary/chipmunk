@@ -38,29 +38,6 @@ RSpec.describe Package, type: :model do
     expect(request.src_path).to eq(File.join(upload_path, "someuser", uuid))
   end
 
-  # TODO: Move the pairtree stuff to PackageStorage#write
-  xdescribe "#dest_path" do
-    context "with a Bag" do
-      it "is based on the storage path and bag id with three levels of hierarchy" do
-        request = Fabricate.build(:package, bag_id: uuid)
-        expect(request.dest_path).to eq(File.join(storage_path, "6d", "11", "83", uuid))
-      end
-
-      it "raises an exception if the bag id is shorter than 6 characters" do
-        request = Fabricate.build(:package, bag_id: "short")
-        expect { request.dest_path }.to raise_error RuntimeError
-      end
-    end
-
-    context "with a plain old zip" do
-      subject(:package) { Fabricate.build(:package, format: "zip") }
-
-      it "raises an Unsupported Format error" do
-        expect { package.dest_path }.to raise_error(Chipmunk::UnsupportedFormatError, /zip/)
-      end
-    end
-  end
-
   it "has an upload link based on the rsync point and bag id" do
     request = Fabricate.build(:package, bag_id: uuid)
     expect(request.upload_link).to eq(File.join(upload_link, uuid))
