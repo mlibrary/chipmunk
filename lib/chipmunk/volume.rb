@@ -39,7 +39,14 @@ module Chipmunk
       (root_path/trim(path)).to_s
     end
 
+    # Get the archive/package stored in this volume at a given path.
+    #
+    # @param [String] the path to the package within the volume to retrieve
+    # @return [Chipmunk::Bag] a storage proxy for the package
+    # @raise [Chipmunk::PackageNotFoundError] if there is no package stored at the given path
     def get(path)
+      raise Chipmunk::PackageNotFoundError unless include?(path)
+
       package_type.new(expand(path))
     end
 

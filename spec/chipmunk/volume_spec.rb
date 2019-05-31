@@ -31,11 +31,7 @@ RSpec.describe Chipmunk::Volume do
       expect(volume.expand("/foo/bar")).to eq "/path/foo/bar"
     end
 
-    it "creates a storage proxy for a path" do
-      expect(volume.get("/foo/bar")).to eq proxy
-    end
-
-    describe "checking package existence" do
+    describe "getting packages" do
       before(:each) do
         allow(File).to receive(:exist?).and_return false
         allow(File).to receive(:exist?).with("/path/existent").and_return true
@@ -47,6 +43,14 @@ RSpec.describe Chipmunk::Volume do
 
       it "reports nonexistent packages as missing" do
         expect(volume.include?("/nonexistent")).to eq false
+      end
+
+      it "creates a storage proxy for an existent path" do
+        expect(volume.get("/existent")).to eq proxy
+      end
+
+      it "raises an error when trying to get a nonexistent package" do
+        expect { volume.get("/nonexistent") }.to raise_error(Chipmunk::PackageNotFoundError)
       end
     end
   end

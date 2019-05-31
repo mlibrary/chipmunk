@@ -25,6 +25,11 @@ RSpec.describe Chipmunk::PackageStorage do
   let(:bags)      { Chipmunk::Volume.new(name: "bags", package_type: FakeBag, root_path: "/bags") }
   let(:zips)      { Chipmunk::Volume.new(name: "zips", package_type: FakeZip, root_path: "/zips") }
 
+  before(:each) do
+    allow(bags).to receive(:include?).with("/a-bag").and_return true
+    allow(zips).to receive(:include?).with("/a-zip").and_return true
+  end
+
   context "with two formats registered: bag and zip" do
     let(:storage)   { described_class.new(volumes: [bags, zips]) }
 
@@ -123,6 +128,6 @@ RSpec.describe Chipmunk::PackageStorage do
   end
 
   def unstored_package(format:, id:)
-    double(:package, stored?: false, format: format, bag_id: id)
+    double(:package, stored?: false, storage_volume: nil, storage_path: nil, format: format, bag_id: id)
   end
 end
