@@ -58,7 +58,7 @@ class Package < ApplicationRecord
   # is relative. While using the root volume, they are equivalent.
   def storage_location
     if stored?
-      volumes.find(storage_volume).expand(storage_path).to_s
+      storage.for(self).path
     end
   end
 
@@ -123,10 +123,6 @@ class Package < ApplicationRecord
   end
 
   private
-
-  def volumes
-    @volumes ||= Services.volumes
-  end
 
   def package_storage
     @package_storage ||= Services.storage

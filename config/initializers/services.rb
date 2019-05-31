@@ -30,13 +30,6 @@ Chipmunk.config.upload.tap do |upload|
 end
 
 Services = Canister.new
-Services.register(:volumes) do
-  VolumeManager.new(volumes: [
-    Volume.new(name: "root", package_type: Chipmunk::Bag, root_path: "/"), # For migration purposes
-    Volume.new(name: "incoming", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.upload_path),
-    Volume.new(name: "bags", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.storage_path)
-  ])
-end
 # TODO: consult the environment-specific configuration for a set of volumes
 Services.register(:incoming_storage) do
   IncomingStorage.new(volume: Volume.new(name: "incoming", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.upload_path))

@@ -14,4 +14,3 @@ require_relative "incoming_storage"
 require_relative "package_storage"
 
 require_relative "volume"
-require_relative "volume_manager"
