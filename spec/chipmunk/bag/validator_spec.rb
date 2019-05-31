@@ -10,9 +10,7 @@ RSpec.describe Chipmunk::Bag::Validator do
 
   let(:queue_item) { Fabricate(:queue_item) }
   let(:package) { queue_item.package }
-  let(:src_path) { queue_item.package.src_path }
-  # TODO: Don't depend on package / src_path, just the bag - see PFDR-184
-  let(:good_tag_files) { [File.join(src_path, "marc.xml")] }
+  let(:good_tag_files) { [fixture("marc.xml")] }
 
   let(:chipmunk_info_db) do
     {
@@ -31,7 +29,7 @@ RSpec.describe Chipmunk::Bag::Validator do
   end
 
   # default (good case)
-  let(:fakebag) { double("fake bag", valid?: true) }
+  let(:fakebag) { double("fake bag", valid?: true, path: "/incoming/bag") }
   let(:ext_validation_result) { ["", "", exitstatus(0)] }
   let(:bag_info) { { "Foo" => "bar", "Baz" => "quux" } }
   let(:tag_files) { good_tag_files }
@@ -51,6 +49,7 @@ RSpec.describe Chipmunk::Bag::Validator do
     let(:validator) { described_class.new(package, errors, fakebag) }
 
     before(:each) do
+      allow(Services.incoming_storage).to receive(:for).and_return(fakebag)
       allow(fakebag).to receive(:chipmunk_info).and_return(chipmunk_info)
       allow(fakebag).to receive(:tag_files).and_return(tag_files)
       allow(fakebag).to receive(:bag_info).and_return(bag_info)

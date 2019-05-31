@@ -5,8 +5,6 @@ require "rails_helper"
 RSpec.describe BagMoveJob do
   let(:queue_item) { Fabricate(:queue_item) }
   let(:package) { queue_item.package }
-  let(:src_path) { package.src_path }
-  let(:good_tag_files) { [File.join(src_path, "marc.xml")] }
 
   let(:chipmunk_info_db) do
     {

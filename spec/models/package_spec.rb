@@ -31,13 +31,6 @@ RSpec.describe Package, type: :model do
     expect(package).not_to be_valid
   end
 
-  # TODO: Move the source path stuff to IncomingStorage
-  it "has an source path based on the user and the bag id" do
-    user = Fabricate.build(:user, username: "someuser")
-    request = Fabricate.build(:package, user: user, bag_id: uuid)
-    expect(request.src_path).to eq(File.join(upload_path, "someuser", uuid))
-  end
-
   it "has an upload link based on the rsync point and bag id" do
     request = Fabricate.build(:package, bag_id: uuid)
     expect(request.upload_link).to eq(File.join(upload_link, uuid))
@@ -83,9 +76,7 @@ RSpec.describe Package, type: :model do
       let(:result)  { package.valid_for_ingest? }
 
       before(:each) do
-        allow(package).to receive(:src_path).and_return("/bad/path")
-        allow(File).to receive(:exist?).and_call_original
-        allow(File).to receive(:exist?).with("/bad/path").and_return(false)
+        allow(Services.incoming_storage).to receive(:include?).and_return(false)
       end
 
       it "fails" do
@@ -115,6 +106,11 @@ RSpec.describe Package, type: :model do
 
   describe "#external_validation_cmd" do
     let(:package) { Fabricate.build(:package) }
+    let(:bag) { double(:bag, path: "/incoming/bag") }
+
+    before(:each) do
+      allow(Services.incoming_storage).to receive(:for).and_return(bag)
+    end
 
     context "when there is an external command configured" do
       around(:each) do |example|
@@ -126,6 +122,10 @@ RSpec.describe Package, type: :model do
 
       it "returns a command starting with the configured executable" do
         expect(package.external_validation_cmd).to match(/^\/bin\/true/)
+      end
+
+      it "includes the path to the source archive" do
+        expect(package.external_validation_cmd).to match("/incoming/bag")
       end
     end
 

@@ -76,11 +76,13 @@ RSpec.shared_examples "a validation integration" do
   context "with a nonexistent bag" do
     let(:package) { package_with_id("deleteme") }
 
-    before(:each) { FileUtils.rmtree package.src_path }
+    before(:each) do
+      allow(Services.incoming_storage).to receive(:include?).and_return(false)
+    end
 
-    it "does not create a bag" do
+    it "does not store the bag" do
+      expect(Services.storage).to_not receive(:write)
       subject
-      expect(File.exist?(package.src_path)).to be(false)
     end
   end
 end

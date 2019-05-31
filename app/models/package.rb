@@ -37,13 +37,6 @@ class Package < ApplicationRecord
     PackagePolicy
   end
 
-  # @deprecated need to remove actual paths leaking from the package
-  # TODO: Wrap up the concept and config of incoming bags and set up a volume
-  #       for that, separate from the preservation storage.
-  def src_path
-    File.join(Rails.application.config.upload["upload_path"], user.username, bag_id)
-  end
-
   def upload_link
     File.join(Rails.application.config.upload["rsync_point"], bag_id)
   end
@@ -90,7 +83,8 @@ class Package < ApplicationRecord
     ext_cmd = Rails.application.config.validation["external"][content_type.to_s]
     return unless ext_cmd
 
-    [ext_cmd, external_id, src_path].join(" ")
+    path = incoming_storage.for(self).path
+    [ext_cmd, external_id, path].join(" ")
   end
 
   def bagger_profile
