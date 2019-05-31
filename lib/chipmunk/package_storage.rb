@@ -26,7 +26,7 @@ module Chipmunk
     # Move the source archive into preservation storage and update the package's
     # storage_volume and storage_path accordingly.
     def write(package, source)
-      if package.format == Package::Format.bag
+      if package.format == Chipmunk::Bag.format
         move_bag(package, source)
       else
         raise Chipmunk::UnsupportedFormatError, "Package #{package.bag_id} has invalid format: #{package.format}"

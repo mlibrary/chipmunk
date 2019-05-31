@@ -20,18 +20,6 @@ class Package < ApplicationRecord
   validates :external_id, presence: true
   validates :format, presence: true
 
-  class Format < String
-    class Bag < Format
-      def initialize
-        super("bag")
-      end
-    end
-
-    def self.bag
-      Bag.new
-    end
-  end
-
   # Declare the policy class to use for authz
   def self.policy_class
     PackagePolicy
@@ -60,7 +48,7 @@ class Package < ApplicationRecord
   def valid_for_ingest?(errors = [])
     if stored?
       errors << "Package #{bag_id} is already stored"
-    elsif format != Format.bag
+    elsif format != Chipmunk::Bag.format
       errors << "Package #{bag_id} has invalid format: #{format}"
     elsif !incoming_storage.include?(self)
       errors << "Bag does not exist at upload location: .../#{user.username}/#{bag_id}"
