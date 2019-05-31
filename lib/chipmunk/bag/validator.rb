@@ -11,14 +11,15 @@ class Chipmunk::Bag
     # @param bag [Chipmunk::Package] If nil, the bag does not yet exist.
     def initialize(package, errors = [], bag = nil)
       @package = package
-      @src_path = package.src_path
       @bag = bag
       @errors = errors
     end
 
-    validates "bag must exist on disk at src_path",
-      condition: -> { File.exist?(src_path) },
-      error: -> { "Bag does not exist at upload location #{src_path}" }
+    # TODO: Separate ingest and storage validation: see PFDR-184 and Package#valid_for_ingest?
+    #       Remove this when it has a proper home.
+    # validates "bag must exist on disk at src_path",
+    #   condition: -> { File.exist?(src_path) },
+    #   error: -> { "Bag does not exist at upload location #{src_path}" }
 
     validates "bag on disk must be valid",
       condition: -> { bag.valid? },
@@ -77,6 +78,6 @@ class Chipmunk::Bag
       array.map {|s| " " * width + s }.join("\n")
     end
 
-    attr_reader :src_path, :package, :bag
+    attr_reader :package, :bag
   end
 end

@@ -3,7 +3,9 @@
 require "rails_helper"
 
 describe "/v1/packages/show.json.jbuilder" do
-  let(:package) { Fabricate.create(:package) }
+  include_context "with test volume"
+
+  let(:package) { Fabricate.create(:stored_package) }
   let(:bag) { double(:bag, relative_data_files: files) }
   let(:files) { 3.times { Faker::Lorem.word } }
 
@@ -17,7 +19,7 @@ describe "/v1/packages/show.json.jbuilder" do
   context "with an underprivileged user" do
     let(:user) { double(:user, admin?: false) }
 
-    it "renders correct json w/o storage_location" do
+    it "renders correct json w/o storage details" do
       expect(JSON.parse(rendered, symbolize_names: true))
         .to eql(
           bag_id:       package.bag_id,
@@ -36,7 +38,7 @@ describe "/v1/packages/show.json.jbuilder" do
   context "with an admin user" do
     let(:user) { double(:admin_user, admin?: true) }
 
-    it "renders correct json w/ storage_location" do
+    it "renders correct json w/ storage details" do
       expect(JSON.parse(rendered, symbolize_names: true))
         .to eql(
           bag_id:       package.bag_id,

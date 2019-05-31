@@ -23,7 +23,7 @@ RSpec.shared_examples "a validation integration" do
     Rails.application.config.validation[content_type] = File.join(Rails.application.root, "bin", validation_script)
     Rails.application.config.upload["upload_path"] = fixture(content_type)
     # don't actually move the bag
-    allow(File).to receive(:rename).with(package.src_path, package.dest_path).and_return true
+    allow(Services.package_storage).to receive(:write).with(package, anything).and_return true
   end
 
   after(:each) do
@@ -34,13 +34,11 @@ RSpec.shared_examples "a validation integration" do
   # for known upload location under fixtures/video
   let(:upload_user) { Fabricate(:user, username: "upload") }
   let(:queue_item) { Fabricate(:queue_item, package: package) }
-  let(:dest_path) { "somepath" }
 
   subject { BagMoveJob.perform_now(queue_item) }
 
   def package_with_id(bag_id)
     Fabricate(:package, content_type: content_type,
-              storage_location: nil,
               bag_id: bag_id,
               external_id: external_id,
               user: upload_user)
@@ -50,10 +48,15 @@ RSpec.shared_examples "a validation integration" do
     let(:package) { package_with_id("goodbag") }
 
     it "completes the queue item and moves it to the destination" do
-      expect(File).to receive(:rename).with(package.src_path, package.dest_path)
+      allow(Services.package_storage).to receive(:write).with(package, anything) do |package, _bag|
+        package.storage_volume = "test"
+        package.storage_path = "/stored/path"
+        true
+      end
       subject
       expect(queue_item.status).to eql("done")
-      expect(queue_item.package.storage_location).to eql(package.dest_path)
+      expect(queue_item.package.storage_volume).to eql("test")
+      expect(queue_item.package.storage_path).to eql("/stored/path")
     end
   end
 
@@ -61,21 +64,23 @@ RSpec.shared_examples "a validation integration" do
     let(:package) { package_with_id("badbag") }
 
     it "reports the error and does not move the bag to storage" do
-      expect(File).not_to receive(:rename).with(package.src_path, package.dest_path)
       subject
       expect(queue_item.error).to match(expected_error)
-      expect(queue_item.package.storage_location).to be_nil
+      expect(queue_item.package.storage_volume).to be_nil
+      expect(queue_item.package.storage_path).to be_nil
     end
   end
 
   context "with a nonexistent bag" do
     let(:package) { package_with_id("deleteme") }
 
-    before(:each) { FileUtils.rmtree package.src_path }
+    before(:each) do
+      allow(Services.incoming_storage).to receive(:include?).and_return(false)
+    end
 
-    it "does not create a bag" do
+    it "does not store the bag" do
+      expect(Services.storage).not_to receive(:write)
       subject
-      expect(File.exist?(package.src_path)).to be(false)
     end
   end
 end

@@ -4,6 +4,7 @@ require "rails_helper"
 
 RSpec.describe V1::PackagesController, type: :controller do
   include Checkpoint::Spec::Controller
+  include_context "with test volume"
 
   describe "/v1" do
     it "uses PackagesPolicy as its collection_policy" do
@@ -19,7 +20,7 @@ RSpec.describe V1::PackagesController, type: :controller do
     it_behaves_like "an index endpoint", "PackagesPolicy"
 
     describe "GET #show" do
-      let(:package) { Fabricate(:package) }
+      let(:package) { Fabricate(:stored_package) }
       let(:bag) { double(:bag) }
 
       before(:each) { allow(Services.storage).to receive(:for).with(package).and_return(bag) }
@@ -73,7 +74,7 @@ RSpec.describe V1::PackagesController, type: :controller do
 
       context "with the external_id supplied" do
         include_context "with someone logged in"
-        let(:package) { Fabricate(:package, user: user) }
+        let(:package) { Fabricate(:stored_package, user: user) }
 
         before(:each) { resource_policy "PackagePolicy", show?: true }
 
@@ -120,7 +121,7 @@ RSpec.describe V1::PackagesController, type: :controller do
       before(:each) { resource_policy "PackagePolicy", show?: true }
 
       context "the package is not stored" do
-        let(:package) { Fabricate(:package, user: user, storage_location: nil) }
+        let(:package) { Fabricate(:package, user: user) }
 
         it "returns a 404" do
           get :send_package, params: { bag_id: package.bag_id }

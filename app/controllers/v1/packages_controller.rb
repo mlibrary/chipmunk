@@ -101,6 +101,7 @@ module V1
 
       Package.new(
         bag_id: bag_id,
+        format: Chipmunk::Bag.format,
         external_id: external_id,
         content_type: content_type,
         user: current_user

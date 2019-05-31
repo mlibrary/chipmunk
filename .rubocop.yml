@@ -45,6 +45,10 @@ Security/YAMLLoad:
 Style/Alias:
   EnforcedStyle: prefer_alias_method
 
+Style/AndOr:
+  Exclude:
+    - app/jobs/bag_move_job.rb
+
 Metrics/LineLength:
   AllowHeredoc: true
   AllowURI: true
@@ -157,6 +161,10 @@ Layout/DefEndAlignment:
 
 Performance/RedundantMerge:
   Enabled: false
+
+Style/RescueModifier:
+  Exclude:
+    - 'spec/**/*_spec.rb'
 
 Style/WordArray:
   EnforcedStyle: brackets

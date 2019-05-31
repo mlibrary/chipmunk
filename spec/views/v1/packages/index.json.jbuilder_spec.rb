@@ -16,7 +16,7 @@ describe "/v1/packages/index.json.jbuilder" do
   context "with an underprivileged user" do
     let(:user) { double(:user, admin?: false) }
 
-    it "renders correct json w/o storage_location" do
+    it "renders correct json w/o storage details" do
       expect(JSON.parse(rendered, symbolize_names: true))
         .to eql([{
           bag_id:       package.bag_id,
@@ -34,7 +34,7 @@ describe "/v1/packages/index.json.jbuilder" do
   context "with an admin user" do
     let(:user) { double(:admin_user, admin?: true) }
 
-    it "renders correct json w/ storage_location" do
+    it "renders correct json w/ storage details" do
       expect(JSON.parse(rendered, symbolize_names: true))
         .to eql([{
           bag_id:           package.bag_id,

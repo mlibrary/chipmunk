@@ -4,10 +4,7 @@ require "rails_helper"
 
 RSpec.describe BagMoveJob do
   let(:queue_item) { Fabricate(:queue_item) }
-  let(:package) { queue_item.bag }
-  let(:src_path) { queue_item.package.src_path }
-  let(:dest_path) { queue_item.package.dest_path }
-  let(:good_tag_files) { [File.join(src_path, "marc.xml")] }
+  let(:package) { queue_item.package }
 
   let(:chipmunk_info_db) do
     {
@@ -25,21 +22,26 @@ RSpec.describe BagMoveJob do
     )
   end
 
-  class InjectedError < RuntimeError
-  end
-
   describe "#perform" do
+    let(:bag) { double(:bag, path: "/uploaded/bag") }
+
     before(:each) do
-      allow(File).to receive(:rename).with(src_path, dest_path).and_return true
+      allow(Services.incoming_storage).to receive(:for).with(package).and_return(bag)
+      allow(Services.storage).to receive(:write).with(package, bag) do |pkg, _bag|
+        pkg.storage_volume = "bags"
+        pkg.storage_path = "/storage/path/to/#{pkg.bag_id}"
+      end
     end
 
     context "when the package is valid" do
-      let(:validator) { double(:validator, valid?: true) }
+      subject(:run_job) { described_class.perform_now(queue_item) }
 
-      subject(:run_job) { described_class.perform_now(queue_item, validator: validator) }
+      before(:each) do
+        allow(queue_item.package).to receive(:valid_for_ingest?).and_return true
+      end
 
       it "moves the bag" do
-        expect(File).to receive(:rename).with(src_path, dest_path)
+        expect(Services.storage).to receive(:write).with(queue_item.package, bag)
         run_job
       end
 
@@ -48,42 +50,45 @@ RSpec.describe BagMoveJob do
         expect(queue_item.status).to eql("done")
       end
 
+      # TODO: Make sure that the destination volume is set properly, not literally; see PFDR-185
+      it "sets the package storage_volume to root" do
+        run_job
+        expect(queue_item.package.storage_volume).to eql("bags")
+      end
+
       context "but the move fails" do
         before(:each) do
-          allow(File).to receive(:rename).with(src_path, dest_path).and_raise InjectedError, "injected error"
+          allow(Services.storage).to receive(:write).with(package, bag).and_raise "test move failed"
         end
 
         it "re-raises the exception" do
-          expect { run_job }.to raise_exception(InjectedError)
+          expect { run_job }.to raise_error(/test move failed/)
         end
 
         it "updates the queue_item to status 'failed'" do
-          begin
-            run_job
-          rescue InjectedError
-          end
-
+          run_job rescue StandardError
           expect(queue_item.status).to eql("failed")
         end
 
         it "records the error in the queue_item" do
-          begin
-            run_job
-          rescue InjectedError
-          end
-
-          expect(queue_item.error).to match(/injected error/)
+          run_job rescue StandardError
+          expect(queue_item.error).to match(/test move failed/)
         end
       end
     end
 
     context "when the package is invalid" do
-      let(:validator) { double(:validator, valid?: false) }
+      subject(:run_job) { described_class.perform_now(queue_item) }
 
-      subject(:run_job) { described_class.perform_now(queue_item, errors: ["my error"], validator: validator) }
+      before(:each) do
+        allow(queue_item.package).to receive(:valid_for_ingest?) do |errors|
+          errors << "my error"
+          false
+        end
+      end
 
       it "does not move the bag" do
-        expect(File).not_to receive(:rename).with(src_path, dest_path)
+        expect(Services.storage).not_to receive(:write).with(package, anything)
         run_job
       end
 
@@ -98,39 +103,29 @@ RSpec.describe BagMoveJob do
       end
 
       it "does not move the bag" do
-        expect(File).not_to receive(:rename).with(src_path, dest_path)
+        expect(Services.storage).not_to receive(:write).with(package, anything)
         run_job
       end
     end
 
     context "when validation raises an exception" do
-      let(:validator) { double(:validator) }
-
-      subject(:run_job) { described_class.perform_now(queue_item, validator: validator) }
+      subject(:run_job) { described_class.perform_now(queue_item) }
 
       before(:each) do
-        allow(validator).to receive(:valid?).and_raise InjectedError, "injected error"
+        allow(queue_item.package).to receive(:valid_for_ingest?).and_raise("test validation failure")
       end
 
       it "re-raises the exception" do
-        expect { run_job }.to raise_exception(InjectedError)
+        expect { run_job }.to raise_exception(/test validation failure/)
       end
 
       it "records the exception" do
-        begin
-          run_job
-        rescue InjectedError
-        end
-
-        expect(queue_item.error).to match(/injected error/)
+        run_job rescue StandardError
+        expect(queue_item.error).to match(/test validation failure/)
       end
 
       it "records the stack trace" do
-        begin
-          run_job
-        rescue InjectedError
-        end
-
+        run_job rescue StandardError
         expect(queue_item.error).to match(__FILE__)
       end
     end

@@ -7,6 +7,12 @@
 # Ignore bundler config.
 /.bundle
 
+# Default incoming and storage locations
+/data/*
+/data/incoming
+/data/storage
+!/data/.keep
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
