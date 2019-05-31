@@ -52,7 +52,8 @@ module Chipmunk
       true
     end
 
-    def destination_volume(package)
+    # We are defaulting everything to "bags" for now as the simplest resolution strategy.
+    def destination_volume(_package)
       volumes["bags"].tap do |volume|
         raise Chipmunk::VolumeNotFoundError, "Cannot find destination volume: bags" if volume.nil?
       end
@@ -61,6 +62,7 @@ module Chipmunk
     def volume_for(package)
       volumes[package.storage_volume].tap do |volume|
         raise Chipmunk::VolumeNotFoundError, package.storage_volume if volume.nil?
+
         unsupported_format!(volume, package) if volume.format != package.format
       end
     end

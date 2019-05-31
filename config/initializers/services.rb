@@ -22,9 +22,10 @@ if Chipmunk.config.keycard&.access
 end
 
 Chipmunk.config.upload.tap do |upload|
-  %w[upload_path storage_path].each do |option|
+  ["upload_path", "storage_path"].each do |option|
     path = upload[option].to_s.strip
     raise ArgumentError, "Configuration option upload.#{option} must not be empty" if path.empty?
+
     upload[option] = Rails.root.join(path).to_s unless path.start_with?("/")
   end
 end
@@ -38,8 +39,8 @@ Services.register(:incoming_storage) do
 end
 Services.register(:storage) do
   Chipmunk::PackageStorage.new(volumes: [
-      Chipmunk::Volume.new(name: "root", package_type: Chipmunk::Bag, root_path: "/"), # For migration purposes
-      Chipmunk::Volume.new(name: "bags", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.storage_path)
+    Chipmunk::Volume.new(name: "root", package_type: Chipmunk::Bag, root_path: "/"), # For migration purposes
+    Chipmunk::Volume.new(name: "bags", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.storage_path)
   ])
 end
 Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }

@@ -19,7 +19,7 @@ module Chipmunk
     # @param root_path [String|Pathname] the path to the storage root for this Volume;
     #   must be absolute; coerced to Pathname
     # @raise [ArgumentError] if the name is blank or root_path is relative
-    def initialize(name:, package_type:,  root_path:)
+    def initialize(name:, package_type:, root_path:)
       @name = name.to_s
       @package_type = package_type
       @root_path = Pathname(root_path)

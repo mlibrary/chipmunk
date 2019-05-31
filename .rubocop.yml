@@ -162,6 +162,10 @@ Layout/DefEndAlignment:
 Performance/RedundantMerge:
   Enabled: false
 
+Style/RescueModifier:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+
 Style/WordArray:
   EnforcedStyle: brackets
 

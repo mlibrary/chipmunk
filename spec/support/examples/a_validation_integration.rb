@@ -48,7 +48,7 @@ RSpec.shared_examples "a validation integration" do
     let(:package) { package_with_id("goodbag") }
 
     it "completes the queue item and moves it to the destination" do
-      expect(Services.package_storage).to receive(:write).with(package, anything) do |package, _bag|
+      allow(Services.package_storage).to receive(:write).with(package, anything) do |package, _bag|
         package.storage_volume = "test"
         package.storage_path = "/stored/path"
         true
@@ -64,7 +64,6 @@ RSpec.shared_examples "a validation integration" do
     let(:package) { package_with_id("badbag") }
 
     it "reports the error and does not move the bag to storage" do
-      expect(Services.package_storage).to_not receive(:write).with(package, anything)
       subject
       expect(queue_item.error).to match(expected_error)
       expect(queue_item.package.storage_volume).to be_nil
@@ -80,7 +79,7 @@ RSpec.shared_examples "a validation integration" do
     end
 
     it "does not store the bag" do
-      expect(Services.storage).to_not receive(:write)
+      expect(Services.storage).not_to receive(:write)
       subject
     end
   end
