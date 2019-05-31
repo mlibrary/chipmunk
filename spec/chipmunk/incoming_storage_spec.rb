@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe IncomingStorage do
+RSpec.describe Chipmunk::IncomingStorage do
   subject(:storage) { described_class.new(volume: volume) }
 
   let(:package_type) { double("SomePackageFormat", format: "some-pkg") }
-  let(:volume) { Volume.new(name: "incoming", package_type: package_type, root_path: "/incoming") }
+  let(:volume) { Chipmunk::Volume.new(name: "incoming", package_type: package_type, root_path: "/incoming") }
 
   let(:uploader)         { instance_double("User", username: "uploader") }
   let(:unstored_package) { instance_double("Package", stored?: false, user: uploader, bag_id: "abcdef-123456") }

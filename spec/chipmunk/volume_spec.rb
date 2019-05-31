@@ -2,7 +2,7 @@
 
 require "pathname"
 
-RSpec.describe Volume do
+RSpec.describe Chipmunk::Volume do
   subject(:volume) { described_class.new(name: name, package_type: package_type, root_path: root_path) }
 
   context "when given valid attributes" do

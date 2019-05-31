@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe PackageStorage do
+RSpec.describe Chipmunk::PackageStorage do
   FakeBag = Struct.new(:storage_location) do
     def self.format
       "bag"
@@ -22,8 +22,8 @@ RSpec.describe PackageStorage do
   # inclusion of specific contexts in tests that need them. In this group,
   # the volumes and volume manager can be considered environmental, while the
   # packages are scenario data.
-  let(:bags)      { Volume.new(name: "bags", package_type: FakeBag, root_path: "/bags") }
-  let(:zips)      { Volume.new(name: "zips", package_type: FakeZip, root_path: "/zips") }
+  let(:bags)      { Chipmunk::Volume.new(name: "bags", package_type: FakeBag, root_path: "/bags") }
+  let(:zips)      { Chipmunk::Volume.new(name: "zips", package_type: FakeZip, root_path: "/zips") }
 
   context "with two formats registered: bag and zip" do
     let(:storage)   { described_class.new(volumes: [bags, zips]) }

@@ -32,12 +32,14 @@ end
 Services = Canister.new
 # TODO: consult the environment-specific configuration for a set of volumes
 Services.register(:incoming_storage) do
-  IncomingStorage.new(volume: Volume.new(name: "incoming", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.upload_path))
+  Chipmunk::IncomingStorage.new(volume: Chipmunk::Volume.new(
+    name: "incoming", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.upload_path
+  ))
 end
 Services.register(:storage) do
-  PackageStorage.new(volumes: [
-      Volume.new(name: "root", package_type: Chipmunk::Bag, root_path: "/"), # For migration purposes
-      Volume.new(name: "bags", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.storage_path)
+  Chipmunk::PackageStorage.new(volumes: [
+      Chipmunk::Volume.new(name: "root", package_type: Chipmunk::Bag, root_path: "/"), # For migration purposes
+      Chipmunk::Volume.new(name: "bags", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.storage_path)
   ])
 end
 Services.register(:request_attributes) { Keycard::Request::AttributesFactory.new }
