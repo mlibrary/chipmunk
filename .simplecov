@@ -1,6 +1,8 @@
 SimpleCov.configure do
   add_filter '/.binstubs'
   add_filter '/.bundle/'
+  add_filter '/Dockerfile'
+  add_filter '/docker-compose.yml'
   add_filter '/.git/'
   add_filter '/spec/'
   add_filter '/test/'

@@ -11,13 +11,18 @@ Development
 Running integration tests
 -------------------------
 
-- Make sure the validation scripts under ``bin`` have all required dependencies
-  installed (out of scope for this respository)
+This repository includes a Docker container that has all of the dependencies of the integration
+tests pre-installed. You will need:
 
-- Set the ``RUN_INTEGRATION`` environment variable; otherwise integration tests
-  are skipped.
+- Docker and Docker Compose
+- The hathitrust/feed:jhove-1.6 and/or the hathitrust/feed:jhove-1.20 images. These can be
+  built from the Dockerfiles in the official
+  `HathiTrust Feed repository <https://github.com/hathitrust/feed/>`_. In the future, they
+  may be uploaded to a public Docker registry.
 
-- Run ``bundle exec rspec``
+Then you can launch the container with ``docker-compose run web bash``, which gives you a shell
+within that container with your current source code mounted. From there, you can install gems
+and run the specs as normal (``bundle install`` and ``bin/rspec``, respectively).
 
 CLI / end-to-end testing
 -----------------------
