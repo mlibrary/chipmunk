@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  web:
+    build: '.'
+    command: ["/bin/bash"]
+    volumes:
+      - type: bind
+        source: '.'
+        target: '/usr/src/app'
+
