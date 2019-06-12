@@ -21,7 +21,7 @@ RSpec.shared_examples "a validation integration" do
   before(:each) do
     @old_validation = Rails.application.config.validation[content_type]
     @old_upload_path = Rails.application.config.upload["upload_path"]
-    Rails.application.config.validation[content_type] = File.join(Rails.application.root, "bin", validation_script)
+    Rails.application.config.validation["external"][content_type] = File.join(Rails.application.root, "bin", validation_script)
 
     @old_incoming_storage = Services.incoming_storage
 
@@ -35,7 +35,7 @@ RSpec.shared_examples "a validation integration" do
   end
 
   after(:each) do
-    Rails.application.config.validation[content_type] = @old_validation
+    Rails.application.config.validation["external"][content_type] = @old_validation
 
     Services.register(:incoming_storage) do
       @old_incoming_storage
