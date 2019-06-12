@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "chipmunk"
 require "fileutils"
 
 # @param content_type [String] The content type to use when constructing Bags.
@@ -20,22 +21,32 @@ RSpec.shared_examples "a validation integration" do
   before(:each) do
     @old_validation = Rails.application.config.validation[content_type]
     @old_upload_path = Rails.application.config.upload["upload_path"]
-    Rails.application.config.validation[content_type] = File.join(Rails.application.root, "bin", validation_script)
-    Rails.application.config.upload["upload_path"] = fixture(content_type)
-    # don't actually move the bag
-    allow(Services.package_storage).to receive(:write).with(package, anything).and_return true
+    Rails.application.config.validation["external"][content_type] = File.join(Rails.application.root, "bin", validation_script)
+
+    @old_incoming_storage = Services.incoming_storage
+
+    Services.register(:incoming_storage) do
+      Chipmunk::IncomingStorage.new(volume: Chipmunk::Volume.new(
+        name: "incoming", package_type: Chipmunk::Bag, root_path: fixture(content_type)
+      ))
+    end
+
+    allow(Services.storage).to receive(:write).with(package, anything).and_return true
   end
 
   after(:each) do
-    Rails.application.config.validation[content_type] = @old_validation
-    Rails.application.config.upload["upload_path"] = @old_upload_path
+    Rails.application.config.validation["external"][content_type] = @old_validation
+
+    Services.register(:incoming_storage) do
+      @old_incoming_storage
+    end
   end
 
   # for known upload location under fixtures/video
   let(:upload_user) { Fabricate(:user, username: "upload") }
   let(:queue_item) { Fabricate(:queue_item, package: package) }
 
-  subject { BagMoveJob.perform_now(queue_item) }
+  subject(:perform_bag_move_job) { BagMoveJob.perform_now(queue_item) }
 
   def package_with_id(bag_id)
     Fabricate(:package, content_type: content_type,
@@ -48,12 +59,12 @@ RSpec.shared_examples "a validation integration" do
     let(:package) { package_with_id("goodbag") }
 
     it "completes the queue item and moves it to the destination" do
-      allow(Services.package_storage).to receive(:write).with(package, anything) do |package, _bag|
+      allow(Services.storage).to receive(:write).with(package, anything) do |package, _bag|
         package.storage_volume = "test"
         package.storage_path = "/stored/path"
         true
       end
-      subject
+      perform_bag_move_job
       expect(queue_item.status).to eql("done")
       expect(queue_item.package.storage_volume).to eql("test")
       expect(queue_item.package.storage_path).to eql("/stored/path")
@@ -64,7 +75,7 @@ RSpec.shared_examples "a validation integration" do
     let(:package) { package_with_id("badbag") }
 
     it "reports the error and does not move the bag to storage" do
-      subject
+      perform_bag_move_job
       expect(queue_item.error).to match(expected_error)
       expect(queue_item.package.storage_volume).to be_nil
       expect(queue_item.package.storage_path).to be_nil
@@ -80,7 +91,7 @@ RSpec.shared_examples "a validation integration" do
 
     it "does not store the bag" do
       expect(Services.storage).not_to receive(:write)
-      subject
+      perform_bag_move_job
     end
   end
 end
