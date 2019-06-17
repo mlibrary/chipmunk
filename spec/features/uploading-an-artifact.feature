@@ -4,22 +4,26 @@ Feature: Uploading an artifact
   I want to deposit that artifact
 
   Background:
-    Given a content manager
+    Given I am an audio content manager
 
   Scenario: Initiating a deposit
-    Given a valid artifact
-    When the content manager initiates the deposit of the artifact
-    Then they receive an identifier for the artifact
-    And  they receive the path to which to upload the artifact
+    When I initiate a deposit of an audio bag
+    Then I receive an identifier for the artifact
+    And  I receive the path to which to upload the content
 
   Scenario: Uploading an artifact
-    Given an initiated deposit
-    When the content manager uploads the artifact
-    And signals that the artifact is fully uploaded
+    Given an audio deposit has been started
+    When I upload the bag
+    And signal that the artifact is fully uploaded
     Then the deposit of the artifact is acknowledged
 
   Scenario: Storing an uploaded artifact
-    Given an initiated deposit
-    And an uploaded artifact
+    Given an audio deposit has been completed
     When processing completes
     Then the bag is stored in the repository
+
+  Scenario: A malformed bag is rejected
+    Given I have uploaded a malformed bag
+    When validation completes
+    Then the bag is not stored in the repository
+    And I can see the reason it failed
