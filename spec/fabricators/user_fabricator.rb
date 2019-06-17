@@ -2,7 +2,7 @@
 
 Fabricator(:user) do
   email { Faker::Internet.email }
-  username { ChipmunkFaker::Internet.user_name }
+  username { "#{ChipmunkFaker::Internet.user_name}#{rand 9999}" }
   api_key_digest { Faker::Crypto.sha256 }
   admin false
 end
