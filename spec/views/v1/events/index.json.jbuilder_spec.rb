@@ -7,7 +7,7 @@ describe "/v1/events/index.json.jbuilder" do
     double(:event,
       id: 1,
       event_type: Faker::Lorem.word,
-      user: double(:user, username: Faker::Internet.user_name),
+      user: double(:user, username: ChipmunkFaker::Internet.user_name),
       outcome: Faker::Lorem.word,
       detail: Faker::Lorem.sentence,
       created_at: Time.now,

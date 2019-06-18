@@ -5,7 +5,7 @@ require "rspec/expectations"
 class FakeUser < OpenStruct
 
   def initialize(hash = {})
-    user_name = ChipmunkFaker::Internet.unique.user_name
+    user_name = ChipmunkFaker::Internet.user_name
     super({ username:   user_name,
             identity:   {},
             admin?:     false,
@@ -35,7 +35,7 @@ class FakeUser < OpenStruct
     end
   end
 
-  def self.with_external_identity(username = Faker::Internet.unique.user_name)
+  def self.with_external_identity(username = ChipmunkFaker::Internet.user_name)
     new(
       known?: false,
       user_name: nil,

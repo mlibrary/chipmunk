@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-require "chipmunk"
-require 'json'
-
-module ChipmunkFaker
-  Internet = Faker::Internet.unique
-end
-
 Given("a preserved Bentley audio artifact") do
   @artifact ||= Fabricate(:stored_package, content_type: "audio")
 end

@@ -45,10 +45,7 @@ RSpec.configure do |config|
   end
 end
 
-support_dir = File.expand_path(File.join(File.dirname(__FILE__), "support"))
-["examples", "contexts", "helpers"].each do |folder|
-  Dir[File.join(support_dir, folder, "**", "*.rb")].each {|f| require f }
-end
+require_relative "all_support"
 
 # Load Turnip. The rest of the config is in the turnip_helper.rb
 require "turnip/rspec"
@@ -56,8 +53,4 @@ require "webmock/rspec"
 
 def fixture(*path)
   File.join(Rails.application.root, "spec", "support", "fixtures", File.join(*path))
-end
-
-module ChipmunkFaker
-  Internet = Faker::Internet.unique
 end

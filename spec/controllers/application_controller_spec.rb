@@ -98,7 +98,7 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     context "with X-Remote-User" do
-      let(:username) { Faker::Internet.user_name }
+      let(:username) { ChipmunkFaker::Internet.user_name }
       let(:remote_user_header) { { "X-Remote-User" => username } }
 
       context "without Authorization" do

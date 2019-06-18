@@ -21,7 +21,7 @@ describe "/v1/audits/show.json.jbuilder" do
         successes: Array.new(success_count) {|n| double(:"success#{n}") },
         failures: Array.new(failure_count) {|n| double(:"failure#{n}") },
         packages: package_count,
-        user: double(:user, username: Faker::Internet.user_name),
+        user: double(:user, username: ChipmunkFaker::Internet.user_name),
         created_at: Time.now,
         expand?: false,
         updated_at: Time.now)
@@ -52,7 +52,7 @@ describe "/v1/audits/show.json.jbuilder" do
         id: 1,
         package: double(:package, bag_id: SecureRandom.uuid, external_id: SecureRandom.uuid),
         event_type: Faker::Lorem.word,
-        user: double(:user, username: Faker::Internet.user_name),
+        user: double(:user, username: ChipmunkFaker::Internet.user_name),
         outcome: Faker::Lorem.word,
         detail: Faker::Lorem.sentence,
         created_at: Time.now,
@@ -74,7 +74,7 @@ describe "/v1/audits/show.json.jbuilder" do
         successes: [event],
         failures: [],
         packages: package_count,
-        user: double(:user, username: Faker::Internet.user_name),
+        user: double(:user, username: ChipmunkFaker::Internet.user_name),
         created_at: Time.now,
         expand?: true,
         updated_at: Time.now)
