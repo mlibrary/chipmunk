@@ -1,4 +1,4 @@
-Feature: Uploading an artifact
+Feature: Depositing an artifact
   In order to begin preserving a digital artifact
   As a content manager
   I want to deposit that artifact
