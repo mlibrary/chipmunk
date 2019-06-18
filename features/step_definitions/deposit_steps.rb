@@ -1,27 +1,20 @@
 # frozen_string_literal: true
 
 Given("a preserved Bentley audio artifact") do
-  @artifact ||= Fabricate(:stored_package, content_type: "audio")
+  @artifact = Fabricate(:stored_package, content_type: "audio")
 end
 
 Given("I am a Bentley audio content steward") do
-  @key ||= Keycard::DigestKey.new
-  @user ||= Fabricate(:user, api_key_digest: @key.digest)
-  Services.checkpoint.grant!(
-    @user,
-    Checkpoint::Credential::Role.new('content_manager'),
-    Checkpoint::Resource::AllOfType.new('audio')
-  )
+  make_me_a("content_manager").on_all("audio")
 end
 
 When("I check the status of the artifact") do
-  header("Authorization", "Token token=#{@key}")
-  @bags_response = JSON.parse(get("/v1/bags/#{@artifact.bag_id}").body)
-  @queue_response = JSON.parse(get("/v1/queue?package=#{@artifact.bag_id}").body)
+  api_get("/v1/bags/#{@artifact.bag_id}")
 end
 
 Then("I receive a report that the artifact is preserved") do
-  expect(@bags_response['stored']).to eq true
+  artifact = JSON.parse(last_response.body)
+  expect(artifact['stored']).to eq true
 end
 
 Given("an uploaded but not yet preserved Bentley audio artifact") do
