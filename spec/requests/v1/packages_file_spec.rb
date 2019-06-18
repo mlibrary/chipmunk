@@ -4,8 +4,6 @@ require "rails_helper"
 require "checkpoint_helper"
 
 RSpec.describe "GET /v1/packages/:bag_id/:file", :checkpoint_transaction, type: :request do
-  include_context "with test volume"
-
   let(:key)  { Keycard::DigestKey.new }
   let(:user) { Fabricate(:user, api_key_digest: key.digest) }
   let(:fixture_path) { fixture("video/upload/goodbag") }
