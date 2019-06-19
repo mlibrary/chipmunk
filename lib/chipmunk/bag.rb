@@ -37,6 +37,18 @@ module Chipmunk
       bag.send(:read_info_file, chipmunk_info_txt_file)
     end
 
+    def id
+      chipmunk_info.fetch("Bag-ID")
+    end
+
+    def content_type
+      chipmunk_info.fetch("Chipmunk-Content-Type")
+    end
+
+    def external_id
+      chipmunk_info.fetch("External-Identifier")
+    end
+
     # Get the absolute paths of all files
     def files
       Dir.glob(bag_dir/"**"/"*")
