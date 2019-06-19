@@ -35,6 +35,24 @@ RSpec.describe Chipmunk::Bag do
     end
   end
 
+  describe "#id" do
+    it "returns the Bag-ID from the chipmunk-info.txt" do
+      expect(stored_bag.id).to eql("14d25bcd-deaf-4c94-add7-c189fdca4692")
+    end
+  end
+
+  describe "#content_type" do
+    it "returns the Chipmunk-Content-Type from the chipmunk-info.txt" do
+      expect(stored_bag.content_type).to eql("audio")
+    end
+  end
+
+  describe "#external_id" do
+    it "returns the External-Identifier from the chipmunk-info.txt" do
+      expect(stored_bag.external_id).to eql("test_ex_id_22")
+    end
+  end
+
   describe "#files" do
     it "returns all the files" do
       expect(stored_bag.files).to contain_exactly(*stored_files)
