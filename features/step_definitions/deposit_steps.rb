@@ -46,8 +46,7 @@ Given("an uploaded Bentley audio artifact of any status") do
 end
 
 Given("I have no role") do
-  @key ||= Keycard::DigestKey.new
-  @user ||= Fabricate(:user, api_key_digest: @key.digest)
+  me
 end
 
 Then("I receive a report that I lack permission to view the artifact") do
@@ -67,15 +66,19 @@ Then("the file is not delivered") do
 end
 
 When("I ask for a list of files in the artifact") do
-  header("Authorization", "Token token=#{@key}")
-  @package_response = JSON.parse(get("/v1/packages/#{@artifact.bag_id}").body)
+  api_get("/v1/packages/#{@artifact.bag_id}")
 end
 
 Then("the filenames are delivered to me in a list") do
   bag = Services.storage.for(@artifact)
-  expect(@package_response['files']).to eql(bag.relative_data_files.map(&:to_s))
+  expect(JSON.parse(last_response.body)['files']).to eql(bag.relative_data_files.map(&:to_s))
 end
 
 Then("the filenames are not delivered") do
-  expect(@package_response.has_key?('files')).to be false
+  expect(JSON.parse(last_response.body).has_key?('files')).to be false
 end
+
+Then("my request is denied") do
+  expect(last_response.status).to eql(403)
+end
+
