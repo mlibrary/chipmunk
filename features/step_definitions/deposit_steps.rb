@@ -73,11 +73,13 @@ Then("the file is not delivered") do
 end
 
 When("I ask for a list of files in the artifact") do
-  pending # Write code here that turns the phrase above into concrete actions
+  header("Authorization", "Token token=#{@key}")
+  @package_response = JSON.parse(get("/v1/packages/#{@artifact.bag_id}").body)
 end
 
 Then("the filenames are delivered to me in a list") do
-  pending # Write code here that turns the phrase above into concrete actions
+  bag = Services.storage.for(@artifact)
+  expect(@package_response['files']).to eql(bag.relative_data_files.map(&:to_s))
 end
 
 Then("the filenames are not delivered") do
