@@ -54,6 +54,11 @@ module MakesApiRequests
     get(*args)
   end
 
+  def api_post(*args)
+    set_auth_token
+    post(*args)
+  end
+
   def set_auth_token
     header("Authorization", "Token token=#{my_api_key}")
   end
