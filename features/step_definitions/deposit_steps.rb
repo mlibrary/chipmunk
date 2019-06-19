@@ -1,84 +1,124 @@
 # frozen_string_literal: true
 
+require "chipmunk"
+require 'json'
+
+module ChipmunkFaker
+  Internet = Faker::Internet.unique
+end
+
 Given("a preserved Bentley audio artifact") do
-  @artifact = Fabricate(:stored_package, content_type: "audio")
+  @artifact ||= Fabricate(:stored_package, content_type: "audio")
+  Fabricate(:queue_item, package: @artifact)
 end
 
 Given("I am a Bentley audio content steward") do
-  make_me_a("content_manager").on_all("audio")
+  @key ||= Keycard::DigestKey.new
+  @user ||= Fabricate(:user, api_key_digest: @key.digest)
+  Services.checkpoint.grant!(
+    @user,
+    Checkpoint::Credential::Role.new('content_manager'),
+    Checkpoint::Resource::AllOfType.new('audio')
+  )
 end
 
 When("I check the status of the artifact") do
-  api_get("/v1/bags/#{@artifact.bag_id}")
+  header("Authorization", "Token token=#{@key}")
+  begin
+    @bags_response ||= get("/v1/bags/#{@artifact.bag_id}")
+  rescue ActiveRecord::RecordNotFound
+    @bags_response ||= Rack::MockResponse.new(404, {}, '')
+  end
+
+  begin
+    queue_response_body ||= JSON.parse(get("/v1/queue?package=#{@artifact.id}").body)
+
+    @latest_queue_response_body ||= queue_response_body.reduce do |lhs, rhs|
+      DateTime.parse(lhs["updated_at"]) > DateTime.parse(rhs["updated_at"]) ? lhs : rhs
+    end
+  rescue JSON::ParserError
+    @latest_queue_response_body ||= {}
+  end
 end
 
 Then("I receive a report that the artifact is preserved") do
-  artifact = JSON.parse(last_response.body)
-  expect(artifact['stored']).to eq true
+  expect(JSON.parse(@bags_response.body)['stored']).to eq true
 end
 
 Given("an uploaded but not yet preserved Bentley audio artifact") do
-  pending # Write code here that turns the phrase above into concrete actions
+  @artifact ||= Fabricate(:package, content_type: "audio")
+  Fabricate(:queue_item, package: @artifact)
 end
 
 Then("I receive a report that the artifact is in progress") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(JSON.parse(@bags_response.body)['stored']).to eq false
+  expect(@latest_queue_response_body['status']).to eq('PENDING').or eq('DONE')
 end
 
 Given("an uploaded Bentley audio artifact that failed validation") do
-  pending # Write code here that turns the phrase above into concrete actions
+  @artifact ||= Fabricate(:package, content_type: "audio")
+  Fabricate(:queue_item, package: @artifact, status: 1)
 end
 
 Then("I receive a report that the artifact is invalid") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(JSON.parse(@bags_response.body)['stored']).to eq false
+  expect(@latest_queue_response_body['status']).to eq('FAILED')
 end
 
 Given("a Bentley audio artifact that has not been uploaded") do
-  pending # Write code here that turns the phrase above into concrete actions
+  class ArtifactStub
+    def bag_id
+      "adsladsjadjsklafdjsa"
+    end
+
+    def id
+      "adsladsjadjsklafdjsa"
+    end
+  end
+
+  @artifact ||= ArtifactStub.new
 end
 
 Then("I receive a report that the artifact has not been received") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(@bags_response.status).to eq 404
 end
 
 Given("an uploaded Bentley audio artifact of any status") do
-  pending # Write code here that turns the phrase above into concrete actions
+  @artifact ||= Fabricate(:stored_package, content_type: "audio")
 end
 
 Given("I have no role") do
-  me
+  @key ||= Keycard::DigestKey.new
+  @user ||= Fabricate(:user)
 end
 
 Then("I receive a report that I lack permission to view the artifact") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(@bags_response.status).to eq 401
 end
 
 When("I attempt to download a file in the artifact") do
-  pending # Write code here that turns the phrase above into concrete actions
+  header("Authorization", "Token token=#{@key}")
+  @file_response ||= get("/v1/packages/#{@artifact.bag_id}/samplefile")
 end
 
 Then("the file is delivered to me as a download") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(@file_response.status).to eq 200
 end
 
 Then("the file is not delivered") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(@file_response.status).to eq 401
 end
 
 When("I ask for a list of files in the artifact") do
-  api_get("/v1/packages/#{@artifact.bag_id}")
+  header("Authorization", "Token token=#{@key}")
+  @file_list_response ||= get("/v1/bags/#{@artifact.bag_id}")
 end
 
 Then("the filenames are delivered to me in a list") do
-  bag = Services.storage.for(@artifact)
-  expect(JSON.parse(last_response.body)['files']).to eql(bag.relative_data_files.map(&:to_s))
+  expect(JSON.parse(@file_list_response.body)).to include("files")
+  expect(JSON.parse(@file_list_response.body)["files"]).to be_kind_of(Array)
 end
 
 Then("the filenames are not delivered") do
-  expect(JSON.parse(last_response.body).has_key?('files')).to be false
+  expect(@file_list_response.status).to eq 401
 end
-
-Then("my request is denied") do
-  expect(last_response.status).to eql(403)
-end
-
