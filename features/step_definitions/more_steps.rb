@@ -1,38 +1,48 @@
+require "chipmunk/bag"
+require "json"
+require "fileutils"
+
+Given("I have a Bentley audio bag to deposit") do
+  @bag = Chipmunk::Bag.new(fixture("test_bag"))
+end
+
 When("I initiate a deposit of an audio bag") do
-  header("Authorization", "Token token=#{@key}")
-  @request_response = post(
+  api_post(
     "/v1/requests",
-    bag_id: "14d25bcd-deaf-4c94-add7-c189fdca4692",
-    content_type: "audio",
-    external_id: "test_ex_id_22"
+    bag_id: @bag.id,
+    content_type: @bag.content_type,
+    external_id: @bag.external_id
   )
 end
 
-Then("I receive an identifier for the artifact") do
-  expect(@request_response["Location"])
-    .to eql("/v1/packages/14d25bcd-deaf-4c94-add7-c189fdca4692")
+Then("I learn where my request is being tracked") do
+  expect(last_response["Location"])
+    .to eql("/v1/packages/#{@bag.id}")
+end
+
+When("I check on my request") do
+  api_get("/v1/packages/#{@bag.id}")
 end
 
 Then("I receive the path to which to upload the content") do
-  response = JSON.parse(get("/v1/packages/14d25bcd-deaf-4c94-add7-c189fdca4692").body)
-  expect(response['upload_link'])
-    .to eql("localhost:/tmp/chipmunk/inc/14d25bcd-deaf-4c94-add7-c189fdca4692")
+  upload_link = JSON.parse(last_response.body)['upload_link']
+  expect(upload_link).to eql("localhost:/tmp/chipmunk/inc/#{@bag.id}")
 end
 
 Given("an audio deposit has been started") do
-  pending # Write code here that turns the phrase above into concrete actions
+  @package = Fabricate(:package, bag_id: @bag.id, content_type: @bag.content_type, external_id: @bag.external_id)
 end
 
 When("I upload the bag") do
-  pending # Write code here that turns the phrase above into concrete actions
+  FileUtils.cp_r @bag.bag_dir, @package.upload_link.split(":").last
 end
 
 When("signal that the artifact is fully uploaded") do
-  pending # Write code here that turns the phrase above into concrete actions
+  api_post("/v1/requests/#{@package.id}/complete")
 end
 
 Then("the deposit of the artifact is acknowledged") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(api_get(last_response['Location']).status).to eql(200)
 end
 
 Given("an audio deposit has been completed") do
