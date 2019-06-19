@@ -53,7 +53,8 @@ Given("an uploaded Bentley audio artifact of any status") do
 end
 
 Given("I have no role") do
-  pending # Write code here that turns the phrase above into concrete actions
+  @key ||= Keycard::DigestKey.new
+  @user ||= Fabricate(:user, api_key_digest: @key.digest)
 end
 
 Then("I receive a report that I lack permission to view the artifact") do
@@ -83,5 +84,5 @@ Then("the filenames are delivered to me in a list") do
 end
 
 Then("the filenames are not delivered") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(@package_response.has_key?('files')).to be false
 end
