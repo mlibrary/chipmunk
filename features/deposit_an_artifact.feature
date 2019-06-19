@@ -1,10 +1,10 @@
 Feature: Depositing an artifact
   In order to begin preserving a digital artifact
-  As a content manager
+  As a content steward
   I want to deposit that artifact
 
   Background:
-    Given I am an audio content manager
+    Given I am a Bentley audio content steward
 
   Scenario: Initiating a deposit
     When I initiate a deposit of an audio bag
