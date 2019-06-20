@@ -51,8 +51,8 @@ module AppHelper
   end
 end
 
-# Set the queue adapter to test so that jobs are run in-line, rather than on backend queue
-ApplicationJob.queue_adapter = :test
+# Set the queue adapter to inline so that jobs are run without a backend queue
+ApplicationJob.queue_adapter = :inline
 
 World(Rack::Test::Methods, AppHelper)
 
