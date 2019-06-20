@@ -21,6 +21,7 @@ Feature: Checking the status of a deposited artifact
     When I check the status of the artifact
     Then I receive a report that the artifact is invalid
 
+  @allow-rescue
   Scenario: Check on an artifact that has not yet been uploaded
     Given a Bentley audio artifact that has not been uploaded
     And I am a Bentley audio content steward
@@ -31,4 +32,4 @@ Feature: Checking the status of a deposited artifact
     Given an uploaded Bentley audio artifact of any status
     And I have no role
     When I check the status of the artifact
-    Then I receive a report that I lack permission to view the artifact
+    Then my request is denied

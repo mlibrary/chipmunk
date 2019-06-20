@@ -59,6 +59,13 @@ module MakesApiRequests
     post(*args)
   end
 
+  def json_get(*args, default_on_failure: :no_default)
+    JSON.parse(api_get(*args).body)
+  rescue JSON::ParserError
+    raise if default_on_failure == :no_default
+    default_on_failure
+  end
+
   def set_auth_token
     header("Authorization", "Token token=#{my_api_key}")
   end
