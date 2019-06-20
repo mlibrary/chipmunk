@@ -38,7 +38,7 @@ When("I upload the bag") do
 end
 
 When("signal that the artifact is fully uploaded") do
-  api_post("/v1/requests/#{@package.id}/complete")
+  api_post("/v1/requests/#{@bag.id}/complete")
 end
 
 Then("the deposit of the artifact is acknowledged") do
