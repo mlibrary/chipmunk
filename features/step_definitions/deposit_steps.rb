@@ -16,7 +16,7 @@ Given("I am a Bentley audio content steward") do
 end
 
 When("I check the status of the artifact") do
-  @bags_response = api_get("/v1/bags/#{@artifact_bag_id}")
+  @api_response = api_get("/v1/bags/#{@artifact_bag_id}")
 
   queue_response_body = json_get("/v1/queue?package=#{@artifact_package_id}",
                                  default_on_failure: [])
@@ -26,7 +26,7 @@ When("I check the status of the artifact") do
 end
 
 Then("I receive a report that the artifact is preserved") do
-  expect(JSON.parse(@bags_response.body)['stored']).to eq true
+  expect(JSON.parse(@api_response.body)['stored']).to eq true
 end
 
 Given("an uploaded but not yet preserved Bentley audio artifact") do
@@ -38,7 +38,7 @@ Given("an uploaded but not yet preserved Bentley audio artifact") do
 end
 
 Then("I receive a report that the artifact is in progress") do
-  expect(JSON.parse(@bags_response.body)['stored']).to eq false
+  expect(JSON.parse(@api_response.body)['stored']).to eq false
   expect(@latest_queue_response_body['status']).to eq('PENDING').or eq('DONE')
 end
 
@@ -51,7 +51,7 @@ Given("an uploaded Bentley audio artifact that failed validation") do
 end
 
 Then("I receive a report that the artifact is invalid") do
-  expect(JSON.parse(@bags_response.body)['stored']).to eq false
+  expect(JSON.parse(@api_response.body)['stored']).to eq false
   expect(@latest_queue_response_body['status']).to eq('FAILED')
 end
 
@@ -61,7 +61,7 @@ Given("a Bentley audio artifact that has not been uploaded") do
 end
 
 Then("I receive a report that the artifact has not been received") do
-  expect(@bags_response.status).to eq 404
+  expect(@api_response.status).to eq 404
 end
 
 Given("an uploaded Bentley audio artifact of any status") do
@@ -75,31 +75,23 @@ Given("I have no role") do
   me
 end
 
-Then("my request to check the artifact status is denied") do
-  expect(@bags_response.status).to eq 403
+Then("my request is denied") do
+  expect(@api_response.status).to eq 403
 end
 
 When("I attempt to download a file in the artifact") do
-  @file_response = api_get("/v1/packages/#{@artifact_bag_id}/samplefile")
+  @api_response = api_get("/v1/packages/#{@artifact_bag_id}/samplefile")
 end
 
 Then("the file is delivered to me as a download") do
-  expect(@file_response.status).to eq 200
-end
-
-Then("my request to download a file is denied") do
-  expect(@file_response.status).to eq 403
+  expect(@api_response.status).to eq 200
 end
 
 When("I ask for a list of files in the artifact") do
-  @file_list_response = api_get("/v1/bags/#{@artifact_bag_id}")
+  @api_response = api_get("/v1/bags/#{@artifact_bag_id}")
 end
 
 Then("the filenames are delivered to me in a list") do
-  expect(JSON.parse(@file_list_response.body)).to include("files")
-  expect(JSON.parse(@file_list_response.body)["files"]).to be_kind_of(Array)
-end
-
-Then("my request for a list of files is denied") do
-  expect(@file_list_response.status).to eq 403
+  expect(JSON.parse(@api_response.body)).to include("files")
+  expect(JSON.parse(@api_response.body)["files"]).to be_kind_of(Array)
 end

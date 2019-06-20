@@ -52,15 +52,11 @@ module MakesApiRequests
   def api_get(*args)
     set_auth_token
     get(*args)
-  rescue ActiveRecord::RecordNotFound
-    mock_404_response
   end
 
   def api_post(*args)
     set_auth_token
     post(*args)
-  rescue ActiveRecord::RecordNotFound
-    mock_404_response
   end
 
   def json_get(*args, default_on_failure: :no_default)
@@ -72,10 +68,6 @@ module MakesApiRequests
 
   def set_auth_token
     header("Authorization", "Token token=#{my_api_key}")
-  end
-
-  def mock_404_response
-    Rack::MockResponse.new(404, {}, '')
   end
 end
 

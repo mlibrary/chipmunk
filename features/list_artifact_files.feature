@@ -14,4 +14,4 @@ Feature: Listing files within an artifact
   Scenario: Try to list files without permission
     Given I have no role
     When I ask for a list of files in the artifact
-    Then my request for a list of files is denied
+    Then my request is denied
