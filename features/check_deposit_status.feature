@@ -31,4 +31,4 @@ Feature: Checking the status of a deposited artifact
     Given an uploaded Bentley audio artifact of any status
     And I have no role
     When I check the status of the artifact
-    Then I receive a report that I lack permission to view the artifact
+    Then my request to check the artifact status is denied
