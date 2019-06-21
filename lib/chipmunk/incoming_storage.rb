@@ -19,6 +19,10 @@ module Chipmunk
       volume.include?(upload_path(package))
     end
 
+    def upload_link(package)
+      File.join(Rails.application.config.upload["rsync_point"], package.bag_id)
+    end
+
     private
 
     def upload_path(package)
