@@ -26,7 +26,7 @@ class Package < ApplicationRecord
   end
 
   def upload_link
-    File.join(Rails.application.config.upload["rsync_point"], bag_id)
+    Services.incoming_storage.upload_link(self)
   end
 
   def stored?
