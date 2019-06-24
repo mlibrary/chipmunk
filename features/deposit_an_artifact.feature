@@ -23,8 +23,3 @@ Feature: Depositing an artifact
     Then the deposit of the artifact is acknowledged
     And the bag is stored in the repository
 
-  Scenario: A malformed bag is rejected
-    Given I have uploaded a malformed bag
-    When validation completes
-    Then the bag is not stored in the repository
-    And I can see the reason it failed
