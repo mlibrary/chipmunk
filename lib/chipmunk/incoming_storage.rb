@@ -1,12 +1,46 @@
 # frozen_string_literal: true
 
+require "pathname"
+
 module Chipmunk
   # IncomingStorage is a factory for proxies to storage of incoming deposits.
   class IncomingStorage
 
+    class UserPathBuilder
+      def initialize(root_path)
+        @root_path = Pathname.new(root_path)
+        raise ArgumentError, "root_path must not be nil" unless @root_path
+      end
+
+      def for(package)
+        File.join(root_path, package.user.username, package.bag_id)
+      end
+
+      private
+
+      attr_reader :root_path
+    end
+
+    class IdPathBuilder
+      def initialize(root_path)
+        @root_path = Pathname.new(root_path)
+        raise ArgumentError, "root_path must not be nil" unless @root_path
+      end
+
+      def for(package)
+        File.join(root_path, package.bag_id)
+      end
+
+      private
+
+      attr_reader :root_path
+    end
+
     # Create an IncomingStorage instance.
-    def initialize(volume:)
+    def initialize(volume:, paths:, links: )
       @volume = volume
+      @paths = paths
+      @links = links
     end
 
     def for(package)
@@ -20,15 +54,15 @@ module Chipmunk
     end
 
     def upload_link(package)
-      File.join(Rails.application.config.upload["rsync_point"], package.bag_id)
+      links.for(package)
     end
 
     private
 
     def upload_path(package)
-      File.join("/", package.user.username, package.bag_id)
+      paths.for(package)
     end
 
-    attr_reader :volume
+    attr_reader :volume, :paths, :links
   end
 end
