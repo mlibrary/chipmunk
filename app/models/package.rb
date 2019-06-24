@@ -51,7 +51,7 @@ class Package < ApplicationRecord
     elsif format != Chipmunk::Bag.format
       errors << "Package #{bag_id} has invalid format: #{format}"
     elsif !incoming_storage.include?(self)
-      errors << "Bag does not exist at upload location: .../#{user.username}/#{bag_id}"
+      errors << "Bag #{bag_id} does not exist in incoming storage."
     end
 
     return false unless errors.empty?
