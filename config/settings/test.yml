@@ -3,9 +3,11 @@ upload:
   rsync_point: localhost:/tmp/chipmunk/inc
   storage_path: /tmp/chipmunk/store
 validation:
+  # These files noop with exit code 0 under normal test, but delegate to their
+  # corresponding files in bin when RUN_INTEGRATION is 1.
   external:
-    audio: "bin/validate_audio.sh"
-    video: "bin/validate_video.pl"
+    audio: "spec/support/bin/validate_audio.sh"
+    video: "spec/support/bin/validate_video.sh"
   bagger_profile:
     digital: "spec/support/fixtures/test-profile.json"
 checkpoint:
