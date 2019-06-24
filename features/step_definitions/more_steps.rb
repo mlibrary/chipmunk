@@ -45,16 +45,8 @@ Then("the deposit of the artifact is acknowledged") do
   expect(api_get(last_response['Location']).status).to eql(200)
 end
 
-Given("an audio deposit has been completed") do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-When("processing completes") do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Then("the bag is stored in the repository") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(Services.storage.for(@package.reload)).to be_valid
 end
 
 Given("I have uploaded a malformed bag") do
