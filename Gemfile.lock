@@ -274,11 +274,7 @@ GEM
     thor (0.20.3)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    timecop (0.9.1)
     tins (1.20.2)
-    turnip (3.1.0)
-      gherkin (~> 5.0)
-      rspec (>= 3.0, < 4.0)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unf (0.1.4)
@@ -335,8 +331,6 @@ DEPENDENCIES
   rubocop-rspec
   semantic_logger
   sqlite3
-  timecop
-  turnip
   webmock
   yard
   zip_tricks
