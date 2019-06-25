@@ -90,12 +90,13 @@ RSpec.describe Chipmunk::PackageStorage do
       end
 
       it "sets the storage_volume" do
-        expect(package).to receive(:storage_volume=).with("bags")
+        expect(package).to receive(:update).with(a_hash_including(storage_volume: "bags"))
         storage.write(package, disk_bag)
       end
 
       it "sets the storage_path with three levels of hierarchy" do
-        expect(package).to receive(:storage_path=).with("/ab/cd/ef/abcdef-123456")
+        expect(package).to receive(:update)
+          .with(a_hash_including(storage_path: "/ab/cd/ef/abcdef-123456"))
         storage.write(package, disk_bag)
       end
     end

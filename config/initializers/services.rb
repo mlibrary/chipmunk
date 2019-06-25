@@ -35,9 +35,15 @@ Services = Canister.new
 # TODO: Separate normal and test contexts
 if Rails.env.test?
   Services.register(:incoming_storage) do
-    Chipmunk::IncomingStorage.new(volume: Chipmunk::Volume.new(
-      name: "incoming", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.upload_path
-    ))
+    Chipmunk::IncomingStorage.new(
+      volume: Chipmunk::Volume.new(
+        name: "incoming",
+        package_type: Chipmunk::Bag,
+        root_path: Chipmunk.config.upload.upload_path
+      ),
+      paths: Chipmunk::IncomingStorage::IdPathBuilder.new("/"),
+      links: Chipmunk::IncomingStorage::IdPathBuilder.new(Chipmunk.config.upload["rsync_point"])
+    )
   end
   Services.register(:storage) do
     Chipmunk::PackageStorage.new(volumes: [
@@ -47,9 +53,15 @@ if Rails.env.test?
   end
 else
   Services.register(:incoming_storage) do
-    Chipmunk::IncomingStorage.new(volume: Chipmunk::Volume.new(
-      name: "incoming", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.upload_path
-    ))
+    Chipmunk::IncomingStorage.new(
+      volume: Chipmunk::Volume.new(
+        name: "incoming",
+        package_type: Chipmunk::Bag,
+        root_path: Chipmunk.config.upload.upload_path
+      ),
+      paths: Chipmunk::IncomingStorage::UserPathBuilder.new(Chipmunk.config.upload["upload_path"]),
+      links: Chipmunk::IncomingStorage::IdPathBuilder.new(Chipmunk.config.upload["rsync_point"])
+    )
   end
   Services.register(:storage) do
     Chipmunk::PackageStorage.new(volumes: [

@@ -6,6 +6,10 @@ Given("I have a Bentley audio bag to deposit") do
   @bag = Chipmunk::Bag.new(fixture("test_bag"))
 end
 
+Given("I have a malformed Bentley audio bag to deposit") do
+  @bag = Chipmunk::Bag.new(fixture("bad_test_bag"))
+end
+
 When("I initiate a deposit of an audio bag") do
   api_post(
     "/v1/requests",
@@ -45,28 +49,14 @@ Then("the deposit of the artifact is acknowledged") do
   expect(api_get(last_response['Location']).status).to eql(200)
 end
 
-Given("an audio deposit has been completed") do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-When("processing completes") do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Then("the bag is stored in the repository") do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Given("I have uploaded a malformed bag") do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-When("validation completes") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(Services.storage.for(@package.reload)).to be_valid
 end
 
 Then("the bag is not stored in the repository") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect {
+    Services.storage.for(@package.reload)
+  }.to raise_error Chipmunk::PackageNotStoredError
 end
 
 Then("I can see the reason it failed") do
