@@ -8,14 +8,14 @@ Feature: End to End functionality
     Given time is frozen at "2017-05-17 18:49:08 UTC"
     And I am a audio content manager with username testuser
     And I send and accept JSON
-    And upload.upload_path is "/tmp/chipmunk/inc"
-    And upload.rsync_point is "localhost:/tmp/chipmunk/inc"
-    And upload.storage_path is "/tmp/chipmunk/store"
+    And upload.upload_path is "data/incoming"
+    And upload.rsync_point is "localhost:data/incoming"
+    And upload.storage_path is "data/storage"
     And validation.external.audio is "true"
 
   Scenario Outline: Create initial request and verify
-    Given "/tmp/chipmunk/inc" exists and is empty
-    And "/tmp/chipmunk/store" exists and is empty
+    Given "data/incoming" exists and is empty
+    And "data/storage" exists and is empty
 
     When I send a POST request to "/v1/requests" with this json:
       | bag_id | <bag_id>             |
@@ -33,11 +33,11 @@ Feature: End to End functionality
       | content_type  | audio                                |
       | external_id   | <external_id>                        |
       | stored        | false                                |
-      | upload_link   | localhost:/tmp/chipmunk/inc/<bag_id> |
+      | upload_link   | localhost:data/incoming/<bag_id> |
       | created_at    | 2017-05-17 18:49:08 UTC              |
       | updated_at    | 2017-05-17 18:49:08 UTC              |
     # simulates action of correctly-configured rsync (out of scope of the application)
-    When I copy a test bag to "/tmp/chipmunk/inc/<bag_id>"
+    When I copy a test bag to "data/incoming/<bag_id>"
     Then copy finishes successfully
     When I send an empty POST request to "/v1/requests/<bag_id>/complete"
     Then the response status should be "201"
@@ -63,7 +63,7 @@ Feature: End to End functionality
       | files         | samplefile                           |
       # see PFDR-66 (this is present for completed bags after the request/bag merger)
       | stored        | true                                 |
-      | upload_link   | localhost:/tmp/chipmunk/inc/<bag_id> |
+      | upload_link   | localhost:data/incoming/<bag_id> |
       | created_at    | 2017-05-17 18:49:08 UTC              |
       | updated_at    | 2017-05-17 18:49:08 UTC              |
 

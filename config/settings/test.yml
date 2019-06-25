@@ -1,7 +1,7 @@
 upload:
-  upload_path: /tmp/chipmunk/inc
-  rsync_point: localhost:/tmp/chipmunk/inc
-  storage_path: /tmp/chipmunk/store
+  upload_path: data/incoming
+  rsync_point: localhost:data/incoming
+  storage_path: data/storage
 validation:
   # These files noop with exit code 0 under normal test, but delegate to their
   # corresponding files in bin when RUN_INTEGRATION is 1.
