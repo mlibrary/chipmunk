@@ -46,8 +46,6 @@ group :test do
   gem "rspec"
   gem "rspec-activejob"
   gem "rspec-rails"
-  gem "timecop"
-  gem "turnip"
   gem "webmock"
 end
 
