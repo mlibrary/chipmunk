@@ -2,14 +2,6 @@ require "chipmunk/bag"
 require "json"
 require "fileutils"
 
-Given("I have a Bentley audio bag to deposit") do
-  @bag = Chipmunk::Bag.new(fixture("test_bag"))
-end
-
-Given("I have a malformed Bentley audio bag to deposit") do
-  @bag = Chipmunk::Bag.new(fixture("bad_test_bag"))
-end
-
 When("I initiate a deposit of an audio bag") do
   api_post(
     "/v1/requests",
@@ -20,8 +12,7 @@ When("I initiate a deposit of an audio bag") do
 end
 
 Then("I learn where my request is being tracked") do
-  expect(last_response["Location"])
-    .to eql("/v1/packages/#{@bag.id}")
+  expect(last_response["Location"]).to eql("/v1/packages/#{@bag.id}")
 end
 
 When("I check on my request") do
@@ -31,10 +22,6 @@ end
 Then("I receive the path to which to upload the content") do
   upload_link = JSON.parse(last_response.body)['upload_link']
   expect(upload_link).to eql("#{Chipmunk.config.upload.rsync_point}/#{@bag.id}")
-end
-
-Given("an audio deposit has been started") do
-  @package = Fabricate(:package, bag_id: @bag.id, content_type: @bag.content_type, external_id: @bag.external_id)
 end
 
 When("I upload the bag") do
@@ -57,8 +44,4 @@ Then("the bag is not stored in the repository") do
   expect {
     Services.storage.for(@package.reload)
   }.to raise_error Chipmunk::PackageNotStoredError
-end
-
-Then("I can see the reason it failed") do
-  pending # Write code here that turns the phrase above into concrete actions
 end
