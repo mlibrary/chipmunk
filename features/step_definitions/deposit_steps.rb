@@ -4,11 +4,8 @@ require "chipmunk"
 require 'json'
 
 Given("a preserved Bentley audio artifact") do
-  artifact = Fabricate(:stored_package, content_type: "audio")
-  Fabricate(:queue_item, package: artifact)
-
-  @artifact_bag_id = artifact.bag_id
-  @artifact_package_id = artifact.id
+  @artifact = Fabricate(:stored_package, content_type: "audio")
+  Fabricate(:queue_item, package: @artifact)
 end
 
 Given("I am a Bentley audio content steward") do
@@ -16,9 +13,9 @@ Given("I am a Bentley audio content steward") do
 end
 
 When("I check the status of the artifact") do
-  @api_response = api_get("/v1/bags/#{@artifact_bag_id}")
+  @api_response = api_get("/v1/bags/#{@artifact.bag_id}")
 
-  queue_response_body = json_get("/v1/queue?package=#{@artifact_package_id}",
+  queue_response_body = json_get("/v1/queue?package=#{@artifact.id}",
                                  default_on_failure: [])
   @latest_queue_response_body = queue_response_body.reduce do |lhs, rhs|
     DateTime.parse(lhs["updated_at"]) > DateTime.parse(rhs["updated_at"]) ? lhs : rhs
@@ -30,11 +27,8 @@ Then("I receive a report that the artifact is preserved") do
 end
 
 Given("an uploaded but not yet preserved Bentley audio artifact") do
-  artifact = Fabricate(:package, content_type: "audio")
-  Fabricate(:queue_item, package: artifact)
-
-  @artifact_bag_id = artifact.bag_id
-  @artifact_package_id = artifact.id
+  @artifact = Fabricate(:package, content_type: "audio")
+  Fabricate(:queue_item, package: @artifact)
 end
 
 Then("I receive a report that the artifact is in progress") do
@@ -43,11 +37,8 @@ Then("I receive a report that the artifact is in progress") do
 end
 
 Given("an uploaded Bentley audio artifact that failed validation") do
-  artifact = Fabricate(:package, content_type: "audio")
-  Fabricate(:queue_item, package: artifact, status: 1)
-
-  @artifact_bag_id = artifact.bag_id
-  @artifact_package_id = artifact.id
+  @artifact = Fabricate(:package, content_type: "audio")
+  Fabricate(:queue_item, package: @artifact, status: 1)
 end
 
 Then("I receive a report that the artifact is invalid") do
@@ -56,8 +47,7 @@ Then("I receive a report that the artifact is invalid") do
 end
 
 Given("a Bentley audio artifact that has not been uploaded") do
-  @artifact_bag_id = "adsladsjadjsklafdjsa"
-  @artifact_package_id = "adsladsjadjsklafdjsa"
+  @artifact = Struct.new(:id, :bag_id).new("some_id", "some_bag_id")
 end
 
 Then("I receive a report that the artifact has not been received") do
@@ -65,10 +55,7 @@ Then("I receive a report that the artifact has not been received") do
 end
 
 Given("an uploaded Bentley audio artifact of any status") do
-  artifact = Fabricate(:stored_package, content_type: "audio")
-
-  @artifact_bag_id = artifact.bag_id
-  @artifact_package_id = artifact.id
+  @artifact = Fabricate(:stored_package, content_type: "audio")
 end
 
 Given("I have no role") do
@@ -80,7 +67,7 @@ Then("my request is denied") do
 end
 
 When("I attempt to download a file in the artifact") do
-  @api_response = api_get("/v1/packages/#{@artifact_bag_id}/samplefile")
+  @api_response = api_get("/v1/packages/#{@artifact.bag_id}/samplefile")
 end
 
 Then("the file is delivered to me as a download") do
@@ -88,7 +75,7 @@ Then("the file is delivered to me as a download") do
 end
 
 When("I ask for a list of files in the artifact") do
-  @api_response = api_get("/v1/bags/#{@artifact_bag_id}")
+  @api_response = api_get("/v1/bags/#{@artifact.bag_id}")
 end
 
 Then("the filenames are delivered to me in a list") do
