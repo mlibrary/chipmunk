@@ -30,7 +30,7 @@ end
 
 Then("I receive the path to which to upload the content") do
   upload_link = JSON.parse(last_response.body)['upload_link']
-  expect(upload_link).to eql("localhost:/tmp/chipmunk/inc/#{@bag.id}")
+  expect(upload_link).to eql("#{Chipmunk.config.upload.rsync_point}/#{@bag.id}")
 end
 
 Given("an audio deposit has been started") do
