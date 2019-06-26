@@ -23,6 +23,6 @@ script:
 
 matrix:
   include:
-    - rvm: 2.6
-      script: bin/rubocop
+    - rvm: ruby-head
+      script: bundle exec rubocop
 
