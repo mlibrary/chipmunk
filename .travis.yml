@@ -21,6 +21,6 @@ script:
 
 matrix:
   include:
-    - rvm: ruby-head
+    - rvm: 2.6
       script: bin/rubocop
 
