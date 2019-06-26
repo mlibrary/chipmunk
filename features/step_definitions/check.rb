@@ -11,13 +11,11 @@ Then("I receive a report that the artifact is preserved") do
 end
 
 Then("I receive a report that the artifact is in progress") do
-  expect(JSON.parse(@package_response.body)['stored']).to eq false
   expect(JSON.parse(@queue_response.body).first['status'])
     .to eq('PENDING').or eq('DONE')
 end
 
 Then("I receive a report that the artifact is invalid") do
-  expect(JSON.parse(@package_response.body)['stored']).to eq false
   expect(JSON.parse(@queue_response.body).first['status']).to eq('FAILED')
 end
 

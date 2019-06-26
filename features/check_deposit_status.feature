@@ -12,15 +12,13 @@ Feature: Checking the status of a deposited artifact
   Scenario: Check on an artifact that has been uploaded but isn't preserved yet
     Given an uploaded but not yet preserved Bentley audio artifact
     And I am a Bentley audio content steward
-    When I check on the artifact
-    And I check on the progress processing the artifact
+    When I check on the progress processing the artifact
     Then I receive a report that the artifact is in progress
 
   Scenario: Check on an invalid artifact that has been uploaded
     Given an uploaded Bentley audio artifact that failed validation
     And I am a Bentley audio content steward
-    When I check on the artifact
-    And I check on the progress processing the artifact
+    When I check on the progress processing the artifact
     Then I receive a report that the artifact is invalid
 
   @allow-rescue
