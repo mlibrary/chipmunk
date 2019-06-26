@@ -46,9 +46,6 @@ RSpec.configure do |config|
 end
 
 require_relative "all_support"
-
-# Load Turnip. The rest of the config is in the turnip_helper.rb
-require "turnip/rspec"
 require "webmock/rspec"
 
 def fixture(*path)
