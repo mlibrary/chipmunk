@@ -20,7 +20,7 @@ before_script:
 
 script:
     - bundle exec rspec
-    - bin/cucumber
+    - bundle exec cucumber
 
 matrix:
   include:
