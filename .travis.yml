@@ -20,10 +20,10 @@ before_script:
 
 script:
     - bundle exec rspec
-    - bin/cucumber
+    - bundle exec cucumber
 
 matrix:
   include:
     - rvm: 2.6
-      script: bin/rubocop
+      script: bundle exec rubocop
 
