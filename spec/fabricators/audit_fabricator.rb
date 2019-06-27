@@ -2,5 +2,5 @@
 
 Fabricator(:audit) do
   user { Fabricate(:user) }
-  packages { 0 }
+  packages { Package.stored.count }
 end

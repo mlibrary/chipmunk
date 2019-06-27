@@ -4,7 +4,7 @@ Feature: Auditing the repository
   I want to audit the repository's content
 
   Background:
-    Given two preserved Bentley audio artifacts
+    Given 2 preserved Bentley audio artifacts
 
   Scenario: Initiating an audit
     Given I am a repository administrator
@@ -15,7 +15,7 @@ Feature: Auditing the repository
     Given I am a repository administrator
     And I have initiated an audit
     When I ask for the status of the audit
-    Then I see the total number of packages that were audited
+    Then I see that 2 packages were audited
     And I see how many have failed
 
   Scenario: Try to initiate an audit without permission
