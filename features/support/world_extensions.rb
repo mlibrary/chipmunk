@@ -63,6 +63,7 @@ module MakesApiRequests
     JSON.parse(api_get(*args).body)
   rescue JSON::ParserError
     raise if default_on_failure == :no_default
+
     default_on_failure
   end
 

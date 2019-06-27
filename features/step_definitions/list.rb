@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "json"
 
 When("I ask for a list of files in the artifact") do

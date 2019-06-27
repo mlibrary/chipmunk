@@ -23,7 +23,6 @@ rescue NameError
   raise "You need to add database_cleaner to your Gemfile (in the :test group) if you wish to use it."
 end
 
-
 # Possible values are :truncation and :transaction
 # The :transaction strategy is faster, but might give you threading problems.
 # See https://github.com/cucumber/cucumber-rails/blob/master/features/choose_javascript_database_strategy.feature
@@ -38,7 +37,7 @@ end
 Checkpoint::DB.initialize!
 Checkpoint::DB[:grants].truncate
 
-Around do |scenario, block|
+Around do |_scenario, block|
   Checkpoint::DB.db.transaction(rollback: :always, auto_savepoint: true) do
     block.call
   end
@@ -55,4 +54,3 @@ end
 ApplicationJob.queue_adapter = :inline
 
 World(Rack::Test::Methods, AppHelper)
-

@@ -28,7 +28,7 @@ RSpec.shared_examples "a validation integration" do
 
     example.run
 
-    Services.register(:incoming_storage) { old_incoming_storage}
+    Services.register(:incoming_storage) { old_incoming_storage }
   end
 
   before(:each) do

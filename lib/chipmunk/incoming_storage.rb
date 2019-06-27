@@ -44,7 +44,7 @@ module Chipmunk
     #   location for a deposit, for a given package.
     # @param links [PathBuilder] A PathBuilder that returns an rsync destination to which the
     #   user should upload, for a given package.
-    def initialize(volume:, paths:, links: )
+    def initialize(volume:, paths:, links:)
       @volume = volume
       @paths = paths
       @links = links

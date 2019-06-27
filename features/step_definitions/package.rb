@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Given(/(\d*) preserved Bentley audio artifacts/) do |quantity|
   Fabricate.times(Integer(quantity), :stored_package, content_type: "audio")
 end
@@ -33,4 +35,3 @@ Given("an audio deposit has been started") do
     external_id: @bag.external_id
   )
 end
-

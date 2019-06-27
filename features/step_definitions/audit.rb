@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 When("I initiate an audit") do
   api_post("/v1/audits")
 end
@@ -22,4 +24,3 @@ end
 Given("I have initiated an audit") do
   @audit = Fabricate(:audit)
 end
-

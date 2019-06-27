@@ -9,9 +9,11 @@ AllCops:
   Exclude:
     - 'bin/bundle'
     - 'bin/console'
+    - 'bin/cucumber'
     - 'bin/rspec'
     - 'bin/rubocop'
     - 'bin/yard'
+    - 'lib/tasks/cucumber.rake'
     - '.bundle/**/*'
     - 'vendor/bundle/**/*'
     - '*.gemspec'

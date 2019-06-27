@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "chipmunk/bag"
 require "json"
 require "fileutils"
@@ -20,7 +22,7 @@ When("I check on my request") do
 end
 
 Then("I receive the path to which to upload the content") do
-  upload_link = JSON.parse(last_response.body)['upload_link']
+  upload_link = JSON.parse(last_response.body)["upload_link"]
   expect(upload_link).to eql("#{Chipmunk.config.upload.rsync_point}/#{@bag.id}")
 end
 
@@ -33,7 +35,7 @@ When("signal that the artifact is fully uploaded") do
 end
 
 Then("the deposit of the artifact is acknowledged") do
-  expect(api_get(last_response['Location']).status).to eql(200)
+  expect(api_get(last_response["Location"]).status).to eql(200)
 end
 
 Then("the bag is stored in the repository") do
@@ -41,7 +43,7 @@ Then("the bag is stored in the repository") do
 end
 
 Then("the bag is not stored in the repository") do
-  expect {
+  expect do
     Services.storage.for(@package.reload)
-  }.to raise_error Chipmunk::PackageNotStoredError
+  end.to raise_error Chipmunk::PackageNotStoredError
 end

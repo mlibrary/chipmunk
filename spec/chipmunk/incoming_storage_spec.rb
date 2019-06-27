@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe Chipmunk::IncomingStorage do
-  subject(:storage) { described_class.new(volume: volume, paths: path_builder, links: path_builder) }
+  let(:package_type) { double("SomePackageFormat", format: "some-pkg") }
+  let(:volume) { Chipmunk::Volume.new(name: "incoming", package_type: package_type, root_path: "/incoming") }
+  let(:path_builder) { Chipmunk::IncomingStorage::IdPathBuilder.new("/") }
+  let(:uploader)         { instance_double("User", username: "uploader") }
+  let(:unstored_package) { instance_double("Package", stored?: false, user: uploader, bag_id: "abcdef-123456") }
+  let(:stored_package)   { instance_double("Package", stored?: true) }
+
   subject(:storage) do
     described_class.new(
       volume: volume,
@@ -9,14 +15,6 @@ RSpec.describe Chipmunk::IncomingStorage do
       links: described_class::IdPathBuilder.new("rsync:foo")
     )
   end
-
-  let(:package_type) { double("SomePackageFormat", format: "some-pkg") }
-  let(:volume) { Chipmunk::Volume.new(name: "incoming", package_type: package_type, root_path: "/incoming") }
-  let(:path_builder) { Chipmunk::IncomingStorage::IdPathBuilder.new("/") }
-
-  let(:uploader)         { instance_double("User", username: "uploader") }
-  let(:unstored_package) { instance_double("Package", stored?: false, user: uploader, bag_id: "abcdef-123456") }
-  let(:stored_package)   { instance_double("Package", stored?: true) }
 
   describe "#upload_link" do
     it "reports the upload link" do
