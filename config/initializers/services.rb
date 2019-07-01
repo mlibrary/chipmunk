@@ -41,8 +41,8 @@ if Rails.env.test?
         package_type: Chipmunk::Bag,
         root_path: Chipmunk.config.upload.upload_path
       ),
-      paths: Chipmunk::IncomingStorage::IdPathBuilder.new("/"),
-      links: Chipmunk::IncomingStorage::IdPathBuilder.new(Chipmunk.config.upload["rsync_point"])
+      paths: Chipmunk::UploadPath.new("/"),
+      links: Chipmunk::UploadPath.new(Chipmunk.config.upload["rsync_point"])
     )
   end
   Services.register(:storage) do
@@ -59,8 +59,8 @@ else
         package_type: Chipmunk::Bag,
         root_path: Chipmunk.config.upload.upload_path
       ),
-      paths: Chipmunk::IncomingStorage::UserPathBuilder.new(Chipmunk.config.upload["upload_path"]),
-      links: Chipmunk::IncomingStorage::IdPathBuilder.new(Chipmunk.config.upload["rsync_point"])
+      paths: Chipmunk::UserUploadPath.new(Chipmunk.config.upload["upload_path"]),
+      links: Chipmunk::UploadPath.new(Chipmunk.config.upload["rsync_point"])
     )
   end
   Services.register(:storage) do

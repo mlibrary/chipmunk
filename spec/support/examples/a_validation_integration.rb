@@ -21,8 +21,8 @@ RSpec.shared_examples "a validation integration" do
     Services.register(:incoming_storage) do
       Chipmunk::IncomingStorage.new(
         volume: Chipmunk::Volume.new(name: "incoming", package_type: Chipmunk::Bag, root_path: fixture(content_type)),
-        paths: Chipmunk::IncomingStorage::UserPathBuilder.new("/"),
-        links: Chipmunk::IncomingStorage::IdPathBuilder.new("/this/does/not/get/used")
+        paths: Chipmunk::UserUploadPath.new("/"),
+        links: Chipmunk::UploadPath.new("/this/does/not/get/used")
       )
     end
 
