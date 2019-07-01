@@ -47,9 +47,7 @@ module Chipmunk
       FileUtils.mkdir_p(dest_path)
       File.rename(source.path, dest_path)
 
-      package.storage_volume = volume.name
-      package.storage_path = storage_path
-      true
+      package.update(storage_volume: volume.name, storage_path: storage_path)
     end
 
     # We are defaulting everything to "bags" for now as the simplest resolution strategy.

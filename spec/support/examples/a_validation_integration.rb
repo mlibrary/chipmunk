@@ -9,8 +9,6 @@ require "fileutils"
 #   under spec/support/fixtures/content_type/{good,bad}
 # @param external_id [String] The external identifier that should be used when
 #   constructing Bags.
-# @param validation_script [String] The validation command to run - should be an
-#   executable script under bin
 # @param expected_error [Regexp] A Regexp that the expected output from
 #   validating spec/support/fixtures/content_type/bad should match.
 RSpec.shared_examples "a validation integration" do
@@ -18,28 +16,23 @@ RSpec.shared_examples "a validation integration" do
     File.join(Rails.application.root, "spec", "support", "fixtures", *args)
   end
 
-  before(:each) do
-    @old_validation = Rails.application.config.validation[content_type]
-    @old_upload_path = Rails.application.config.upload["upload_path"]
-    Rails.application.config.validation["external"][content_type] = File.join(Rails.application.root, "bin", validation_script)
-
-    @old_incoming_storage = Services.incoming_storage
-
+  around(:each) do |example|
+    old_incoming_storage = Services.incoming_storage
     Services.register(:incoming_storage) do
-      Chipmunk::IncomingStorage.new(volume: Chipmunk::Volume.new(
-        name: "incoming", package_type: Chipmunk::Bag, root_path: fixture(content_type)
-      ))
+      Chipmunk::IncomingStorage.new(
+        volume: Chipmunk::Volume.new(name: "incoming", package_type: Chipmunk::Bag, root_path: fixture(content_type)),
+        paths: Chipmunk::UserUploadPath.new("/"),
+        links: Chipmunk::UploadPath.new("/this/does/not/get/used")
+      )
     end
 
-    allow(Services.storage).to receive(:write).with(package, anything).and_return true
+    example.run
+
+    Services.register(:incoming_storage) { old_incoming_storage }
   end
 
-  after(:each) do
-    Rails.application.config.validation["external"][content_type] = @old_validation
-
-    Services.register(:incoming_storage) do
-      @old_incoming_storage
-    end
+  before(:each) do
+    allow(Services.storage).to receive(:write).with(package, anything).and_return true
   end
 
   # for known upload location under fixtures/video

@@ -14,4 +14,4 @@ Feature: Downloading files within an artifact
   Scenario: Try to download a file without permission
     Given I have no role
     When I attempt to download a file in the artifact
-    Then the file is not delivered
+    Then my request is denied
