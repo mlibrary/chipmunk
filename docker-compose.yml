@@ -1,10 +1,15 @@
 version: '3.7'
 services:
-  web:
-    build: '.'
-    command: ["/bin/bash"]
+  dev:
+    build:
+      context: .
+      target: base
+    command: ["bundle", "exec", "rspec"]
     volumes:
       - type: bind
         source: '.'
         target: '/usr/src/app'
+  app:
+    build: .
+    command: ["bin/rails", "server"]
 

@@ -1,5 +1,5 @@
 ARG FEED_TAG=jhove-1.6
-FROM hathitrust/feed:${FEED_TAG}
+FROM hathitrust/feed:${FEED_TAG} as base
 
 RUN apt-get update && apt-get install -y \
   autoconf \
@@ -29,6 +29,8 @@ RUN mkdir -p $APP_PATH
 WORKDIR $APP_PATH
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
-
 ENV RUN_INTEGRATION 1
-CMD ["bundle", "exec", "rspec"]
+
+FROM base as build
+COPY . ./
+
