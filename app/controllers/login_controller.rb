@@ -14,7 +14,7 @@ class LoginController < ApplicationController
   end
 
   def create
-    forbidden! and return unless Chipmunk.config.allow_impersonation
+    return forbidden! unless Chipmunk.config.allow_impersonation
 
     username = params[:username]
     user = User.find_by_username(username)

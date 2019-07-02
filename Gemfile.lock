@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/mlibrary/keycard
-  revision: 05d7ed79255f03d8506579f148d4a470e8cb5afd
+  revision: 28cebd1eaab681b36f16b2db70e0e26d68a49754
   branch: login-support
   specs:
-    keycard (0.3.2)
+    keycard (0.3.3)
       sequel
 
 GEM
