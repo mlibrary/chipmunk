@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/mlibrary/keycard
+  revision: 05d7ed79255f03d8506579f148d4a470e8cb5afd
+  branch: login-support
+  specs:
+    keycard (0.3.2)
+      sequel
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -124,8 +132,6 @@ GEM
       checkpoint (~> 1.1.0)
       keycard (~> 0.3.0)
       vizier (~> 0.1.0)
-    keycard (0.3.1)
-      sequel
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -314,7 +320,7 @@ DEPENDENCIES
   faker
   jbuilder
   kcv (~> 0.4.0)
-  keycard (~> 0.3.1)
+  keycard!
   mysql2 (~> 0.4.10)
   pry
   pry-byebug
