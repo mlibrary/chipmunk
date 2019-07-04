@@ -48,6 +48,7 @@ class LoginController < ApplicationController
       <html>
         <body>
           <form method="post">
+            <input type="hidden" name="authenticity_token" value="#{form_authenticity_token}" />
             <input type="text" name="username" />
             <input type="submit" name="login" />
           </form>

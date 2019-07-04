@@ -1,5 +1,8 @@
 allow_impersonation: true
 
+# One day in development
+session_timeout: 86400
+
 upload:
   upload_path: data/incoming
   rsync_point: localhost:incoming

@@ -2,3 +2,6 @@ default_from: changeme@example.com
 
 # Allow users to impersonate (login as) anyone -- useful for development
 allow_impersonation: false
+
+# Session inactivity timeout; default to one hour
+session_timeout: 3600
