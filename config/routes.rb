@@ -24,4 +24,12 @@ Rails.application.routes.draw do
   get "/login", to: "login#new", as: "login"
   post "/login", to: "login#create", as: "login_as"
   match "/logout", to: "login#destroy", as: "logout", via: [:get, :post]
+
+  get "*path", to: "application#fallback_index_html", constraints: ->(request) do
+    !request.xhr? && request.format.html?
+  end
+
+  root to: "application#fallback_index_html", constraints: ->(request) do
+    !request.xhr? && request.format.html?
+  end
 end
