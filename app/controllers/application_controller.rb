@@ -34,7 +34,7 @@ class ApplicationController < ActionController::API
   def fallback_index_html
     app_index = "public/index.html"
     if File.exist?(Rails.root.join(app_index))
-      render file "public/index.html", content_type: :html
+      render file: app_index, content_type: :html
     elsif Rails.env.development?
       render plain: "Frontend application is not built in public/. Only the API is available."
     else
