@@ -3,8 +3,8 @@
 class CreateQueueItems < ActiveRecord::Migration[5.1]
   def change
     create_table :queue_items do |t|
-      t.integer :request_id, null: false
-      t.integer :bag_id, null: true
+      t.references :request, null: false, index: false
+      t.references :bag, null: true, index: false
       t.integer :status, null: false, default: 0
       t.text :error, null: true
       t.timestamps
