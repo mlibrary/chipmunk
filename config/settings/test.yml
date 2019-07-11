@@ -1,3 +1,5 @@
+allow_impersonation: true
+
 upload:
   upload_path: data/incoming
   rsync_point: localhost:data/incoming

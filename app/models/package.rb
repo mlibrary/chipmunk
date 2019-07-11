@@ -36,6 +36,8 @@ class Package < ApplicationRecord
   # V1 API exposes the absolute path to storage.
   def storage_location
     package_storage.for(self).path if stored?
+  rescue Chipmunk::PackageNotFoundError
+    storage_path
   end
 
   def storage_location=

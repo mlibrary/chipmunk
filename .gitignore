@@ -13,6 +13,10 @@
 /data/storage
 !/data/.keep
 
+# Front-end application
+/public/*
+!/public/.keep
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
