@@ -3,7 +3,7 @@
 require "rails_helper"
 require "checkpoint_helper"
 
-RSpec.describe "Login Worfklows", type: :request do
+RSpec.describe "Login Workflows", type: :request do
   context "when impersonation is allowed" do
     let(:user) { Fabricate(:user) }
 
