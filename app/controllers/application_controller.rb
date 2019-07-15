@@ -31,6 +31,17 @@ class ApplicationController < ActionController::API
   rescue_from NotAuthorizedError, with: :user_not_authorized
   rescue_from Chipmunk::FileNotFoundError, with: :file_not_found
 
+  def fallback_index_html
+    app_index = "public/index.html"
+    if File.exist?(Rails.root.join(app_index))
+      render file: app_index, content_type: :html
+    elsif Rails.env.development?
+      render plain: "Frontend application is not built in public/. Only the API is available."
+    else
+      file_not_found
+    end
+  end
+
   def fake_user(user)
     raise "only for testing" unless Rails.env.test?
 

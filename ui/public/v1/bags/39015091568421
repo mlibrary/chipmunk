@@ -1,0 +1,19 @@
+{
+  "bag_id": "7af657bb-0970-49a7-bf67-a67268b739d4",
+  "user": "mattlach",
+  "content_type": "audio",
+  "external_id": "39015091568421",
+  "upload_link": "vodka.umdl.umich.edu:incoming/7af657bb-0970-49a7-bf67-a67268b739d4",
+  "storage_location": "/pfdr/storage/7a/f6/57/7af657bb-0970-49a7-bf67-a67268b739d4",
+  "stored": true,
+  "created_at": "2019-03-20 17:38:46 UTC",
+  "updated_at": "2019-03-20 18:05:12 UTC",
+  "files": [
+    "am000002.wav",
+    "am000001.wav",
+    "pm000001.wav",
+    "pm000002.wav",
+    "mets.xml",
+    "notes.txt"
+  ]
+}

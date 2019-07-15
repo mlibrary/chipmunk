@@ -127,6 +127,9 @@ Layout/MultilineMethodCallIndentation:
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
 
+Style/Lambda:
+  Enabled: false
+
 # Produces poor results.
 Style/Next:
   Enabled: false
