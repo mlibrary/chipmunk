@@ -15,6 +15,7 @@ module V1
       policy = collection_policy.new(current_user)
       policy.authorize! :index?
 
+      @current_user = current_user
       @packages = policy.resolve
     end
 
@@ -22,6 +23,7 @@ module V1
     # GET /packages/39015012345678
     def show
       resource_policy.new(current_user, package).authorize! :show?
+      @current_user = current_user
 
       # Expose the bag if this is a request for a logical package.
       # Avoid exposing it if this is a request for a logical request.
@@ -118,6 +120,5 @@ module V1
         return :invalid
       end
     end
-
   end
 end

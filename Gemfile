@@ -27,7 +27,7 @@ gem "zip_tricks"
 
 gem "checkpoint", "~> 1.1.3"
 gem "kcv", "~> 0.4.0"
-gem "keycard", "~> 0.3.1"
+gem "keycard", "~> 0.3.3"
 
 group :development, :test do
   gem "byebug", platforms: [:mri]

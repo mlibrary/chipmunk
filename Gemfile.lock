@@ -124,7 +124,7 @@ GEM
       checkpoint (~> 1.1.0)
       keycard (~> 0.3.0)
       vizier (~> 0.1.0)
-    keycard (0.3.1)
+    keycard (0.3.3)
       sequel
     loofah (2.2.3)
       crass (~> 1.0.2)
@@ -314,7 +314,7 @@ DEPENDENCIES
   faker
   jbuilder
   kcv (~> 0.4.0)
-  keycard (~> 0.3.1)
+  keycard (~> 0.3.3)
   mysql2 (~> 0.4.10)
   pry
   pry-byebug

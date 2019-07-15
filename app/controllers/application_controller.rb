@@ -3,23 +3,39 @@
 require "policy_errors"
 
 class ApplicationController < ActionController::API
+  include ActionController::Cookies
+  include ActionController::RequestForgeryProtection
+  # It's unclear why this is required. The include is ignoring the config
+  # option, which is false under test, so we have to apply it by hand.
+  self.allow_forgery_protection = ActionController::Base.allow_forgery_protection
 
-  # Add a before_action to authenticate all requests.
-  # Move this to subclassed controllers if you only
-  # want to authenticate certain methods.
-  before_action :authenticate
+  include Keycard::ControllerMethods
+
+  # Add before_action to authenticate and secure all requests.
+  # If an API key is provided, it must also be valid. We do not fall back
+  # to other forms of authentication in the case of failure.
+  # If it isn't provided, attempt to find the user via the user_eid, or
+  # build out a guest user.
+  # Skip authenticate! for specific actions if you want to bypass the requirement.
+  # TODO: Add config option to allow nonmember users, reject them, or autocreate them
+  before_action :validate_session
+  before_action :authenticate!
+  protect_from_forgery with: :exception, unless: -> { authentication.csrf_safe? }
+  before_action :set_csrf_cookie
+
   before_action :set_format_to_json
 
+  rescue_from Keycard::AuthenticationRequired, with: :redirect_to_login
+  rescue_from Keycard::AuthenticationFailed, with: :authentication_failed
+  rescue_from ActionController::InvalidAuthenticityToken, with: :user_not_authorized
   rescue_from NotAuthorizedError, with: :user_not_authorized
   rescue_from Chipmunk::FileNotFoundError, with: :file_not_found
-
-  attr_reader :current_user
 
   def fake_user(user)
     raise "only for testing" unless Rails.env.test?
 
-    @current_user = user
-    @current_user.identity ||= {}
+    user.identity ||= {}
+    auto_login(user)
   end
 
   protected
@@ -36,48 +52,33 @@ class ApplicationController < ActionController::API
     request.format = :json
   end
 
-  def authenticate
-    # If an API key is provided, it must also be valid. We do not fall back
-    # to other forms of authentication.
-    # If it isn't provided, attempt to find the user via the user_eid, or
-    # build out a guest user.
-    return if @current_user && Rails.env.test?
-
-    request_attributes = Services.request_attributes.for(request)
-    if request_attributes.auth_token
-      authenticate_token(request_attributes)
-    else
-      authenticate_nontoken(request_attributes)
-    end
+  def render_unauthorized(realm = "Application")
+    headers["WWW-Authenticate"] = %(Token realm="#{realm.delete('"')}")
+    render json: { error: "Bad credentials" }, status: :unauthorized
   end
 
-  def authenticate_token(request_attributes)
-    digest = Keycard::DigestKey.new(key: request_attributes.auth_token).digest
-    unless (@current_user = User.find_by(api_key_digest: digest))
+  def redirect_to_login
+    if request.get? && !request.xhr?
+      session[:return_to] = request.path
+      redirect_to login_path
+    else
       render_unauthorized
     end
   end
 
-  def authenticate_nontoken(request_attributes)
-    @current_user = User.find_by(username: request_attributes.user_eid)
-    @current_user ||= User.new
-    @current_user.username ||= request_attributes.user_eid
-    @current_user.identity = @current_user.identity.merge(request_attributes.identity)
-    unless @current_user.identity[:username]
-      if request.get? && !request.xhr?
-        session[:return_to] = request.path
-        redirect_to("/login")
-      else
-        # redirecting to an interactive login page isn't a good idea with POST
-        # or non-interactive (XMLHttpRequest) requests - cribbed from Sorcery
-        render_unauthorized
-      end
-    end
+  def authentication_failed
+    render_unauthorized
   end
 
-  def render_unauthorized(realm = "Application")
-    headers["WWW-Authenticate"] = %(Token realm="#{realm.delete('"')}")
-    render json: "Bad credentials", status: :unauthorized
+  def set_csrf_cookie
+    cookies["CSRF-TOKEN"] = form_authenticity_token
   end
 
+  def session_timeout
+    Chipmunk.config.session_timeout
+  end
+
+  def notary
+    Services.notary
+  end
 end

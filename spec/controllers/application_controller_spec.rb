@@ -66,10 +66,6 @@ RSpec.describe ApplicationController, type: :controller do
         expect(controller.current_user).to eq(user)
       end
 
-      it "sets identity[:username] to user.username" do
-        expect(controller.current_user.identity[:username]).to eq(user.username)
-      end
-
       it_behaves_like "an allowed request"
     end
 
@@ -110,8 +106,8 @@ RSpec.describe ApplicationController, type: :controller do
 
       it_behaves_like "respects Authorization header"
 
-      it "sets identity[:username] to the X-Remote-User value" do
-        expect(controller.current_user.identity[:username]).to eq(username)
+      it "sets identity[:user_eid] to the X-Remote-User value" do
+        expect(controller.current_user.identity[:user_eid]).to eq(username)
       end
     end
   end

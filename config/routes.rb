@@ -21,5 +21,7 @@ Rails.application.routes.draw do
     resources :audits, only: [:index, :create, :show]
   end
 
-  get "/login", controller: :users, action: :login
+  get "/login", to: "login#new", as: "login"
+  post "/login", to: "login#create", as: "login_as"
+  match "/logout", to: "login#destroy", as: "logout", via: [:get, :post]
 end
