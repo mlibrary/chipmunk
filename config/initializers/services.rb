@@ -59,7 +59,7 @@ else
         package_type: Chipmunk::Bag,
         root_path: Chipmunk.config.upload.upload_path
       ),
-      paths: Chipmunk::UserUploadPath.new(Chipmunk.config.upload["upload_path"]),
+      paths: Chipmunk::UserUploadPath.new("/"),
       links: Chipmunk::UploadPath.new(Chipmunk.config.upload["rsync_point"])
     )
   end
