@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "chipmunk"
+require "rails"
 
 def assign_db(lhs, rhs)
   if rhs.is_a? String

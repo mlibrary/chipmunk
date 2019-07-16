@@ -30,6 +30,8 @@ CLI / end-to-end testing
 - Prerequisite: install ``rsync`` and set up the ability for the current user to use rsync over
   ssh to ``localhost`` (an ssh key is nice but not required).
 - ``git clone``/``bundle install`` as usual
+- Set up the authentication database: ``bundle exec rake keycard:migrate``
+- Set up the authorization database: ``bundle exec rake checkpoint:migrate``
 - Set up the database: ``bundle exec rake db:setup``
 - Set up the repository and upload paths: ``bundle exec rake chipmunk:setup``
 - Set up external validators in ``config/settings/development.local.yml`` (see
