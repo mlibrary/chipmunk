@@ -1,5 +1,19 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Configuration
+
+There are two environment variables that can be set to ensure that the app
+has correct labeling and can issue requests to the API:
+
+ * `REACT_APP_API_URL`: the URL of the API; must include the protocol; defaults 
+   to http://localhost:3000/ in development
+ * `REACT_APP_REPO_NAME`: the title of the repository, to be displayed prominently
+   in the interfact
+
+The defaults are set in `.env` and `.env.development`. You can use `*.local` for
+overrides that will be ignored by Git. There are details of how this works in the
+[upstream documentation](https://facebook.github.io/create-react-app/docs/adding-custom-environment-variables).
+
 ## Available Scripts
 
 In the project directory, you can run:

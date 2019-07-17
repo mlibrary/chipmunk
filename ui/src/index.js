@@ -6,6 +6,9 @@ import ArtifactSearch from "./artifact_search";
 import ArtifactView from "./artifact_view";
 import errorMessage from "./error_message";
 
+const API_URL = process.env.REACT_APP_API_URL;
+const REPO_NAME = process.env.REACT_APP_REPO_NAME;
+
 function App() {
   return (
     <div>
@@ -19,7 +22,7 @@ function App() {
           <Heading level={1} size="3XL" style={{
             marginTop: SPACING['2XL'],
             marginBottom: SPACING['XL']
-          }}>Catalogued and Hosted Electronic Resources</Heading>
+          }}>{REPO_NAME}</Heading>
           <BrowserRouter>
             <Route path="/" exact component={SearchWrapper}/>
             <Route path="/artifacts/:id" component={DirectArtifact}/>
@@ -32,7 +35,7 @@ function App() {
 
 function SearchWrapper() {
   return (
-    <ArtifactSearch api="/"/>
+    <ArtifactSearch api={API_URL} />
   );
 }
 
@@ -53,7 +56,7 @@ class ErroringArtifact extends React.Component {
   render() {
     return (
       <ArtifactView
-        api="/"
+        api={API_URL}
         id={this.props.id}
         onError={e => { this.setError(e) }}
         error={this.state.error}
