@@ -13,6 +13,10 @@
 /data/storage
 !/data/.keep
 
+# Ignore public directory as it is where the built app is served from
+/public/*
+!/public/.keep
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
