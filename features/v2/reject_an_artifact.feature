@@ -8,7 +8,7 @@ Feature: Rejecting a malformed artifact
     And I have a malformed Bentley audio bag to deposit
 
   Scenario: A malformed bag is rejected
-    Given an audio deposit has been started
+    Given a new deposit
     When I upload the bag
     And signal that the artifact is fully uploaded
     Then the bag is not stored in the repository
