@@ -5,21 +5,27 @@ Feature: Depositing an artifact
 
   Background:
     Given I am a Bentley audio content steward
-    And I have a Bentley audio bag to deposit
 
   Scenario: Initiating a deposit
+    Given I have a Bentley audio bag to deposit
     When I initiate a deposit of an audio bag
     Then I learn where my request is being tracked
 
   Scenario: Finding upload location
-    Given an audio deposit has been started
-    When I check on my request
+    Given a new deposit
+    When I check on the deposit
     Then I receive the path to which to upload the content
 
   Scenario: Uploading an artifact
-    Given an audio deposit has been started
+    Given a new deposit
+    And I have a Bentley audio bag to deposit
     When I upload the bag
-    And signal that the artifact is fully uploaded
+    And I signal that the artifact is fully uploaded
     Then the deposit of the artifact is acknowledged
-    And the bag is stored in the repository
+    And the deposit is ingesting
+
+  Scenario: Preserving an artifact
+    Given an in progress deposit
+    When the deposit's ingest completes
+    Then the bag is stored in the repository
 
