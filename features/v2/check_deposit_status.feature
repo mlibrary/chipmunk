@@ -1,35 +1,36 @@
-Feature: Checking the status of a deposited artifact
-  In order to know which digital artifacts have been preserved
+Feature: Checking the status of a deposit
+  In order to know which deposits have completed
   As a content steward
-  I want to check the status of artifacts that have been uploaded
+  I want to check the status of my deposits
 
-  Scenario: Check on a valid and ingested artifact
-    Given a preserved Bentley audio artifact
+  Scenario: Check on a successful deposit
+    Given a completed deposit
     And I am a Bentley audio content steward
-    When I check on the artifact
-    Then I receive a report that the artifact is preserved
+    When I check on the deposit
+    Then I receive a report that the deposit is completed
 
-  Scenario: Check on an artifact that has been uploaded but isn't preserved yet
-    Given an uploaded but not yet preserved Bentley audio artifact
+  Scenario: Check on an in progress deposit
+    Given an in progress deposit
     And I am a Bentley audio content steward
-    When I check on the progress processing the artifact
-    Then I receive a report that the artifact is in progress
+    When I check on the deposit
+    Then I receive a report that the deposit is ingesting
 
-  Scenario: Check on an invalid artifact that has been uploaded
-    Given an uploaded Bentley audio artifact that failed validation
+  Scenario: Check on a deposit of an invalid artifact
+    Given a failed deposit
     And I am a Bentley audio content steward
-    When I check on the progress processing the artifact
-    Then I receive a report that the artifact is invalid
+    When I check on the deposit
+    Then I receive a report that the deposit failed
+    And I receive a report that the artifact is invalid
 
   @allow-rescue
-  Scenario: Check on an artifact that has not yet been uploaded
-    Given a Bentley audio artifact that has not been uploaded
+  Scenario: Check on a new deposit
+    Given a new deposit
     And I am a Bentley audio content steward
-    When I check on the artifact
-    Then I receive a report that the artifact has not been received
+    When I check on the deposit
+    Then I receive a report that the deposit is started
 
-  Scenario: Check on an artifact without permission
-    Given an uploaded Bentley audio artifact of any status
+  Scenario: Check on a deposit without permission
+    Given a deposit
     And I have no role
-    When I check on the artifact
+    When I check on the deposit
     Then my request is denied
