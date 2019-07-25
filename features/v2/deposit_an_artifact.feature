@@ -29,3 +29,9 @@ Feature: Depositing an artifact
     When the deposit's ingest completes
     Then the bag is stored in the repository
 
+  Scenario: A malformed bag is rejected
+    Given a new deposit
+    And I have a malformed Bentley audio bag to deposit
+    When I upload the bag
+    And signal that the artifact is fully uploaded
+    Then the bag is not stored in the repository
