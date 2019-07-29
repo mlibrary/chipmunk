@@ -20,7 +20,7 @@ before_script:
 
 script:
     - bundle exec rspec
-    - bundle exec cucumber
+    - bundle exec cucumber --no-strict-pending
 
 matrix:
   include:

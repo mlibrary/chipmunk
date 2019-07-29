@@ -18,6 +18,7 @@ Feature: Downloading files within an artifact
 
   Scenario: Try to download a file without permission
     Given I have no role
+    And a preserved audio artifact
     When I attempt to download a file in the artifact
     Then my request is denied
 
