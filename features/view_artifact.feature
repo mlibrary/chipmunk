@@ -18,3 +18,8 @@ Feature: List the contents of an artifact
     When I am seeking a known revision of the artifact
     And I view the artifact
     Then I see the specified revision
+
+  Scenario: Listing the revisions of an artifact
+    Given a preserved audio artifact with multiple revisions
+    When I view the revision history of the artifact
+    Then I see all of the revisions listed with timestamps

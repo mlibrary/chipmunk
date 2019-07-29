@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Given("I am a content steward") do
   pending # Write code here that turns the phrase above into concrete actions
 end
@@ -174,3 +176,10 @@ Then("I see the specified revision") do
   pending # Write code here that turns the phrase above into concrete actions
 end
 
+When("I view the revision history of the artifact") do
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Then("I see all of the revisions listed with timestamps") do
+  pending # Write code here that turns the phrase above into concrete actions
+end
