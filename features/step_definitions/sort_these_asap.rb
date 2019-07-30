@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
-Given("I am a content steward") do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Given("an audio object that is not in the repository") do
-  pending # Write code here that turns the phrase above into concrete actions
+  @digital_object = Chipmunk::Bag.new(fixture("test_bag"))
 end
 
 When("I deposit the object as a bag") do
-  pending # Write code here that turns the phrase above into concrete actions
+  api_post(
+    "/v2/deposits",
+    bag_id: @digital_object.id,
+    content_type: @digital_object.content_type,
+    external_id: @digital_object.external_id
+  )
 end
 
 Then("it is preserved as an artifact") do
@@ -21,7 +22,8 @@ Then("the artifact has the identifier from within the bag") do
 end
 
 Given("a preserved audio artifact") do
-  pending # Write code here that turns the phrase above into concrete actions
+  @artifact = Fabricate(:stored_package, content_type: "audio")
+  Fabricate(:queue_item, package: @artifact)
 end
 
 When("I attempt to deposit the object as a bag to create a new artifact") do
@@ -29,10 +31,6 @@ When("I attempt to deposit the object as a bag to create a new artifact") do
 end
 
 Then("it is rejected as already preserved") do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Given("I am a subject librarian") do
   pending # Write code here that turns the phrase above into concrete actions
 end
 

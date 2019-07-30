@@ -8,6 +8,10 @@ Given("I am a repository administrator") do
   make_me_an("admin").on_everything
 end
 
+Given("I am a subject librarian") do
+  make_me_a("subject_librarian").on_all("sociology_and_applied_psychology")
+end
+
 Given("I have no role") do
   me
 end

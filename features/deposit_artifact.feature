@@ -9,7 +9,7 @@ Feature: Deposit a new artifact into the repository
   successfully deposited into the repository.
 
   Background:
-    Given I am a content steward
+    Given I am a Bentley audio content steward
 
   Scenario: Depositing a new artifact
     Given an audio object that is not in the repository

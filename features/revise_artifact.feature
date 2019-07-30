@@ -9,7 +9,7 @@ Feature: Revise an artifact in the repository
   future functionality.
 
   Background:
-    Given I am a content steward
+    Given I am a Bentley audio content steward
 
   Scenario: Uploading a new edition
     Given a preserved audio artifact
