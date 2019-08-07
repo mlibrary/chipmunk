@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190531175502) do
+ActiveRecord::Schema.define(version: 20190807173150) do
+
+  create_table "artifacts", force: :cascade do |t|
+    t.string "artifact_id", null: false
+    t.string "content_type", null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["artifact_id"], name: "index_artifacts_on_artifact_id", unique: true
+    t.index ["user_id"], name: "index_artifacts_on_user_id"
+  end
 
   create_table "audits", force: :cascade do |t|
     t.integer "user_id"
@@ -18,6 +28,15 @@ ActiveRecord::Schema.define(version: 20190531175502) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_audits_on_user_id"
+  end
+
+  create_table "deposits", force: :cascade do |t|
+    t.integer "artifact_id", null: false
+    t.integer "user_id", null: false
+    t.string "status", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_deposits_on_user_id"
   end
 
   create_table "events", force: :cascade do |t|

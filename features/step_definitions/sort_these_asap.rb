@@ -1,23 +1,44 @@
 # frozen_string_literal: true
 
 Given("I am a content steward") do
-  pending # Write code here that turns the phrase above into concrete actions
+  make_me_a("content_manager").on_all("audio")
 end
 
 Given("an audio object that is not in the repository") do
-  pending # Write code here that turns the phrase above into concrete actions
+  @bag = Chipmunk::Bag.new(fixture("test_bag"))
 end
 
 When("I deposit the object as a bag") do
-  pending # Write code here that turns the phrase above into concrete actions
+  # create a new, empty artifact
+  # create a new deposit for a revision to that artifact
+  # upload the bag
+  # mark the deposit complete
+  api_post(
+    "/v2/artifacts",
+    artifact_id: @bag.external_id,
+    content_type: @bag.content_type
+  )
+
+  deposit = JSON.parse(api_post("/v2/artifacts/#{@bag.external_id}/revisions").body)
+  FileUtils.cp_r @bag.bag_dir, deposit["upload_link"].split(":").last
+  api_post("/v2/deposits/#{deposit["id"]}/complete")
+
+  # api_post("/v2/artifacts/#{@bag.external_id}/revisions")
+  # upload_link = JSON.parse(last_response.body)["upload_link".body)]
+  # FileUtils.cp_r @bag.bag_dir, upload_link.split(":").last
+  # api_post("#{last_response["Location"]}/complete")
 end
 
 Then("it is preserved as an artifact") do
-  pending # Write code here that turns the phrase above into concrete actions
+  @artifact = Artifact.find_by_artifact_id!(@bag.external_id)
+  expect(Services.storage.for(@artifact)).to be_valid
 end
 
 Then("the artifact has the identifier from within the bag") do
-  pending # Write code here that turns the phrase above into concrete actions
+  api_get(
+    "/v2/artifacts/#{@bag.external_id}/"
+  )
+  expect(JSON.parse(last_response.body)["id"])
 end
 
 Given("a preserved audio artifact") do
