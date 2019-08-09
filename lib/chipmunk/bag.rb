@@ -118,5 +118,7 @@ module Chipmunk
 end
 
 require_relative "bag/profile"
+require_relative "bag/reader"
+require_relative "bag/move_writer"
 require_relative "bag/tag"
 require_relative "bag/validator"
