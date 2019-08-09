@@ -15,14 +15,15 @@ module Chipmunk
     # Create a new Volume.
     #
     # @param name [String] the name of the Volume; coerced to String
-    # @param package_type [Class] the storage class for this volume (Chipmunk::Bag)
+    # @param reader [Bag::Reader] A reader that can return the an instance of the
+    #   stored object given a path.
     # @param root_path [String|Pathname] the path to the storage root for this Volume;
     #   must be absolute; coerced to Pathname
     # @raise [ArgumentError] if the name is blank or root_path is relative
-    def initialize(name:, package_type:, root_path:)
+    def initialize(name:, root_path:, reader: Chipmunk::Bag::Reader.new)
       @name = name.to_s
-      @package_type = package_type
       @root_path = Pathname(root_path)
+      @reader = reader
       validate!
     end
 
@@ -47,7 +48,7 @@ module Chipmunk
     def get(path)
       raise Chipmunk::PackageNotFoundError unless include?(path)
 
-      package_type.new(expand(path))
+      reader.at(expand(path))
     end
 
     def include?(path)
@@ -57,7 +58,7 @@ module Chipmunk
     # @!attribute [r]
     #   @return [String] the format name of the items in this volume
     def format
-      package_type.format
+      reader.format
     end
 
     private
@@ -73,6 +74,6 @@ module Chipmunk
       path.to_s.sub(/^\/*/, "")
     end
 
-    attr_reader :package_type
+    attr_reader :reader
   end
 end
