@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Chipmunk::IncomingStorage do
-  let(:package_type) { double("SomePackageFormat", format: "some-pkg") }
-  let(:volume) { Chipmunk::Volume.new(name: "incoming", package_type: package_type, root_path: "/incoming") }
+  let(:reader) { double(:reader, format: "some-pkg") }
+  let(:writer) { double(:writer, format: "some-pkg") }
+  let(:volume) { Chipmunk::Volume.new(name: "incoming", writer: writer, reader: reader, root_path: "/incoming") }
   let(:path_builder) { Chipmunk::UploadPath.new("/") }
   let(:uploader)         { instance_double("User", username: "uploader") }
   let(:unstored_package) { instance_double("Package", stored?: false, user: uploader, bag_id: "abcdef-123456") }

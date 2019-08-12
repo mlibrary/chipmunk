@@ -26,28 +26,27 @@ module Chipmunk
     # Move the source archive into preservation storage and update the package's
     # storage_volume and storage_path accordingly.
     def write(package, source)
-      if package.format == Chipmunk::Bag.format
-        move_bag(package, source)
-      else
-        raise Chipmunk::UnsupportedFormatError, "Package #{package.bag_id} has invalid format: #{package.format}"
-      end
+      check_format!(package)
+      storage_path = storage_path_for(package)
+      volume = destination_volume(package)
+      volume.write(source, storage_path)
+      package.update(storage_volume: volume.name, storage_path: storage_path)
     end
 
     private
 
-    def move_bag(package, source)
-      bag_id = package.bag_id
-      prefixes = bag_id.match(/^(..)(..)(..).*/)
-      raise "bag_id too short: #{bag_id}" unless prefixes
+    def check_format!(package)
+      unless package.format == Chipmunk::Bag.format
+        raise Chipmunk::UnsupportedFormatError,
+          "Package #{package.identifier} has invalid format: #{package.format}"
+      end
+    end
 
-      storage_path = File.join("/", prefixes[1..3], bag_id)
-      volume = destination_volume(package)
-      dest_path = volume.expand(storage_path)
+    def storage_path_for(package)
+      prefixes = package.identifier.match(/^(..)(..)(..).*/)
+      raise "identifier too short: #{package.identifier}" unless prefixes
 
-      FileUtils.mkdir_p(dest_path)
-      File.rename(source.path, dest_path)
-
-      package.update(storage_volume: volume.name, storage_path: storage_path)
+      File.join("/", prefixes[1..3], package.identifier)
     end
 
     # We are defaulting everything to "bags" for now as the simplest resolution strategy.

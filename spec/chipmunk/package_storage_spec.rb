@@ -13,6 +13,33 @@ RSpec.describe Chipmunk::PackageStorage do
     end
   end
 
+  class FakeBagReader
+    def format
+      "bag"
+    end
+
+    def at(path)
+      FakeBag.new(path)
+    end
+  end
+
+  class FakeZipReader
+    def format
+      "zip"
+    end
+
+    def at(path)
+      FakeZip.new(path)
+    end
+  end
+
+  class FakeBagWriter
+    def write(_obj, _path)
+      nil
+    end
+  end
+  FakeZipWriter = FakeBagWriter
+
   # TODO: Set up a "test context" that has realistic, but test-focused
   # services registered. This will offload setup of the environment from
   # various tests. This may be as simple as registering test components over
@@ -22,8 +49,23 @@ RSpec.describe Chipmunk::PackageStorage do
   # inclusion of specific contexts in tests that need them. In this group,
   # the volumes and volume manager can be considered environmental, while the
   # packages are scenario data.
-  let(:bags)      { Chipmunk::Volume.new(name: "bags", package_type: FakeBag, root_path: "/bags") }
-  let(:zips)      { Chipmunk::Volume.new(name: "zips", package_type: FakeZip, root_path: "/zips") }
+  let(:bags) do
+    Chipmunk::Volume.new(
+      name: "bags",
+      root_path: "/bags",
+      reader: FakeBagReader.new,
+      writer: FakeBagWriter.new
+    )
+  end
+
+  let(:zips) do
+    Chipmunk::Volume.new(
+      name: "zips",
+      root_path: "/zips",
+      reader: FakeZipReader.new,
+      writer: FakeZipWriter.new
+    )
+  end
 
   before(:each) do
     allow(bags).to receive(:include?).with("/a-bag").and_return true
@@ -71,21 +113,19 @@ RSpec.describe Chipmunk::PackageStorage do
     context "with a good bag" do
       subject(:storage) { described_class.new(volumes: [bags]) }
 
-      let(:package)  { spy(:package, format: "bag", bag_id: "abcdef-123456") }
+      let(:package)  { spy(:package, format: "bag", identifier: "abcdef-123456") }
       let(:disk_bag) { double(:bag, path: "/uploaded/abcdef-123456") }
 
-      before(:each) do
-        allow(FileUtils).to receive(:mkdir_p).with("/bags/ab/cd/ef/abcdef-123456")
-        allow(File).to receive(:rename).with("/uploaded/abcdef-123456", "/bags/ab/cd/ef/abcdef-123456")
-      end
-
-      it "ensures the destination directory exists" do
-        expect(FileUtils).to receive(:mkdir_p)
-        storage.write(package, disk_bag)
-      end
-
       it "moves the source bag to the destination directory" do
-        expect(File).to receive(:rename)
+        # TODO: This test is probably less specific than originally intended; setting
+        # an expection also adds an implicit allow(...) for the expectation. Here,
+        # originally it just expected File.rename to be called, regardless of args.
+        # Indeed, there seems to be a bit of a mismatch with these arguments across
+        # the few files concerned with it; somtimes they're bags, sometimes they're
+        # paths. We should be careful to make that clear so no issues get past
+        # testing. For the time being, I have left the expectation with the original
+        # specificity.
+        expect(bags).to receive(:write)
         storage.write(package, disk_bag)
       end
 
@@ -104,7 +144,7 @@ RSpec.describe Chipmunk::PackageStorage do
     context "with a badly identified bag (shorter than 6 chars)" do
       subject(:storage) { described_class.new(volumes: [bags]) }
 
-      let(:package)  { double(:package, format: "bag", bag_id: "ab12") }
+      let(:package)  { double(:package, format: "bag", identifier: "ab12") }
       let(:disk_bag) { double(:bag, path: "/uploaded/ab12") }
 
       it "raises an exception" do
@@ -115,7 +155,7 @@ RSpec.describe Chipmunk::PackageStorage do
     context "with an unsupported archive format" do
       subject(:storage) { described_class.new(volumes: [bags]) }
 
-      let(:package) { double(:package, format: "junk", bag_id: "id") }
+      let(:package) { double(:package, format: "junk", identifier: "id") }
       let(:archive) { double(:archive) }
 
       it "raises an Unsupported Format error" do
@@ -129,6 +169,6 @@ RSpec.describe Chipmunk::PackageStorage do
   end
 
   def unstored_package(format:, id:)
-    double(:package, stored?: false, storage_volume: nil, storage_path: nil, format: format, bag_id: id)
+    double(:package, stored?: false, storage_volume: nil, storage_path: nil, format: format, identifier: id)
   end
 end

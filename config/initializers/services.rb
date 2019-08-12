@@ -39,7 +39,8 @@ if Rails.env.test?
     Chipmunk::IncomingStorage.new(
       volume: Chipmunk::Volume.new(
         name: "incoming",
-        package_type: Chipmunk::Bag,
+        reader: Chipmunk::Bag::Reader.new,
+        writer: Chipmunk::Bag::MoveWriter.new,
         root_path: Chipmunk.config.upload.upload_path
       ),
       paths: Chipmunk::UploadPath.new("/"),
@@ -48,8 +49,18 @@ if Rails.env.test?
   end
   Services.register(:storage) do
     Chipmunk::PackageStorage.new(volumes: [
-      Chipmunk::Volume.new(name: "test", package_type: Chipmunk::Bag, root_path: Rails.root.join("spec/support/fixtures")),
-      Chipmunk::Volume.new(name: "bags", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.storage_path)
+      Chipmunk::Volume.new(
+        name: "test",
+        reader: Chipmunk::Bag::Reader.new,
+        writer: Chipmunk::Bag::MoveWriter.new,
+        root_path: Rails.root.join("spec/support/fixtures")
+      ),
+      Chipmunk::Volume.new(
+        name: "bags",
+        reader: Chipmunk::Bag::Reader.new,
+        writer: Chipmunk::Bag::MoveWriter.new,
+        root_path: Chipmunk.config.upload.storage_path
+      )
     ])
   end
 else
@@ -57,7 +68,8 @@ else
     Chipmunk::IncomingStorage.new(
       volume: Chipmunk::Volume.new(
         name: "incoming",
-        package_type: Chipmunk::Bag,
+        reader: Chipmunk::Bag::Reader.new,
+        writer: Chipmunk::Bag::MoveWriter.new,
         root_path: Chipmunk.config.upload.upload_path
       ),
       paths: Chipmunk::UserUploadPath.new("/"),
@@ -66,8 +78,18 @@ else
   end
   Services.register(:storage) do
     Chipmunk::PackageStorage.new(volumes: [
-      Chipmunk::Volume.new(name: "root", package_type: Chipmunk::Bag, root_path: "/"), # For migration purposes
-      Chipmunk::Volume.new(name: "bags", package_type: Chipmunk::Bag, root_path: Chipmunk.config.upload.storage_path)
+      Chipmunk::Volume.new(
+        name: "root",
+        reader: Chipmunk::Bag::Reader.new,
+        writer: Chipmunk::Bag::MoveWriter.new,
+        root_path: "/" # For migration purposes
+      ),
+      Chipmunk::Volume.new(
+        name: "bags",
+        reader: Chipmunk::Bag::Reader.new,
+        writer: Chipmunk::Bag::MoveWriter.new,
+        root_path: Chipmunk.config.upload.storage_path
+      )
     ])
   end
 end

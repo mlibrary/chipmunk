@@ -20,10 +20,11 @@ module Chipmunk
     # @param root_path [String|Pathname] the path to the storage root for this Volume;
     #   must be absolute; coerced to Pathname
     # @raise [ArgumentError] if the name is blank or root_path is relative
-    def initialize(name:, root_path:, reader: Chipmunk::Bag::Reader.new)
+    def initialize(name:, root_path:, reader: Chipmunk::Bag::Reader.new, writer:)
       @name = name.to_s
       @root_path = Pathname(root_path)
       @reader = reader
+      @writer = writer
       validate!
     end
 
@@ -51,6 +52,10 @@ module Chipmunk
       reader.at(expand(path))
     end
 
+    def write(object, path)
+      writer.write(object, expand(path))
+    end
+
     def include?(path)
       File.exist?(expand(path))
     end
@@ -67,6 +72,8 @@ module Chipmunk
       raise ArgumentError, "Volume name must not be blank" if name.strip.empty?
       raise ArgumentError, "Volume format must not be blank" if format.to_s.strip.empty?
       raise ArgumentError, "Volume root_path must be absolute (#{root_path})" unless root_path.absolute?
+      raise ArgumentError, "Volume must specify a reader" unless reader
+      raise ArgumentError, "Volume must specify a writer" unless writer
     end
 
     # Remove any leading slashes so Pathname joins properly
@@ -74,6 +81,6 @@ module Chipmunk
       path.to_s.sub(/^\/*/, "")
     end
 
-    attr_reader :reader
+    attr_reader :reader, :writer
   end
 end
