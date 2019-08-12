@@ -6,7 +6,7 @@ module Chipmunk
       end
 
       def format
-        "bag"
+        Bag.format
       end
     end
   end
