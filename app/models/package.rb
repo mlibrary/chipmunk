@@ -14,6 +14,7 @@ class Package < ApplicationRecord
   def to_param
     bag_id
   end
+  alias_method :identifier, :to_param
 
   validates :bag_id, presence: true, length: { minimum: 6 }
   validates :user_id, presence: true
