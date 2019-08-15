@@ -27,18 +27,26 @@ class Artifact < ApplicationRecord
     AnyArtifact.new
   end
 
+  alias_method :identifier, :id
+
 
   # Each artifact belongs to a single user
   belongs_to :user
   # Deposits are collections of zero or more revisions
   has_many :revisions
+  # Revisions are added to artifacts via deposits
+  has_many :deposits
 
-  def to_param
-    artifact_id
-  end
+  validates :id, presence: true,
+    format: { with: Services.uuid_format,
+    message: "must be a valid v4 uuid." }
 
-  validates :artifact_id, presence: true
-  validates :user_id, presence: true
+  validates :user, presence: true
+  validates :format, presence: true # TODO this is a controlled vocabulary
   validates :content_type, presence: true # TODO this is a controlled vocabulary
+
+  def stored?
+    revisions.any?
+  end
 
 end

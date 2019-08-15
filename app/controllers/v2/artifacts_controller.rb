@@ -13,7 +13,7 @@ module V2
       collection_policy.new(current_user).authorize! :new?
       # We don't explicitly check for :save? permissions
 
-      if duplicate = Artifact.find_by_artifact_id(params[:artifact_id])
+      if duplicate = Artifact.find_by(id: params[:id])
         resource_policy.new(current_user, duplicate).authorize! :show?
         head 303, location: v2_artifact_path(duplicate)
       else
@@ -32,8 +32,9 @@ module V2
     def new_artifact(params)
       # TODO: Should artifact have a format?
       Artifact.new(
-        artifact_id: params[:artifact_id],
+        id: params[:id],
         user: current_user,
+        format: params[:format],
         content_type: params[:content_type]
       )
     end
