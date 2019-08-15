@@ -1,8 +1,8 @@
 class CreateDeposits < ActiveRecord::Migration[5.1]
   def change
     create_table :deposits do |t|
-      t.references :artifact, null: false, index: false
-      t.references :user, null: false, index: false
+      t.string :artifact_id, null: false, index: false
+      t.belongs_to :user, null: false, index: false
       t.string :status, null: false
       t.timestamps
     end

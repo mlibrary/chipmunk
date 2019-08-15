@@ -15,13 +15,15 @@ When("I deposit the object as a bag") do
   # mark the deposit complete
   api_post(
     "/v2/artifacts",
-    artifact_id: @bag.external_id,
-    content_type: @bag.content_type
+    id: @bag.external_id,
+    content_type: @bag.content_type,
+    format: "versionedbag"
   )
 
-  deposit = JSON.parse(api_post("/v2/artifacts/#{@bag.external_id}/revisions").body)
+  api_post("/v2/artifacts/#{@bag.external_id}/revisions")
+  deposit = JSON.parse(last_response.body)
   FileUtils.cp_r @bag.bag_dir, deposit["upload_link"].split(":").last
-  api_post("/v2/deposits/#{deposit["id"]}/complete")
+  api_post("/v2/deposits/#{deposit["id"]}/complete") # Should this be a put?
 
   # api_post("/v2/artifacts/#{@bag.external_id}/revisions")
   # upload_link = JSON.parse(last_response.body)["upload_link".body)]
@@ -30,7 +32,7 @@ When("I deposit the object as a bag") do
 end
 
 Then("it is preserved as an artifact") do
-  @artifact = Artifact.find_by_artifact_id!(@bag.external_id)
+  @artifact = Artifact.find(@bag.external_id)
   expect(Services.storage.for(@artifact)).to be_valid
 end
 
