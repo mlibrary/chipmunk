@@ -23,12 +23,6 @@ RSpec.describe Chipmunk::IncomingStorage do
     end
   end
 
-  context "with a package that is already in preservation" do
-    it "raises an already-stored error" do
-      expect { storage.for(stored_package) }.to raise_error(Chipmunk::PackageAlreadyStoredError)
-    end
-  end
-
   context "with a package that is uploaded to a user's directory (not yet in preservation)" do
     let(:incoming_bag) { double(:bag) }
 

@@ -77,6 +77,27 @@ RSpec.describe BagMoveJob do
       end
     end
 
+    context "with a package that is already in preservation" do
+      subject(:run_job) { described_class.perform_now(queue_item) }
+      before(:each) { allow(package).to receive(:stored?).and_return true }
+
+      it "does not move the bag" do
+        expect(Services.storage).not_to receive(:write).with(package, anything)
+        run_job
+      end
+
+      it "updates the queue_item to status 'failed'" do
+        run_job
+        expect(queue_item.status).to eql("failed")
+      end
+
+      it "records the validation error" do
+        run_job
+        expect(queue_item.error).to match(/already stored/)
+      end
+
+    end
+
     context "when the package is invalid" do
       subject(:run_job) { described_class.perform_now(queue_item) }
 
