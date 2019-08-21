@@ -26,6 +26,10 @@ class Package < ApplicationRecord
     PackagePolicy
   end
 
+  def username
+    user.username
+  end
+
   def upload_link
     Services.incoming_storage.upload_link(self)
   end
