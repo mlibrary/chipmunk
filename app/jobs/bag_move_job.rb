@@ -30,7 +30,10 @@ class BagMoveJob < ApplicationJob
   end
 
   def validate
-    package.valid_for_ingest?(errors)
+    if package.stored?
+      errors << "Package #{package} is already stored"
+    end
+    !package.stored? && package.valid_for_ingest?(errors)
   end
 
   def move_bag

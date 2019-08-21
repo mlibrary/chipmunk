@@ -23,8 +23,6 @@ module Chipmunk
     end
 
     def for(package)
-      raise Chipmunk::PackageAlreadyStoredError, package if package.stored?
-
       volume.get(upload_path(package))
     end
 
