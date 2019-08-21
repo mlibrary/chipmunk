@@ -5,8 +5,7 @@ RSpec.describe Chipmunk::IncomingStorage do
   let(:writer) { double(:writer, format: "some-pkg") }
   let(:volume) { Chipmunk::Volume.new(name: "incoming", writer: writer, reader: reader, root_path: "/incoming") }
   let(:path_builder) { Chipmunk::UploadPath.new("/") }
-  let(:uploader)         { instance_double("User", username: "uploader") }
-  let(:unstored_package) { instance_double("Package", stored?: false, user: uploader, bag_id: "abcdef-123456", identifier: "abcdef-123456") }
+  let(:unstored_package) { instance_double("Package", stored?: false, username: "uploader", bag_id: "abcdef-123456", identifier: "abcdef-123456") }
   let(:stored_package)   { instance_double("Package", stored?: true) }
 
   subject(:storage) do
