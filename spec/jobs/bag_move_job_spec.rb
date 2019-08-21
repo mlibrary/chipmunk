@@ -41,7 +41,7 @@ RSpec.describe BagMoveJob do
       end
 
       it "moves the bag" do
-        expect(Services.storage).to receive(:write).with(queue_item.package, bag)
+        expect(Services.storage).to receive(:write)
         run_job
       end
 
@@ -82,7 +82,7 @@ RSpec.describe BagMoveJob do
       before(:each) { allow(package).to receive(:stored?).and_return true }
 
       it "does not move the bag" do
-        expect(Services.storage).not_to receive(:write).with(package, anything)
+        expect(Services.storage).not_to receive(:write)
         run_job
       end
 
@@ -109,7 +109,7 @@ RSpec.describe BagMoveJob do
       end
 
       it "does not move the bag" do
-        expect(Services.storage).not_to receive(:write).with(package, anything)
+        expect(Services.storage).not_to receive(:write)
         run_job
       end
 
@@ -121,11 +121,6 @@ RSpec.describe BagMoveJob do
       it "records the validation error" do
         run_job
         expect(queue_item.error).to match(/my error/)
-      end
-
-      it "does not move the bag" do
-        expect(Services.storage).not_to receive(:write).with(package, anything)
-        run_job
       end
     end
 
