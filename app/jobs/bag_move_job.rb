@@ -32,8 +32,14 @@ class BagMoveJob < ApplicationJob
   def validate
     if package.stored?
       errors << "Package #{package} is already stored"
+    elsif !incoming_storage.include?(package)
+      errors << "Bag #{bag_id} does not exist in incoming storage."
+    else
+      validation_errors = Chipmunk::ValidatorService.new
+        .errors_for_package(package, incoming_storage.for(package))
+      errors.push(*validation_errors)
     end
-    !package.stored? && package.valid_for_ingest?(errors)
+    errors.empty?
   end
 
   def move_bag
