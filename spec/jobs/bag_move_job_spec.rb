@@ -6,26 +6,11 @@ RSpec.describe BagMoveJob do
   let(:queue_item) { Fabricate(:queue_item) }
   let(:package) { queue_item.package }
 
-  let(:chipmunk_info_db) do
-    {
-      "External-Identifier"   => package.external_id,
-      "Chipmunk-Content-Type" => package.content_type,
-      "Bag-ID"                => package.bag_id
-    }
-  end
-
-  let(:chipmunk_info_good) do
-    chipmunk_info_db.merge(
-      "Metadata-Type"         => "MARC",
-      "Metadata-URL"          => "http://what.ever",
-      "Metadata-Tagfile"      => "marc.xml"
-    )
-  end
-
   describe "#perform" do
     let(:bag) { double(:bag, path: "/uploaded/bag") }
 
     before(:each) do
+      allow(Services.validation).to receive(:validate).with(package).and_return(validation_result)
       allow(Services.incoming_storage).to receive(:for).with(package).and_return(bag)
       allow(Services.storage).to receive(:write).with(package, bag) do |pkg, _bag|
         pkg.storage_volume = "bags"
@@ -35,10 +20,7 @@ RSpec.describe BagMoveJob do
 
     context "when the package is valid" do
       subject(:run_job) { described_class.perform_now(queue_item) }
-
-      before(:each) do
-        allow(queue_item.package).to receive(:valid_for_ingest?).and_return true
-      end
+      let(:validation_result) { double(:validation_result, errors: [], valid?: true) }
 
       it "moves the bag" do
         expect(Services.storage).to receive(:write)
@@ -77,36 +59,9 @@ RSpec.describe BagMoveJob do
       end
     end
 
-    context "with a package that is already in preservation" do
-      subject(:run_job) { described_class.perform_now(queue_item) }
-      before(:each) { allow(package).to receive(:stored?).and_return true }
-
-      it "does not move the bag" do
-        expect(Services.storage).not_to receive(:write)
-        run_job
-      end
-
-      it "updates the queue_item to status 'failed'" do
-        run_job
-        expect(queue_item.status).to eql("failed")
-      end
-
-      it "records the validation error" do
-        run_job
-        expect(queue_item.error).to match(/already stored/)
-      end
-
-    end
-
     context "when the package is invalid" do
       subject(:run_job) { described_class.perform_now(queue_item) }
-
-      before(:each) do
-        allow(queue_item.package).to receive(:valid_for_ingest?) do |errors|
-          errors << "my error"
-          false
-        end
-      end
+      let(:validation_result) { double(valid?: false, errors: ["my error"]) }
 
       it "does not move the bag" do
         expect(Services.storage).not_to receive(:write)
@@ -124,26 +79,5 @@ RSpec.describe BagMoveJob do
       end
     end
 
-    context "when validation raises an exception" do
-      subject(:run_job) { described_class.perform_now(queue_item) }
-
-      before(:each) do
-        allow(queue_item.package).to receive(:valid_for_ingest?).and_raise("test validation failure")
-      end
-
-      it "re-raises the exception" do
-        expect { run_job }.to raise_exception(/test validation failure/)
-      end
-
-      it "records the exception" do
-        run_job rescue StandardError
-        expect(queue_item.error).to match(/test validation failure/)
-      end
-
-      it "records the stack trace" do
-        run_job rescue StandardError
-        expect(queue_item.error).to match(__FILE__)
-      end
-    end
   end
 end
