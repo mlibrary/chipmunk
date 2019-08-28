@@ -6,21 +6,34 @@ module Chipmunk
     # Validate that the bag obeys the spec set by the profile
     class BaggerProfile < Validator
 
-      # @param [Bag::Profile]
-      def initialize(profile)
-        @profile = profile
+      # @param [Package]
+      def initialize(package)
+        @package = package
       end
 
       validates "bag on disk meets bagger profile",
-        condition: proc {|bag, errors| errors.empty? },
-        error: proc {|bag, errors| errors },
+        only_if: proc { uri },
         precondition: proc {|bag|
           [].tap {|errors| profile.valid?(bag.bag_info, errors: errors) }
-        }
+        },
+        condition: proc {|bag, errors| errors.empty? },
+        error: proc {|bag, errors| errors }
 
       private
 
-      attr_reader :profile
+      attr_reader :package
+
+      def uri
+        @uri ||= Rails.application.config
+          .validation["bagger_profile"][package.content_type.to_s]
+      end
+
+      def profile
+        if uri
+          Bag::Profile.new(uri)
+        end
+      end
     end
+
   end
 end

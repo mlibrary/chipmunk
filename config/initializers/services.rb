@@ -63,6 +63,8 @@ Services.register(:storage) do
   ])
 end
 
+Services.register(:validation) { Chipmunk::ValidationService.new }
+
 Services.register(:checkpoint) do
   Checkpoint::Authority.new(agent_resolver: KCV::AgentResolver.new,
                             credential_resolver: Chipmunk::RoleResolver.new,
