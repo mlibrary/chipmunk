@@ -37,7 +37,9 @@ class Artifact < ApplicationRecord
   # Revisions are added to artifacts via deposits
   has_many :deposits
 
-  validates :id, presence: true
+  validates :id, presence: true,
+    format: { with: Services.uuid_format,
+    message: "must be a valid v4 uuid." }
 
   validates :user, presence: true
   validates :format, presence: true # TODO this is a controlled vocabulary
