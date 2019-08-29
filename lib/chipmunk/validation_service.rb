@@ -8,7 +8,7 @@ module Chipmunk
     def validate(validatable)
       case validatable
       when Package
-        validate_package(validatable)
+        validate_with(validatable, package_validators(validatable))
       else
         ValidationResult.new(["Did not recognize type #{validatable.class}"])
       end
@@ -16,10 +16,10 @@ module Chipmunk
 
     private
 
-    def validate_package(package)
-      if incoming_storage.include?(package)
-        sip = incoming_storage.for(package)
-        ValidationResult.new(errors(package_validators(package), sip))
+    def validate_with(validatable, validators)
+      if incoming_storage.include?(validatable)
+        sip = incoming_storage.for(validatable)
+        ValidationResult.new(errors(validators, sip))
       else
         return ValidationResult.new(["Could not find an uploaded sip"])
       end
@@ -27,6 +27,7 @@ module Chipmunk
 
     def package_validators(package)
       [
+        Validator::StorageFormat.new(package.storage_format),
         Validator::BagConsistency.new,
         Validator::BagMatchesPackage.new(package),
         Validator::External.new(package),

@@ -26,6 +26,13 @@ class Package < ApplicationRecord
     PackagePolicy
   end
 
+  # Rails overrides the format param on requests, so we rename this to storage_format.
+  # This alias is for backwards compatibility
+  # alias_method :storage_format, :format
+  def storage_format
+    format
+  end
+
   def username
     user.username
   end

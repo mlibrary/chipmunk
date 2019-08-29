@@ -62,15 +62,15 @@ module Chipmunk
 
     # @!attribute [r]
     #   @return [String] the format name of the items in this volume
-    def format
-      reader.format
+    def storage_format
+      reader.storage_format
     end
+    alias_method :format, :storage_format
 
     private
 
     def validate!
       raise ArgumentError, "Volume name must not be blank" if name.strip.empty?
-      raise ArgumentError, "Volume format must not be blank" if format.to_s.strip.empty?
       raise ArgumentError, "Volume root_path must be absolute (#{root_path})" unless root_path.absolute?
       raise ArgumentError, "Volume must specify a reader" unless reader
       raise ArgumentError, "Volume must specify a writer" unless writer

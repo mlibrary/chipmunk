@@ -26,21 +26,13 @@ module Chipmunk
     # Move the source archive into preservation storage and update the package's
     # storage_volume and storage_path accordingly.
     def write(package, source)
-      check_format!(package)
-      storage_path = storage_path_for(package)
       volume = destination_volume(package)
+      storage_path = storage_path_for(package)
       volume.write(source, storage_path)
       package.update(storage_volume: volume.name, storage_path: storage_path)
     end
 
     private
-
-    def check_format!(package)
-      unless package.format == Chipmunk::Bag.format
-        raise Chipmunk::UnsupportedFormatError,
-          "Package #{package.identifier} has invalid format: #{package.format}"
-      end
-    end
 
     def storage_path_for(package)
       prefixes = package.identifier.match(/^(..)(..)(..).*/)
@@ -50,9 +42,11 @@ module Chipmunk
     end
 
     # We are defaulting everything to "bags" for now as the simplest resolution strategy.
-    def destination_volume(_package)
+    def destination_volume(package)
       volumes["bags"].tap do |volume|
         raise Chipmunk::VolumeNotFoundError, "Cannot find destination volume: bags" if volume.nil?
+
+        unsupported_format!(volume, package) if volume.storage_format != package.storage_format
       end
     end
 
@@ -60,12 +54,12 @@ module Chipmunk
       volumes[package.storage_volume].tap do |volume|
         raise Chipmunk::VolumeNotFoundError, package.storage_volume if volume.nil?
 
-        unsupported_format!(volume, package) if volume.format != package.format
+        unsupported_format!(volume, package) if volume.storage_format != package.storage_format
       end
     end
 
     def unsupported_format!(volume, package)
-      raise Chipmunk::UnsupportedFormatError, "Volume #{volume.name} does not support #{package.format}"
+      raise Chipmunk::UnsupportedFormatError, "Volume #{volume.name} does not support #{package.storage_format}"
     end
 
     attr_reader :volumes

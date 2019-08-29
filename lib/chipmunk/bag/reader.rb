@@ -5,8 +5,8 @@ module Chipmunk
         Chipmunk::Bag.new(path)
       end
 
-      def format
-        Bag.format
+      def storage_format
+        Bag.storage_format
       end
     end
   end

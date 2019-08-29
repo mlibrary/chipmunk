@@ -6,8 +6,8 @@ module Chipmunk
         File.rename(bag.path, path)
       end
 
-      def format
-        Bag.format
+      def storage_format
+        Bag.storage_format
       end
     end
   end
