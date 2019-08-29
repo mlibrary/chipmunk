@@ -9,6 +9,11 @@ module V2
       AnyArtifact.new
     end
 
+    def show
+      @artifact = Artifact.find(params[:id])
+      render json: @artifact, status: 200
+    end
+
     def create
       collection_policy.new(current_user).authorize! :new?
       # We don't explicitly check for :save? permissions
@@ -30,8 +35,6 @@ module V2
     private
 
     def new_artifact(params)
-      # TODO: Should artifact have a format?
-      binding.pry
       Artifact.new(
         id: params[:id],
         user: current_user,

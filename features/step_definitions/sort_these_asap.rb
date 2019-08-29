@@ -5,30 +5,21 @@ Given("I am a content steward") do
 end
 
 Given("an audio object that is not in the repository") do
-  @bag = Chipmunk::Bag.new(fixture("test_bag"))
+  @bag = Chipmunk::Bag.new(fixture("14d25bcd-deaf-4c94-add7-c189fdca4692"))
 end
 
 When("I deposit the object as a bag") do
-  # create a new, empty artifact
-  # create a new deposit for a revision to that artifact
-  # upload the bag
-  # mark the deposit complete
   api_post(
     "/v2/artifacts",
     id: @bag.external_id,
     content_type: @bag.content_type,
-    format: "versionedbag"
+    storage_format: "bag"
   )
 
   api_post("/v2/artifacts/#{@bag.external_id}/revisions")
   deposit = JSON.parse(last_response.body)
   FileUtils.cp_r @bag.bag_dir, deposit["upload_link"].split(":").last
   api_post("/v2/deposits/#{deposit["id"]}/complete") # Should this be a put?
-
-  # api_post("/v2/artifacts/#{@bag.external_id}/revisions")
-  # upload_link = JSON.parse(last_response.body)["upload_link".body)]
-  # FileUtils.cp_r @bag.bag_dir, upload_link.split(":").last
-  # api_post("#{last_response["Location"]}/complete")
 end
 
 Then("it is preserved as an artifact") do
@@ -40,7 +31,7 @@ Then("the artifact has the identifier from within the bag") do
   api_get(
     "/v2/artifacts/#{@bag.external_id}/"
   )
-  expect(JSON.parse(last_response.body)["id"])
+  expect(last_response.successful?).to be true
 end
 
 Given("a preserved audio artifact") do

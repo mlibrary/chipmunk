@@ -4,6 +4,7 @@ class CreateDeposits < ActiveRecord::Migration[5.1]
       t.string :artifact_id, null: false, index: false
       t.belongs_to :user, null: false, index: false
       t.string :status, null: false
+      t.text :error, null: false, default: ""
       t.timestamps
     end
 

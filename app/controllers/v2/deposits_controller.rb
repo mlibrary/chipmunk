@@ -16,11 +16,11 @@ module V2
       # TODO policy check
       @deposit = Deposit.find(params[:id])
       case @deposit.status
-      when :started
-        @deposit.update!(status: :ingesting)
-        BagMoveJob.perform_later(@deposit)
+      when Deposit.statuses[:started]
+        @deposit.update!(status: Deposit.statuses[:ingesting])
+        FinishDepositJob.perform_later(@deposit)
         render json: @deposit, status: 200
-      when :ingesting
+      when Deposit.statuses[:ingesting]
         render json: @deposit, status: 200
       else # :completed, :failed, :cancelled
         head 422 # TODO think about this response

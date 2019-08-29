@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # TODO: consider returning paths or urls
-json.iamadeposit "DEPOSIT"
 json.id deposit.id
 json.artifact deposit.artifact_id
 json.user deposit.user.username
