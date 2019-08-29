@@ -20,10 +20,10 @@ RSpec.describe Artifact, type: :model do
         2.times { Fabricate(:artifact, id: id) }
       end.to raise_error ActiveRecord::RecordNotUnique
     end
+  end
 
-    it "must be a UUIDv4" do
-      expect(Fabricate.build(:artifact, id: "foo")).to_not be_valid
-    end
+  it "can be something other than a uuid" do
+    expect { Fabricate(:artifact, id: "foo") }.to_not raise_error
   end
 
   describe "#stored?" do
