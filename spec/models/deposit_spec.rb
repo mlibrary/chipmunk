@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe Deposit, type: :model do
+  it_behaves_like "a depositable item" do
+    let(:instance) { Fabricate.build(:deposit) }
+  end
+
   it "has a valid fabricator" do
     expect(Fabricate.create(:deposit)).to be_valid
   end

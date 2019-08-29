@@ -8,6 +8,10 @@ RSpec.describe Package, type: :model do
   let(:storage_path) { Rails.application.config.upload["storage_path"] }
   let(:uuid) { "6d11833a-d5fd-44f8-9205-277218578901" }
 
+  it_behaves_like "a depositable item" do
+    let(:instance) { Fabricate.build(:package) }
+  end
+
   [:bag_id, :user_id, :external_id, :format, :content_type].each do |field|
     it "#{field} is required" do
       expect(Fabricate.build(:package, field => nil)).not_to be_valid
