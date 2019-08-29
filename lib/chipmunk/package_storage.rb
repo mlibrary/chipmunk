@@ -20,7 +20,15 @@ module Chipmunk
     def for(package)
       raise Chipmunk::PackageNotStoredError, package unless package.stored?
 
-      volume_for(package).get(package.storage_path)
+      # This is backwards compatibility for Package#storage_path. Otherwise, we
+      # construct the storage path from the package's identifier. Package#storage_path
+      # is safe to remove now, but is nontrivial to do so.
+      storage_path = if package.respond_to?(:storage_path)
+        package.storage_path
+      else
+        storage_path_for(package)
+      end
+      volume_for(package).get(storage_path)
     end
 
     # Move the source archive into preservation storage and update the package's
@@ -29,7 +37,7 @@ module Chipmunk
       volume = destination_volume(package)
       storage_path = storage_path_for(package)
       volume.write(source, storage_path)
-      package.update(storage_volume: volume.name, storage_path: storage_path)
+      yield volume, storage_path
     end
 
     private

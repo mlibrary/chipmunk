@@ -22,16 +22,25 @@ class Deposit < ApplicationRecord
     id.to_s
   end
 
-  # For backwards compatibility with BagMoveJob
-  def package
-    artifact
+  def username
+    user.username
   end
 
-  # TODO
-  def valid_for_ingest?(errors = [])
-    true
+  def content_type
+    artifact.content_type
   end
 
+  def format
+    artifact.format
+  end
+
+  def complete!
+    update!(status: "completed")
+  end
+
+  def fail!(errors)
+    update!(status: "failed", error: errors.join("\n\n"))
+  end
 
   def upload_link
     Services.incoming_storage.upload_link(self)
