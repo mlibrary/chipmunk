@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.describe Artifact, type: :model do
@@ -22,7 +24,7 @@ RSpec.describe Artifact, type: :model do
     end
 
     it "must be a UUIDv4" do
-      expect(Fabricate.build(:artifact, id: "foo")).to_not be_valid
+      expect(Fabricate.build(:artifact, id: "foo")).not_to be_valid
     end
   end
 
@@ -33,10 +35,9 @@ RSpec.describe Artifact, type: :model do
     it "is true if it has 1 or more revisions" do
       artifact = Fabricate.build(
         :artifact,
-        revisions: [ Fabricate.build(:revision) ]
+        revisions: [Fabricate.build(:revision)]
       )
       expect(artifact.stored?).to be true
     end
   end
-
 end

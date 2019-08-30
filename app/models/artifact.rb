@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Artifact < ApplicationRecord
 
   class AnyArtifact
@@ -29,7 +31,6 @@ class Artifact < ApplicationRecord
 
   alias_method :identifier, :id
 
-
   # Each artifact belongs to a single user
   belongs_to :user
   # Deposits are collections of zero or more revisions
@@ -38,8 +39,8 @@ class Artifact < ApplicationRecord
   has_many :deposits
 
   validates :id, presence: true,
-    format: { with: Services.uuid_format,
-    message: "must be a valid v4 uuid." }
+    format: { with:    Services.uuid_format,
+              message: "must be a valid v4 uuid." }
 
   validates :user, presence: true
   validates :storage_format, presence: true # TODO this is a controlled vocabulary

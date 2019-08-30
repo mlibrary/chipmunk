@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Chipmunk::Validator::BagConsistency do
   let(:validator) { described_class.new }
   let(:tag_files) { [fixture("marc.xml")] }
@@ -14,9 +16,9 @@ RSpec.describe Chipmunk::Validator::BagConsistency do
   end
   let(:chipmunk_info) do
     {
-      "Metadata-Type"         => "MARC",
-      "Metadata-URL"          => "http://what.ever",
-      "Metadata-Tagfile"      => "marc.xml"
+      "Metadata-Type"    => "MARC",
+      "Metadata-URL"     => "http://what.ever",
+      "Metadata-Tagfile" => "marc.xml"
     }
   end
 
@@ -30,7 +32,7 @@ RSpec.describe Chipmunk::Validator::BagConsistency do
 
     it "reports the errors from the bag" do
       expect(validator.errors(bag)).to include(
-        a_string_matching( /Error validating.*\n  injected error$/)
+        a_string_matching(/Error validating.*\n  injected error$/)
       )
     end
   end
@@ -56,8 +58,8 @@ RSpec.describe Chipmunk::Validator::BagConsistency do
   context "when the bag has only some descriptive metadata tags" do
     let(:chipmunk_info) do
       {
-        "Metadata-URL"          => "http://what.ever",
-        "Metadata-Tagfile"      => "marc.xml"
+        "Metadata-URL"     => "http://what.ever",
+        "Metadata-Tagfile" => "marc.xml"
       }
     end
 

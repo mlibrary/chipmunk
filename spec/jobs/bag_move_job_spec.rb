@@ -19,6 +19,7 @@ RSpec.describe BagMoveJob do
 
     context "when the package is valid" do
       subject(:run_job) { described_class.perform_now(queue_item) }
+
       let(:validation_result) { double(:validation_result, errors: [], valid?: true) }
 
       it "moves the bag" do
@@ -65,6 +66,7 @@ RSpec.describe BagMoveJob do
 
     context "when the package is invalid" do
       subject(:run_job) { described_class.perform_now(queue_item) }
+
       let(:validation_result) { double(valid?: false, errors: ["my error"]) }
 
       it "does not move the bag" do
@@ -82,6 +84,5 @@ RSpec.describe BagMoveJob do
         expect(queue_item.error).to match(/my error/)
       end
     end
-
   end
 end

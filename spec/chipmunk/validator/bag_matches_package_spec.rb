@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "securerandom"
 
 RSpec.describe Chipmunk::Validator::BagMatchesPackage do
@@ -21,6 +23,7 @@ RSpec.describe Chipmunk::Validator::BagMatchesPackage do
 
   context "when everything matches" do
     let(:chipmunk_info) { good_chipmunk_info }
+
     it { expect(validator.valid?(bag)).to be true }
   end
 

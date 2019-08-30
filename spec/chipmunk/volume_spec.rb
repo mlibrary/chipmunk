@@ -68,7 +68,7 @@ RSpec.describe Chipmunk::Volume do
   end
 
   context "when given a blank name" do
-    let(:name)         { "" }
+    let(:name) { "" }
     let(:reader) { double(:reader, at: nil, format: "some-pkg") }
     let(:writer)       { double(:writer, write: nil, format: "some-pkg") }
     let(:root_path)    { "/path" }
@@ -79,7 +79,7 @@ RSpec.describe Chipmunk::Volume do
   end
 
   context "when given a relative path" do
-    let(:name)         { "vol" }
+    let(:name) { "vol" }
     let(:reader) { double(:reader, at: nil, format: "some-pkg") }
     let(:writer)       { double(:writer, write: nil, format: "some-pkg") }
     let(:root_path)    { "relative/path" }

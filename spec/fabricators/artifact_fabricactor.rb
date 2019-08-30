@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Fabricator(:artifact) do
   id { SecureRandom.uuid }
   user { Fabricate(:user) }

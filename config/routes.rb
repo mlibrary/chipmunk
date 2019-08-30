@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     !request.xhr? && request.format.html?
   end
 
-  root to: "application#fallback_index_html", constraints: ->(request) do !request.xhr? && request.format.html?
+  root to: "application#fallback_index_html", constraints: ->(request) do
+    !request.xhr? && request.format.html?
   end
 end

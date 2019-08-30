@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Chipmunk
 
   # The result of a validation attempt

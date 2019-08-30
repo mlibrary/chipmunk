@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 # These tests were ported over from PackageStorage's specs.
 RSpec.describe Chipmunk::Bag::MoveWriter do
   let(:bag) { double(:bag, path: "/some/bag/path") }
   let(:path) { "/bag/goes/in/here" }
+
   subject(:writer) { described_class.new }
 
   before(:each) do

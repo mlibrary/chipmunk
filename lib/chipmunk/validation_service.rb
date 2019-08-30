@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "validation_result"
 
 module Chipmunk
@@ -23,7 +25,7 @@ module Chipmunk
         sip = incoming_storage.for(validatable)
         ValidationResult.new(errors(validators, sip))
       else
-        return ValidationResult.new(["Could not find an uploaded sip"])
+        ValidationResult.new(["Could not find an uploaded sip"])
       end
     end
 

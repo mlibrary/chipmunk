@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Chipmunk::Validator::BaggerProfile do
   let(:validator) { described_class.new(package) }
   let(:bag) { double(:bag, bag_info: { "Baz" => "quux" }) }

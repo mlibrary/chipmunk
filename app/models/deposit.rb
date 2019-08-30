@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Deposit < ApplicationRecord
 
   # Each deposit is created by a single user
@@ -7,10 +9,10 @@ class Deposit < ApplicationRecord
 
   # TODO Could not get the attributes api to work with a custom type
   enum status: {
-    started: "started",
-    canceled: "cancelled",
+    started:   "started",
+    canceled:  "cancelled",
     ingesting: "ingesting",
-    failed: "failed",
+    failed:    "failed",
     completed: "completed"
   }
 

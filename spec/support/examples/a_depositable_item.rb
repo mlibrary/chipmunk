@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples "a depositable item" do
   let(:instance) { described_class.new }
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "validator"
 
 module Chipmunk
@@ -16,8 +18,8 @@ module Chipmunk
         precondition: proc {|bag|
           [].tap {|errors| profile.valid?(bag.bag_info, errors: errors) }
         },
-        condition: proc {|bag, errors| errors.empty? },
-        error: proc {|bag, errors| errors }
+        condition: proc {|_bag, errors| errors.empty? },
+        error: proc {|_bag, errors| errors }
 
       private
 

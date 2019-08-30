@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module Chipmunk
   module Validator
-
 
     # A validator runs compile-time validations against a validatable object
     # passed to #valid? or #errors during run-time. Validations are created
@@ -32,6 +33,7 @@ module Chipmunk
         def validates(_desc = "", only_if: proc { true }, precondition: proc {}, condition:, error:)
           validations << lambda do |validatable|
             return unless instance_exec(validatable, &only_if)
+
             precond_result = instance_exec(validatable, &precondition)
             unless instance_exec(validatable, *precond_result, &condition)
               instance_exec(validatable, *precond_result, &error)

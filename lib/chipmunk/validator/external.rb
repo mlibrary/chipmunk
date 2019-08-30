@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "validator"
 require "open3"
 
@@ -24,7 +26,7 @@ module Chipmunk
         only_if: proc {|validatable| !command.nil? && validatable.valid? },
         precondition: proc { Open3.capture3(command) },
         condition: proc {|_, _, _, status| status.exitstatus.zero? },
-        error: proc {|_, _, stderr, _|  "Error validating content\n" + stderr }
+        error: proc {|_, _, stderr, _| "Error validating content\n" + stderr }
 
       private
 

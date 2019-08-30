@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Chipmunk::Validator::External do
   let(:content_type) { "mycontenttype" }
   let(:package) { double(:package, identifier: SecureRandom.uuid, content_type: content_type) }
@@ -61,5 +63,4 @@ RSpec.describe Chipmunk::Validator::External do
       expect(validator.valid?(bag)).to be true
     end
   end
-
 end

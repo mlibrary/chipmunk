@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Chipmunk
   class FinishDeposit
     def initialize(deposit)
@@ -6,7 +8,7 @@ module Chipmunk
     end
 
     def run
-      ingest! or record_failure
+      ingest! || record_failure
     end
 
     private
@@ -14,9 +16,9 @@ module Chipmunk
     attr_reader :deposit, :errors
 
     def ingest!
-      validate and move_sip and record_success
-    rescue StandardError => error
-      log_exception(error)
+      validate && move_sip && record_success
+    rescue StandardError => e
+      log_exception(e)
     end
 
     def validate

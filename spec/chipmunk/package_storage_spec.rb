@@ -75,7 +75,7 @@ RSpec.describe Chipmunk::PackageStorage do
   context "with two storage_formats registered: bag and zip" do
     let(:storage)   { described_class.new(volumes: [bags, zips]) }
 
-    let(:storage_formats)   { { bag: FakeBag, zip: FakeZip } }
+    let(:storage_formats) { { bag: FakeBag, zip: FakeZip } }
     let(:bag)       { stored_package(storage_format: "bag", storage_volume: "bags", storage_path: "/a-bag") }
     let(:zip)       { stored_package(storage_format: "zip", storage_volume: "zips", storage_path: "/a-zip") }
     let(:transient) { unstored_package(storage_format: "bag", id: "abcdef-123456") }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Chipmunk
 
   class DepositStatus
@@ -54,6 +56,7 @@ module Chipmunk
     end
 
     private
+
     attr_reader :value
 
   end
