@@ -15,8 +15,8 @@ RSpec.describe Chipmunk::Volume do
   context "when given valid attributes" do
     let(:name)         { "vol" }
     let(:proxy)        { double(:storage_proxy) }
-    let(:reader)       { double(:reader, at: proxy, format: "some-pkg") }
-    let(:writer)       { double(:writer, write: nil, format: "some-pkg") }
+    let(:reader)       { double(:reader, at: proxy, storage_format: "some-pkg") }
+    let(:writer)       { double(:writer, write: nil) }
     let(:root_path)    { "/path" }
 
     it "has the correct name" do
@@ -25,6 +25,10 @@ RSpec.describe Chipmunk::Volume do
 
     it "has the correct format" do
       expect(volume.format).to eq "some-pkg"
+    end
+
+    it "has the correct storage_format" do
+      expect(volume.storage_format).to eq "some-pkg"
     end
 
     it "has the correct root path" do

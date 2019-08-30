@@ -38,7 +38,7 @@ module V2
       Artifact.new(
         id: params[:id],
         user: current_user,
-        format: params[:format],
+        storage_format: params[:storage_format],
         content_type: params[:content_type]
       )
     end

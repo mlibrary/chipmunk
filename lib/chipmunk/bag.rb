@@ -6,13 +6,21 @@ module Chipmunk
   class Bag
     include SemanticLogger::Loggable
 
+    class << self
+      def format
+        "bag"
+      end
+      alias_method :storage_format, :format
+    end
+
     def initialize(path, info = {}, _create = false)
       @bag = BagIt::Bag.new(path, info, _create)
     end
 
-    def self.format
-      "bag"
+    def format
+      self.class.format
     end
+    alias_method :storage_format, :format
 
     def path
       bag_dir.to_s

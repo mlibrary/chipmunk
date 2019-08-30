@@ -42,7 +42,7 @@ class Artifact < ApplicationRecord
     message: "must be a valid v4 uuid." }
 
   validates :user, presence: true
-  validates :format, presence: true # TODO this is a controlled vocabulary
+  validates :storage_format, presence: true # TODO this is a controlled vocabulary
   validates :content_type, presence: true # TODO this is a controlled vocabulary
 
   def stored?

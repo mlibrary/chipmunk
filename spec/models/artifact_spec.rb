@@ -4,7 +4,7 @@ RSpec.describe Artifact, type: :model do
   let(:id) { SecureRandom.uuid }
   let(:user) { Fabricate.create(:user) }
   let(:content_type) { ["digital", "audio"].sample }
-  let(:format) { ["bag", "bag:versioned"].sample }
+  let(:storage_format) { ["bag", "bag:versioned"].sample }
 
   it "has a valid fabricator" do
     expect(Fabricate.create(:artifact)).to be_valid

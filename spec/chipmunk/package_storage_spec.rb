@@ -2,19 +2,19 @@
 
 RSpec.describe Chipmunk::PackageStorage do
   FakeBag = Struct.new(:storage_path) do
-    def self.format
+    def self.storage_format
       "bag"
     end
   end
 
   FakeZip = Struct.new(:storage_path) do
-    def self.format
+    def self.storage_format
       "zip"
     end
   end
 
   class FakeBagReader
-    def format
+    def storage_format
       "bag"
     end
 
@@ -24,7 +24,7 @@ RSpec.describe Chipmunk::PackageStorage do
   end
 
   class FakeZipReader
-    def format
+    def storage_format
       "zip"
     end
 
@@ -72,14 +72,14 @@ RSpec.describe Chipmunk::PackageStorage do
     allow(zips).to receive(:include?).with("/a-zip").and_return true
   end
 
-  context "with two formats registered: bag and zip" do
+  context "with two storage_formats registered: bag and zip" do
     let(:storage)   { described_class.new(volumes: [bags, zips]) }
 
-    let(:formats)   { { bag: FakeBag, zip: FakeZip } }
-    let(:bag)       { stored_package(format: "bag", storage_volume: "bags", storage_path: "/a-bag") }
-    let(:zip)       { stored_package(format: "zip", storage_volume: "zips", storage_path: "/a-zip") }
-    let(:transient) { unstored_package(format: "bag", id: "abcdef-123456") }
-    let(:badvolume) { stored_package(format: "bag", storage_volume: "notfound") }
+    let(:storage_formats)   { { bag: FakeBag, zip: FakeZip } }
+    let(:bag)       { stored_package(storage_format: "bag", storage_volume: "bags", storage_path: "/a-bag") }
+    let(:zip)       { stored_package(storage_format: "zip", storage_volume: "zips", storage_path: "/a-zip") }
+    let(:transient) { unstored_package(storage_format: "bag", id: "abcdef-123456") }
+    let(:badvolume) { stored_package(storage_format: "bag", storage_volume: "notfound") }
 
     let(:bag_proxy) { storage.for(bag) }
     let(:zip_proxy) { storage.for(zip) }
@@ -113,7 +113,7 @@ RSpec.describe Chipmunk::PackageStorage do
     context "with a good bag" do
       subject(:storage) { described_class.new(volumes: [bags]) }
 
-      let(:package)  { spy(:package, format: "bag", identifier: "abcdef-123456") }
+      let(:package)  { spy(:package, storage_format: "bag", identifier: "abcdef-123456") }
       let(:disk_bag) { double(:bag, path: "/uploaded/abcdef-123456") }
 
       it "moves the source bag to the destination directory" do
@@ -144,7 +144,7 @@ RSpec.describe Chipmunk::PackageStorage do
     context "with a badly identified bag (shorter than 6 chars)" do
       subject(:storage) { described_class.new(volumes: [bags]) }
 
-      let(:package)  { double(:package, format: "bag", identifier: "ab12") }
+      let(:package)  { double(:package, storage_format: "bag", identifier: "ab12") }
       let(:disk_bag) { double(:bag, path: "/uploaded/ab12") }
 
       it "raises an exception" do
@@ -152,10 +152,10 @@ RSpec.describe Chipmunk::PackageStorage do
       end
     end
 
-    context "with an unsupported archive format" do
+    context "with an unsupported archive storage_format" do
       subject(:storage) { described_class.new(volumes: [bags]) }
 
-      let(:package) { double(:package, format: "junk", identifier: "id") }
+      let(:package) { double(:package, storage_format: "junk", identifier: "id") }
       let(:archive) { double(:archive) }
 
       it "raises an Unsupported Format error" do
@@ -164,11 +164,11 @@ RSpec.describe Chipmunk::PackageStorage do
     end
   end
 
-  def stored_package(format:, storage_volume: "test", storage_path: "/path")
-    double(:package, stored?: true, format: format.to_s, storage_volume: storage_volume, storage_path: storage_path)
+  def stored_package(storage_format:, storage_volume: "test", storage_path: "/path")
+    double(:package, stored?: true, storage_format: storage_format.to_s, storage_volume: storage_volume, storage_path: storage_path)
   end
 
-  def unstored_package(format:, id:)
-    double(:package, stored?: false, storage_volume: nil, storage_path: nil, format: format, identifier: id)
+  def unstored_package(storage_format:, id:)
+    double(:package, stored?: false, storage_volume: nil, storage_path: nil, storage_format: storage_format, identifier: id)
   end
 end
