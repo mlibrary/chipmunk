@@ -9,6 +9,8 @@ module Chipmunk
       case validatable
       when Package
         validate_with(validatable, package_validators(validatable))
+      when Deposit
+        validate_with(validatable, deposit_validators(validatable))
       else
         ValidationResult.new(["Did not recognize type #{validatable.class}"])
       end
@@ -23,6 +25,15 @@ module Chipmunk
       else
         return ValidationResult.new(["Could not find an uploaded sip"])
       end
+    end
+
+    # TODO: decide which validators we need
+    def deposit_validators(deposit)
+      [
+        Validator::BagConsistency.new,
+        Validator::External.new(deposit),
+        Validator::BaggerProfile.new(deposit)
+      ]
     end
 
     def package_validators(package)
