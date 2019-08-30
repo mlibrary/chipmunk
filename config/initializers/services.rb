@@ -79,3 +79,6 @@ Services.register(:checkpoint) do
 end
 
 Services.register(:notary) { Keycard::Notary.default }
+Services.register(:uuid_format) do
+    /\A[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i
+end
