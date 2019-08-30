@@ -8,14 +8,13 @@ RSpec.describe BagMoveJob do
 
   describe "#perform" do
     let(:bag) { double(:bag, path: "/uploaded/bag") }
+    let(:volume) { double(:volume, name: "bags") }
 
     before(:each) do
       allow(Services.validation).to receive(:validate).with(package).and_return(validation_result)
       allow(Services.incoming_storage).to receive(:for).with(package).and_return(bag)
-      allow(Services.storage).to receive(:write).with(package, bag) do |pkg, _bag|
-        pkg.storage_volume = "bags"
-        pkg.storage_path = "/storage/path/to/#{pkg.bag_id}"
-      end
+      allow(Services.storage).to receive(:write).with(package, bag)
+        .and_yield(volume, "/storage/path/to/#{package.bag_id}")
     end
 
     context "when the package is valid" do
@@ -32,10 +31,15 @@ RSpec.describe BagMoveJob do
         expect(queue_item.status).to eql("done")
       end
 
-      # TODO: Make sure that the destination volume is set properly, not literally; see PFDR-185
-      it "sets the package storage_volume to root" do
+      it "sets the package storage_volume" do
         run_job
         expect(queue_item.package.storage_volume).to eql("bags")
+      end
+
+      it "sets the package storage_path" do
+        run_job
+        expect(package.storage_path)
+          .to eql("/storage/path/to/#{package.bag_id}")
       end
 
       context "but the move fails" do
