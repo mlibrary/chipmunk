@@ -2,11 +2,11 @@
 
 # Give FEED_HOME env var a default value if unset.
 #
-if [ ! "$FEED_HOME" ] then
+if [ -z "$FEED_HOME" ]; then
   FEED_HOME=/usr/local/feed
 fi
 
-export HTFEED_CONFIG=$FEED_HOME/config_audio.yaml
+export HTFEED_CONFIG=$FEED_HOME/etc/config_audio.yaml
 
 # Append 'data' to given directory (which is the root of the bag) and redirect
 # STDERR to STDOUT, since we aren't currently saving STDOUT
