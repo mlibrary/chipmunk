@@ -71,7 +71,7 @@ GEM
       thor
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
-    crass (1.0.4)
+    crass (1.0.5)
     cucumber (3.1.2)
       builder (>= 2.1.2)
       cucumber-core (~> 3.2.0)
@@ -126,7 +126,7 @@ GEM
       vizier (~> 0.1.0)
     keycard (0.3.3)
       sequel
-    loofah (2.2.3)
+    loofah (2.3.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.1)
@@ -145,7 +145,7 @@ GEM
     mysql2 (0.4.10)
     netrc (0.11.0)
     nio4r (2.5.1)
-    nokogiri (1.10.4)
+    nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
     parallel (1.17.0)
     parser (2.6.2.1)
