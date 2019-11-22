@@ -10,6 +10,7 @@ upload:
 validation:
   external:
     audio: "bin/validate_audio.sh"
+    bentleyaudio: "bin/validate_bentleyaudio.sh"
     video: "bin/validate_video.pl"
   bagger_profile:
     digital: "http://uri_to_bagger_profile"

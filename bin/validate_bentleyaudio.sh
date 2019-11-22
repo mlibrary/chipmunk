@@ -11,4 +11,4 @@ export HTFEED_CONFIG=$FEED_HOME/etc/config_audio.yaml
 
 EXTERNAL_ID=$1
 BAG_DIRECTORY=$2
-perl $FEED_HOME/bin/validate_vendoraudio_chipmunk.pl "$EXTERNAL_ID" "$BAG_DIRECTORY/data" -level INFO -file - 1>&2
+perl $FEED_HOME/bin/validate_bentleyaudio_chipmunk.pl "$EXTERNAL_ID" "$BAG_DIRECTORY/data" -level INFO -file - 1>&2
