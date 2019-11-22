@@ -9,6 +9,7 @@ validation:
   # corresponding files in bin when RUN_INTEGRATION is 1.
   external:
     audio: "spec/support/bin/validate_audio.sh"
+    bentleyaudio: "spec/support/bin/validate_bentleyaudio.sh"
     video: "spec/support/bin/validate_video.sh"
   bagger_profile:
     digital: "spec/support/fixtures/test-profile.json"

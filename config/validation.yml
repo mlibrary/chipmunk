@@ -2,6 +2,7 @@
 
 external:
   audio: <%= Chipmunk.config.validation.external.audio %>
+  bentleyaudio: <%= Chipmunk.config.validation.external.bentleyaudio %>
   video: <%= Chipmunk.config.validation.external.video %>
 bagger_profile:
   digital: <%= Chipmunk.config.validation.bagger_profile.digital %>
