@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
+require "rubygems"
+require "bundler/setup"
 
 require "canister"
 require "ettin"
@@ -26,7 +28,7 @@ Checkpoint::DB.initialize!
 # should get this from the resolver
 ROLES = ["admin", "content_manager", "viewer"].freeze
 # should get this from Package
-CONTENT_TYPES = ["audio", "video", "digital"].freeze
+CONTENT_TYPES = ["audio", "bentleyaudio", "video", "digital"].freeze
 
 def grant
   (username, role, content_type) = ARGV
