@@ -21,4 +21,5 @@ class QueueItem < ApplicationRecord
 
   scope :for_package, ->(package_id) { where(package_id: package_id) unless package_id.blank? }
   scope :for_packages, ->(package_scope) { joins(:package).merge(package_scope) }
+  scope :recent_first, ->() { order(updated_at: :desc) }
 end

@@ -17,6 +17,14 @@ module V1
       @queue_items = policy.resolve.for_package(params[:package])
     end
 
+    # GET /v1/queue/status
+    def status
+      policy = collection_policy.new(current_user)
+      policy.authorize! :index?
+
+      render 'status', locals: { queue_items: policy.resolve.includes(:package) }
+    end
+
     # GET /v1/queue/:id
     def show
       @queue_item = QueueItem.find(params[:id])

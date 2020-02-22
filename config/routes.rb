@@ -16,7 +16,9 @@ Rails.application.routes.draw do
     get "/bags/:bag_id/events", controller: :events, action: :index
 
     # We foresee the need for destroy; currently out of scope.
-    resources :queue_items, only: [:index, :show], path: :queue
+    resources :queue_items, only: [:index, :show], path: :queue do
+      get "status", on: :collection
+    end
 
     resources :audits, only: [:index, :create, :show]
   end
