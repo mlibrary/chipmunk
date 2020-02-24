@@ -89,14 +89,16 @@ module V1
     end
 
     def before_time
-      Time.zone.parse(params[:before])
-    rescue ArgumentError
-      nil
+      parse_time params[:before]
     end
 
     def after_time
-      Time.zone.parse(params[:after])
-    rescue ArgumentError
+      parse_time params[:after]
+    end
+
+    def parse_time(time)
+      Time.zone.parse(time)
+    rescue ArgumentError, TypeError
       nil
     end
   end
