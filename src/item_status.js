@@ -41,7 +41,7 @@ class ItemStatus extends React.Component {
           <td key="id"><Link to={"/artifacts/" + artifact.external_id}>{artifact.external_id}</Link></td>
           <td key="type" >{artifact.content_type}</td>
           <td key="bagid">{artifact.bag_id}</td>
-          <td key="created"><Moment format="MM/DD/YYYY - h:mm a" date={item.updated_at} /></td>
+          <td key="created"><Moment format="MM/DD/YYYY - h:mm a" date={item.created_at} /></td>
           <td key="updated"><Moment format="MM/DD/YYYY - h:mm a" date={item.updated_at} /></td>
         </tr>
         { item.error &&
