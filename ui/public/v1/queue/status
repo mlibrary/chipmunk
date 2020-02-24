@@ -1,0 +1,102 @@
+{
+  "done": [
+    {
+      "id": 2,
+      "status": "DONE",
+      "request": "/v1/requests/7301a496-d8f8-4331-84e3-270244fc5078",
+      "package": {
+        "id": 1,
+        "bag_id": "7301a496-d8f8-4331-84e3-270244fc5078",
+        "external_id": "BOGUS-8565725649",
+        "content_type": "audio"
+      },
+      "created_at": "2017-10-16T19:45:06.000Z",
+      "updated_at": "2017-10-16T19:45:26.000Z"
+    },
+    {
+      "id": 3,
+      "status": "DONE",
+      "request": "/v1/requests/a280e8c5-cb71-4bfb-b324-9d5a6a3100ab",
+      "package": {
+        "id": 2,
+        "content_type": "audio",
+        "bag_id": "a280e8c5-cb71-4bfb-b324-9d5a6a3100ab",
+        "external_id": "BOGUS-7307503699"
+      },
+      "created_at": "2017-10-16T20:22:48.000Z",
+      "updated_at": "2017-10-16T20:23:59.000Z"
+    },
+    {
+      "id": 4,
+      "status": "DONE",
+      "request": "/v1/requests/b33c187c-1a4b-4d85-9f4b-f3cfa83d7313",
+      "package": {
+        "id": 3,
+        "content_type": "audio",
+        "bag_id": "b33c187c-1a4b-4d85-9f4b-f3cfa83d7313",
+        "external_id": "BOGUS-9883395635"
+      },
+      "created_at": "2017-10-20T13:23:31.000Z",
+      "updated_at": "2017-10-20T13:24:52.000Z"
+    }
+  ],
+  "pending": [],
+  "failed": [
+    {
+      "id": 1,
+      "status": "FAILED",
+      "request": "/v1/requests/2047a938-399a-439e-8543-0b5b68263357",
+      "package": {
+        "id": 1,
+        "content_type": "audio",
+        "bag_id": "2047a938-399a-439e-8543-0b5b68263357",
+        "external_id": "BOGUS-3945170288"
+      },
+      "created_at": "2017-10-16T19:43:29.000Z",
+      "updated_at": "2017-10-16T19:43:43.000Z",
+      "error": "No such file or directory - /path/to/validation_script"
+    },
+    {
+      "id": 123,
+      "status": "FAILED",
+      "request": "c85d184a-a53b-44ad-b52e-b5432b85aa93",
+      "package": {
+        "content_type": "audio",
+        "id": 122,
+        "bag_id": "c85d184a-a53b-44ad-b52e-b5432b85aa93",
+        "external_id": "BOGUS-8769893684"
+      },
+      "created_at": "2017-11-02T02:01:12.000Z",
+      "updated_at": "2017-11-02T02:03:32.000Z",
+      "error": "Error validating content:\n### DEVELOPMENT VERSION ### feed_v1.3.99_dev-9-gbc94e1e at /usr/local/feed/bin/validate_vendoraudio_chipmunk.pl line 5.\nERROR - Invalid value for field\tobjid: BOGUS-8769893684\tnamespace: mdp\tfile: am000001.wav\tfield: in  - \tremediable: 0\tactual: University of Michigan Library\n\texpected: one of (University of Michigan, University of Michigan Library, The MediaPreserve)\nWARN - Validation failed\tobjid: BOGUS-8769893684\tnamespace: mdp\tfile: am000001.wav\tfield: WAVE origination date\tdetail: (empty)\nERROR - File validation failed\tnamespace: mdp\tobjid: BOGUS-8769893684\tstage: HTFeed::PackageType::Audio::VolumeValidator\tfile: am000001.wav\nERROR - Invalid value for field\tobjid: BOGUS-8769893684\tnamespace: mdp\tfile: pm000001.wav\tfield: in  - \tremediable: 0\tactual: University of Michigan Library\n\texpected: one of (University of Michigan, University of Michigan Library, The MediaPreserve)\nWARN - Validation failed\tobjid: BOGUS-8769893684\tnamespace: mdp\tfile: pm000001.wav\tfield: WAVE origination date\tdetail: (empty)\nERROR - File validation failed\tnamespace: mdp\tobjid: BOGUS-8769893684\tstage: HTFeed::PackageType::Audio::VolumeValidator\tfile: pm000001.wav\n"
+    },
+    {
+      "id": 124,
+      "status": "FAILED",
+      "request": "/v1/requests/81144053-4c28-45b5-82f2-5c74098d9e85",
+      "package": {
+        "id": 123,
+        "content_type": "audio",
+        "bag_id": "81144053-4c28-45b5-82f2-5c74098d9e85",
+        "external_id": "BOGUS-5558316653"
+      },
+      "created_at": "2017-11-02T02:07:57.000Z",
+      "updated_at": "2017-11-02T02:11:11.000Z",
+      "error": "Error validating content:\n### DEVELOPMENT VERSION ### feed_v1.3.99_dev-9-gbc94e1e at /l/local/feed/bin/validate_vendoraudio_chipmunk.pl line 5.\nERROR - Invalid value for field\tobjid: BOGUS-5558316653\tnamespace: mdp\tfile: am000001.wav\tfield: in  - \tremediable: 0\tactual: University of Michigan Library\n\texpected: one of (University of Michigan, University of Michigan Library, The MediaPreserve)\nWARN - Validation failed\tobjid: BOGUS-5558316653\tnamespace: mdp\tfile: am000001.wav\tfield: WAVE origination date\tdetail: (empty)\nERROR - File validation failed\tnamespace: mdp\tobjid: BOGUS-5558316653\tstage: HTFeed::PackageType::Audio::VolumeValidator\tfile: am000001.wav\nERROR - Invalid value for field\tobjid: BOGUS-5558316653\tnamespace: mdp\tfile: am000002.wav\tfield: in  - \tremediable: 0\tactual: University of Michigan Library\n\texpected: one of (University of Michigan, University of Michigan Library, The MediaPreserve)\nWARN - Validation failed\tobjid: BOGUS-5558316653\tnamespace: mdp\tfile: am000002.wav\tfield: WAVE origination date\tdetail: (empty)\nERROR - File validation failed\tnamespace: mdp\tobjid: BOGUS-5558316653\tstage: HTFeed::PackageType::Audio::VolumeValidator\tfile: am000002.wav\nERROR - Invalid value for field\tobjid: BOGUS-5558316653\tnamespace: mdp\tfile: pm000001.wav\tfield: in  - \tremediable: 0\tactual: University of Michigan Library\n\texpected: one of (University of Michigan, University of Michigan Library, The MediaPreserve)\nWARN - Validation failed\tobjid: BOGUS-5558316653\tnamespace: mdp\tfile: pm000001.wav\tfield: WAVE origination date\tdetail: (empty)\nERROR - File validation failed\tnamespace: mdp\tobjid: BOGUS-5558316653\tstage: HTFeed::PackageType::Audio::VolumeValidator\tfile: pm000001.wav\nWARN - Validation failed\tobjid: BOGUS-5558316653\tnamespace: mdp\tfile: pm000002.wav\tfield: WAVE origination date\tdetail: (empty)\nERROR - Invalid value for field\tobjid: BOGUS-5558316653\tnamespace: mdp\tfile: pm000002.wav\tfield: in  - \tremediable: 0\tactual: University of Michigan Library\n\texpected: one of (University of Michigan, University of Michigan Library, The MediaPreserve)\nERROR - File validation failed\tnamespace: mdp\tobjid: BOGUS-5558316653\tstage: HTFeed::PackageType::Audio::VolumeValidator\tfile: pm000002.wav\n"
+    },
+    {
+      "id": 125,
+      "status": "FAILED",
+      "request": "/v1/requests/2b6db094-4af5-403d-8d55-5c9e95d9638c",
+      "package": {
+        "id": 124,
+        "content_type": "audio",
+        "bag_id": "2b6db094-4af5-403d-8d55-5c9e95d9638c",
+        "external_id": "BOGUS-0190880154"
+      },
+      "created_at": "2017-11-02T02:12:53.000Z",
+      "updated_at": "2017-11-02T02:14:46.000Z",
+      "error": "Error validating content:\n### DEVELOPMENT VERSION ### feed_v1.3.99_dev-9-gbc94e1e at /l/local/feed/bin/validate_vendoraudio_chipmunk.pl line 5.\nWARN - Validation failed\tobjid: BOGUS-0190880154\tnamespace: mdp\tfile: am000001.wav\tfield: WAVE origination date\tdetail: (empty)\nERROR - Invalid value for field\tobjid: BOGUS-0190880154\tnamespace: mdp\tfile: am000001.wav\tfield: in  - \tremediable: 0\tactual: University of Michigan Library\n\texpected: one of (University of Michigan, University of Michigan Library, The MediaPreserve)\nERROR - File validation failed\tnamespace: mdp\tobjid: BOGUS-0190880154\tstage: HTFeed::PackageType::Audio::VolumeValidator\tfile: am000001.wav\nWARN - Validation failed\tobjid: BOGUS-0190880154\tnamespace: mdp\tfile: pm000001.wav\tfield: WAVE origination date\tdetail: (empty)\nERROR - Invalid value for field\tobjid: BOGUS-0190880154\tnamespace: mdp\tfile: pm000001.wav\tfield: in  - \tremediable: 0\tactual: University of Michigan Library\n\texpected: one of (University of Michigan, University of Michigan Library, The MediaPreserve)\nERROR - File validation failed\tnamespace: mdp\tobjid: BOGUS-0190880154\tstage: HTFeed::PackageType::Audio::VolumeValidator\tfile: pm000001.wav\n"
+    }
+  ]
+}
