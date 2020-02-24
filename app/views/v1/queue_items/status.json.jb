@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+def status_json(queue_item)
+  package = queue_item.package
+  {
+    id: queue_item.id,
+    status: queue_item.status.to_s.upcase,
+    request: v1_request_path(package),
+    package: {
+      id: package.id,
+      bag_id: package.bag_id,
+      external_id: package.external_id,
+      content_type: package.content_type
+    },
+    created_at: queue_item.created_at,
+    updated_at: queue_item.updated_at,
+  }.tap do |json|
+    json[:error] = queue_item.error if queue_item.failed?
+  end
+end
+
+def queue_items_json(items)
+  items.map {|qi| status_json(qi) }
+end
+
+{
+  done: queue_items_json(queue_items.done),
+  pending: queue_items_json(queue_items.pending),
+  failed: queue_items_json(queue_items.failed)
+}

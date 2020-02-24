@@ -116,6 +116,8 @@ GEM
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.2)
+    jb (0.7.1)
+      multi_json
     jbuilder (2.7.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
@@ -144,7 +146,7 @@ GEM
     mustermann (1.0.2)
     mysql2 (0.4.10)
     netrc (0.11.0)
-    nio4r (2.5.1)
+    nio4r (2.5.2)
     nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
     parallel (1.17.0)
@@ -158,7 +160,7 @@ GEM
       pry (~> 0.10)
     psych (3.1.0)
     public_suffix (3.0.2)
-    puma (4.1.0)
+    puma (4.3.1)
       nio4r (~> 2.0)
     rack (2.0.6)
     rack-cors (1.0.5)
@@ -315,13 +317,15 @@ DEPENDENCIES
   ettin
   fabrication
   faker
+  jb
   jbuilder
   kcv (~> 0.4.0)
   keycard (~> 0.3.3)
   mysql2 (~> 0.4.10)
+  nio4r (= 2.5.2)
   pry
   pry-byebug
-  puma (= 4.1.0)
+  puma (= 4.3.1)
   rack-cors
   rails (~> 5.1.0)
   rails-controller-testing
