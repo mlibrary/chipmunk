@@ -12,7 +12,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem "puma", "= 4.1.0"
+gem "puma", "4.3.1"
 
 gem "bagit"
 gem "bcrypt", "~> 3.1.7"
