@@ -4,10 +4,12 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { Margins, UniversalHeader, Heading, GlobalStyleSheet, SPACING } from "@umich-lib/core";
 import ArtifactSearch from "./artifact_search";
 import ArtifactView from "./artifact_view";
+import StatusReport from "./status_report";
 import errorMessage from "./error_message";
 
-const API_URL = process.env.REACT_APP_API_URL;
-const REPO_NAME = process.env.REACT_APP_REPO_NAME;
+export const API_URL = process.env.REACT_APP_API_URL;
+export const APP_URL = process.env.REACT_APP_APP_URL || API_URL;
+export const REPO_NAME = process.env.REACT_APP_REPO_NAME;
 
 function App() {
   return (
@@ -16,9 +18,7 @@ function App() {
       <UniversalHeader/>
 
       <Margins>
-        <main style={{
-          maxWidth: '38rem'
-        }}>
+        <main>
           <Heading level={1} size="3XL" style={{
             marginTop: SPACING['2XL'],
             marginBottom: SPACING['XL']
@@ -26,6 +26,7 @@ function App() {
           <BrowserRouter>
             <Route path="/" exact component={SearchWrapper}/>
             <Route path="/artifacts/:id" component={DirectArtifact}/>
+            <Route path="/status" render={() => <StatusReport api={API_URL} />}/>
           </BrowserRouter>
         </main>
       </Margins>
@@ -35,13 +36,21 @@ function App() {
 
 function SearchWrapper() {
   return (
-    <ArtifactSearch api={API_URL} />
+    <div style={{
+        maxWidth: '38rem'
+    }}>
+      <ArtifactSearch api={API_URL} />
+    </div>
   );
 }
 
 function DirectArtifact({ match }) {
   return (
-    <ErroringArtifact id={match.params.id}/>
+    <div style={{
+        maxWidth: '38rem'
+    }}>
+      <ErroringArtifact id={match.params.id}/>
+    </div>
   );
 }
 
@@ -71,3 +80,4 @@ class ErroringArtifact extends React.Component {
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
+
