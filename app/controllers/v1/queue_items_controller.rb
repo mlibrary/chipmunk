@@ -23,7 +23,7 @@ module V1
       policy.authorize! :index?
 
       queue_items = policy.resolve.includes(:package).merge(time_filter).recent_first
-      render 'status', locals: { queue_items: queue_items }
+      render "status", locals: { queue_items: queue_items }
     end
 
     # GET /v1/queue/:id

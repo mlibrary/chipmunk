@@ -58,6 +58,6 @@ module Chipmunk
 
     config.active_job.queue_adapter = :resque
 
-    config.time_zone = 'America/Detroit'
+    config.time_zone = "America/Detroit"
   end
 end

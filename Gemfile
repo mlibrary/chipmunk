@@ -12,15 +12,15 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem "puma", "= 4.3.1"
 gem "nio4r", "= 2.5.2"
+gem "puma", "= 4.3.1"
 
 gem "bagit"
 gem "bcrypt", "~> 3.1.7"
 gem "canister"
 gem "ettin"
-gem "jbuilder"
 gem "jb"
+gem "jbuilder"
 gem "mysql2", "~>0.4.10"
 gem "rack-cors"
 gem "rails", "~> 5.1.0"
