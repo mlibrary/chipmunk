@@ -22,7 +22,8 @@ module V1
       policy = collection_policy.new(current_user)
       policy.authorize! :index?
 
-      render 'status', locals: { queue_items: policy.resolve.includes(:package) }
+      queue_items = policy.resolve.includes(:package).merge(time_filter).recent_first
+      render "status", locals: { queue_items: queue_items }
     end
 
     # GET /v1/queue/:id
@@ -78,6 +79,25 @@ module V1
       else
         return :invalid
       end
+    end
+
+    def time_filter
+      scope = QueueItem.all
+      scope = scope.before_time(before_time) if before_time
+      scope = scope.after_time(after_time) if after_time
+      scope
+    end
+
+    def before_time
+      Time.zone.parse(params[:before])
+    rescue ArgumentError
+      nil
+    end
+
+    def after_time
+      Time.zone.parse(params[:after])
+    rescue ArgumentError
+      nil
     end
   end
 end

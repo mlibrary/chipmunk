@@ -57,5 +57,7 @@ module Chipmunk
     config.validation = YAML.safe_load(ERB.new(validation_path.read).result)
 
     config.active_job.queue_adapter = :resque
+
+    config.time_zone = "America/Detroit"
   end
 end
