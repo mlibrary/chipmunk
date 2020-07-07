@@ -147,7 +147,7 @@ GEM
     mysql2 (0.4.10)
     netrc (0.11.0)
     nio4r (2.5.2)
-    nokogiri (1.10.5)
+    nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
     parallel (1.17.0)
     parser (2.6.2.1)
@@ -160,9 +160,9 @@ GEM
       pry (~> 0.10)
     psych (3.1.0)
     public_suffix (3.0.2)
-    puma (4.3.1)
+    puma (4.3.5)
       nio4r (~> 2.0)
-    rack (2.0.6)
+    rack (2.2.3)
     rack-cors (1.0.5)
       rack (>= 1.6.0)
     rack-protection (2.0.3)
@@ -197,7 +197,7 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rainbow (3.0.0)
-    rake (12.3.2)
+    rake (13.0.1)
     redis (4.0.1)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
@@ -296,7 +296,7 @@ GEM
       hashdiff
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.3)
+    websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.20)
@@ -325,7 +325,7 @@ DEPENDENCIES
   nio4r (= 2.5.2)
   pry
   pry-byebug
-  puma (= 4.3.1)
+  puma (= 4.3.5)
   rack-cors
   rails (~> 5.1.0)
   rails-controller-testing
@@ -344,4 +344,4 @@ DEPENDENCIES
   zip_tricks
 
 BUNDLED WITH
-   2.0.2
+   2.1.4
