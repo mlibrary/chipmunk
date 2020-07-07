@@ -31,9 +31,6 @@
 # Rubymine
 /.idea
 
-# rbenv local file
-.ruby-version
-
 # Ignore test coverage
 /coverage
 
