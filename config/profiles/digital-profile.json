@@ -1,0 +1,292 @@
+{
+  "ordered": [
+    {
+      "BarcodeNumber/Identifier": {
+        "fieldRequired": true
+      }
+    },
+    {
+      "AccessionNumber/Collection": {
+        "fieldRequired": true
+      }
+    },
+    {
+      "OriginatingUnit/Department": {
+        "fieldRequired": true,
+        "defaultValue": "Special Collections"
+      }
+    },
+    {
+      "MediaRetentionPriority": {
+        "fieldRequired": true,
+        "defaultValue": "???",
+        "valueList": [
+          "???",
+          "High",
+          "Low",
+	  "Not Applicable",
+          "Not Yet Known "
+        ]
+      }
+    },
+     {
+        "recordsTitle": {
+          "fieldRequired": false
+        }
+        },
+    {
+      "Medium/Carrier": {
+        "fieldRequired": true,
+        "defaultValue": "???",
+        "valueList": [
+          "???",
+          "CD",
+          "DVD",
+          "Blu-Ray",
+          "HDD/Hard-Drive",
+          "USB: Flash/Thumb-Drive",
+          "Floppy: 3.5in",
+          "Floppy: 3.5in (400K)",
+          "Floppy: 3.5in (800K)",
+          "Floppy: 5.25in",
+          "Floppy: 8in",
+          "Zip Disk",
+          "Jazz Drive",
+          "Tape/Disk Cartridge",
+          "Memory Card (SD/HC/XC/UHS/MS PRO/PRO Duo/Compact Flash/etc.)",
+          "Magneto-Optical Disc (1990s)",
+          "Mobile Device (Phone/Tablet/etc.)",
+          "Computer",
+          "Folder on Computer",
+          "Email/Attachment",
+          "Content Systems (RMS/DMS/RDMS/CMS Repository)",
+          "Network Storage (NAS/SAN/FTP/SFTP)",
+          "Cloud Storage",
+          "Other(Describe in notes)"
+        ]
+      }
+    },
+    {
+      "Medium/CarrierConditionNotes": {
+        "fieldRequired": false
+      }
+    },
+        {
+      "Medium/CarrierDetails": {
+        "fieldRequired": false
+      }
+    },
+        {
+      "Medium/Carrier #2": {
+        "fieldRequired": false,
+        "defaultValue": "???",
+        "valueList": [
+          "???",
+          "CD",
+          "DVD",
+          "Blu-Ray",
+          "HDD/Hard-Drive",
+          "USB: Flash/Thumb-Drive",
+          "Floppy: 3.5in",
+          "Floppy: 3.5in (400K)",
+          "Floppy: 3.5in (800K)",
+          "Floppy: 5.25in",
+          "Floppy: 8in",
+          "Zip Disk",
+          "Jazz Drive",
+          "Tape/Disk Cartridge",
+          "Memory Card (SD/HC/XC/UHS/MS PRO/PRO Duo/Compact Flash/etc.)",
+          "Magneto-Optical Disc (1990s)",
+          "Mobile Device (Phone/Tablet/etc.)",
+          "Computer",
+          "Folder on Computer",
+          "Email/Attachment",
+          "Content Systems (RMS/DMS/RDMS/CMS Repository)",
+          "Network Storage (NAS/SAN/FTP/SFTP)",
+          "Cloud Storage",
+          "Other(Describe in notes)"
+        ]
+      }
+    },
+    {
+      "MediaConditionNotes #2": {
+        "fieldRequired": false
+      }
+    },
+        {
+      "Medium/CarrierDetails #2": {
+        "fieldRequired": false
+      }
+    },
+    {
+      "Hardware": {
+        "fieldRequired": true,
+        "defaultValue": "???",
+        "valueList": [
+          "???",
+          "External 3.5in Floppy Reader",
+          "Internal 3.5in Floppy Reader on vintage machine",
+          "Internal Optical Drive",
+          "USB via WriteBlocker",
+          "Direct USB",
+          "File Hosting Service",
+          "5.25in Floppy Reader via FC5025",
+	  "Zip Drive",
+	  "Not Applicable"
+        ]
+      }
+    },
+    {
+      "Software": {
+        "fieldRequired": true,
+        "defaultValue": "???",
+        "valueList": [
+          "???",
+          "Guymager",
+          "FTK Imager",
+          "Data Accessioner",
+          "Disc Copy on vintage machine",
+	  "Exact Audio Copy",
+          "Iomegaware",
+          "FC5025 Disk Image and Browse",
+	  "Download through browser",
+          "Other - see Notes field"
+
+
+        ]
+      }
+    },
+    {
+      "WriteBlockerHardware": {
+        "fieldRequired": true,
+        "defaultValue": "???",
+        "valueList": [
+          "???",
+          "Tableau USB Bridge",
+          "Tableau FireWire Bridge",
+          "Floppy Disk Write Protect",
+          "Read-Only Optical Disc",
+          "Not Applicable"
+        ]
+      }
+    },
+    {
+      "WriteBlockerSoftware": {
+        "fieldRequired": true,
+        "defaultValue": "Active",
+        "valueList": [
+          "???",
+          "Active",
+          "Not Active"
+        ]
+      }
+    },
+    {
+      "VirusCheckRun?": {
+        "fieldRequired": true,
+        "defaultValue": "???",
+        "valueList": [
+          "???",
+          "YES",
+          "NO",
+          "COULD NOT RUN"
+        ]
+      }
+    },
+    {
+      "VirusCheckSoftware?": {
+        "fieldRequired": true,
+        "defaultValue": "Clam AV",
+        "valueList": [
+          "???",
+          "Clam AV",
+          "Clam Tk",
+          "Microsoft System Center Endpoint Protection",
+          "Windows Defender"
+        ]
+      }
+    },
+    {
+      "VirusCheckResults": {
+        "fieldRequired": true,
+        "defaultValue": "???",
+        "valueList": [
+          "???",
+          "PASS",
+          "FAIL",
+          "NOT APPLICABLE"
+        ]
+      }
+    },
+    {
+      "VirusCheckResultsNotes": {
+        "fieldRequired": false
+      }
+    },
+    {
+      "TestMountPerformed?": {
+        "fieldRequired": true,
+        "defaultValue": "???",
+        "valueList": [
+          "???",
+          "YES",
+          "NO",
+          "NOT APPLICABLE",
+          "IMAGE QUARANTINED"
+        ]
+      }
+    },
+    {
+      "TestMountResults": {
+        "fieldRequired": true,
+        "defaultValue": "???",
+        "valueList": [
+          "???",
+          "SUCCESSFUL",
+          "UNSUCCESSFUL",
+          "NOT APPLICABLE"
+        ]
+      }
+    },
+    {
+      "BagContent": {
+        "fieldRequired": true,
+        "defaultValue": "Disk Image/Forensic Image",
+        "valueList": [
+          "???",
+          "Disk Image/Forensic Image",
+          "Logical Transfer",
+	  "Audio CD Conversion"
+        ]
+      }
+    },
+    {
+      "OAISDigitalCurationLifecycle": {
+        "fieldRequired": true,
+        "defaultValue": "SIP",
+        "valueList": [
+          "???",
+          "SIP",
+          "AIP",
+          "AIPe (encapsulated AIP)",
+          "DIP"
+        ]
+      }
+    },
+    {
+      "Notes": {
+        "fieldRequired": false
+      }
+    },
+    {
+      "ItemInformationNotes": {
+        "fieldRequired": false
+      }
+    },
+    {
+      "BagCreator": {
+        "fieldRequired": true
+      }
+    }
+  ]
+}

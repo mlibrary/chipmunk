@@ -6,3 +6,4 @@ external:
   video: <%= Chipmunk.config.validation.external.video %>
 bagger_profile:
   digital: <%= Chipmunk.config.validation.bagger_profile.digital %>
+  video_game: <%= Chipmunk.config.validation.bagger_profile.video_game %>

@@ -13,7 +13,8 @@ validation:
     bentleyaudio: "bin/validate_bentleyaudio.sh"
     video: "bin/validate_video.pl"
   bagger_profile:
-    digital: "http://uri_to_bagger_profile"
+    digital: "config/profiles/digital-profile.json"
+    video_game: "config/profiles/video-game-profile.json"
 checkpoint:
   database: 
     adapter: sqlite

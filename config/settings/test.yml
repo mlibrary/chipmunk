@@ -13,6 +13,7 @@ validation:
     video: "spec/support/bin/validate_video.sh"
   bagger_profile:
     digital: "spec/support/fixtures/test-profile.json"
+    video_game: "spec/support/fixtures/test-profile.json"
 checkpoint:
   database:
     adapter: sqlite
