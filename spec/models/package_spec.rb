@@ -179,6 +179,7 @@ RSpec.describe Package, type: :model do
         "digital:(all)",
         "audio:(all)",
         "video:(all)",
+        "video_game:(all)",
         "Package:(all)",
         "(all):(all)"
       )

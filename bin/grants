@@ -29,7 +29,7 @@ Checkpoint::DB.initialize!
 # should get this from the resolver
 ROLES = ["admin", "content_manager", "viewer"].freeze
 # should get this from Package
-CONTENT_TYPES = ["audio", "bentleyaudio", "video", "digital"].freeze
+CONTENT_TYPES = ["audio", "bentleyaudio", "video", "digital", "video_game"].freeze
 
 def grant
   (username, role, content_type) = ARGV

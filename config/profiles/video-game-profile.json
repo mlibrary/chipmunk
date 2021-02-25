@@ -1,0 +1,211 @@
+{
+  "ordered": [
+    {
+      "BIB/System Number": {
+        "fieldRequired": true
+      }
+    },
+    {
+      "BarcodeNumber/Identifier": {
+        "fieldRequired": true
+      }
+    },
+    {
+      "GameTitle": {
+        "fieldRequired": true
+      }
+    },
+    {
+      "GameSystem": {
+        "fieldRequired": true,
+        "valueList": [
+          "3DO",
+          "3DS",
+          "Amiga",
+          "Android",
+          "Apple II",
+          "Arcadia",
+          "Atari 2600",
+          "Atari 5200",
+          "Atari 7800",
+          "Atari 800",
+          "Atari ST",
+          "CD-I",
+          "Coleco Adam",
+          "Colecovision",
+          "Commodore 64",
+          "Didj",
+          "Dreamcast",
+          "DS",
+          "Famicom",
+          "Game Boy",
+          "Game Boy Advance",
+          "Game Boy Color",
+          "Game Gear",
+          "Gamecube",
+          "Game.com",
+          "Genesis",
+          "Genesis 32X",
+          "Intellivision",
+          "iPad",
+          "Jaguar",
+          "Linux",
+          "Lynx",
+          "Mac",
+          "N64",
+          "Neo Geo X",
+          "NES",
+          "Nuon",
+          "Odyssey 2",
+          "Ouya",
+          "PC",
+          "Pico",
+          "PS Vita",
+          "PS1",
+          "PS2",
+          "PS3",
+          "PS4",
+          "PSP",
+          "RCA Studio II",
+          "Saturn",
+          "Sega CD",
+          "Sega CD 32X",
+          "Sega Mark III",
+          "Sega Master System",
+          "SNES",
+          "Super Famicom",
+          "Switch",
+          "Text only",
+          "TI-99",
+          "TRS-80 computer",
+          "TurboGrafx 16",
+          "V-Motion",
+          "V-Smile",
+          "Vectrex",
+          "Vic 20",
+          "Virtual Boy",
+          "VIS",
+          "Wii",
+          "Wii U",
+          "Wonderswan Color",
+          "Xbox",
+          "Xbox 360",
+          "Xbox One"
+        ]
+      }
+    },
+    {
+      "GameRegion": {
+        "fieldRequired": true,
+        "defaultValue": "NTSC-U (North and South America, etc.)",
+        "valueList": [
+          "NTSC-U (North and South America, etc.)",
+          "PAL (Europe and Oceania)",
+          "NTSC-J (Japan, Hong Kong and Taiwan)",
+          "NTSC-C (China)",
+          "NTSC-K (South Korea)",
+          "Other"
+        ]
+      }
+    },
+    {
+      "Type": {
+        "fieldRequired": true,
+        "defaultValue": "Physical game",
+        "valueList": [
+          "Physical game",
+          "Virtual game"
+        ]
+      }
+    },
+    {
+      "PhysicalGameMediaFormat": {
+        "fieldRequired": false,
+        "valueList": [
+          "",
+          "Blu-ray",
+          "DVD",
+          "CD",
+          "MiniDVD",
+          "Floppy: 3.5in",
+          "Floppy: 5.25in",
+          "Cassette tape",
+          "Cartridge",
+          "Mini-cartridge",
+          "Memory card",
+          "Media Disc",
+          "PDF - Text only",
+          "Other - see GameNotes field"
+        ]
+      }
+    },
+    {
+      "VirtualGameEdition": {
+        "fieldRequired": false,
+        "valueList": [
+          "",
+          "Android",
+          "Apple IIgs",
+          "GOG",
+          "iOS",
+          "Mac",
+          "3DS Virtual Console",
+          "None",
+          "Origin",
+          "Ouya",
+          "PlayStation 3",
+          "PlayStation 4",
+          "PlayStation Vita",
+          "Steam",
+          "WiiWare",
+          "Xbox Live",
+          "Other"
+        ]
+      }
+    },
+    {
+      "GameNotes": {
+        "fieldRequired": false
+      }
+    },
+    {
+      "Hardware": {
+        "fieldRequired": false,
+        "defaultValue": "",
+        "valueList": [
+          "",
+          "Internal 3.5in Floppy Reader on vintage machine",
+          "External 3.5in Floppy Reader",
+          "Internal Optical Drive",
+          "External Optical Drive",
+          "5.25in Floppy Reader via FC5025",
+          "Other - see ImagingNotes field"
+        ]
+      }
+    },
+    {
+      "Software": {
+        "fieldRequired": false,
+        "defaultValue": "",
+        "valueList": [
+          "",
+          "FC5025 Disk Image and Browse",
+          "FTK Imager",
+          "Disk Copy on vintage machine",
+          "Other - see ImagingNotes field"
+        ]
+      }
+    },
+    {
+      "ImagingNotes": {
+        "fieldRequired": false
+      }
+    },
+    {
+      "BagCreatorName": {
+        "fieldRequired": true,
+        "defaultValue": "Val Waldron"
+      }
+    }
+  ]
+}
